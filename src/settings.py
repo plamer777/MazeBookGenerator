@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     # AI API
     OPEN_AI_KEY: str = ""
     HF_TOKEN: str = ""
+    REPLICATE_API_TOKEN: str = ""
 
     class Config:
         env_file = ".env"
@@ -64,10 +65,81 @@ OPEN_AI_THEME_PROMPT: str = (
     "}}"
 )
 
+OPEN_AI_THEME_SYSTEM_RU: str = (
+    "Ты помощник, который генерирует контент для детских книг с лабиринтами. "
+    "Отвечай только валидным JSON в точном запрошенном формате, без пояснений."
+)
+OPEN_AI_THEME_PROMPT_RU: str = (
+    "Придумай УНИКАЛЬНУЮ тему для детской книги с лабиринтами на {pages_count} страниц.\n"
+    "Следующие названия уже использованы — НЕ повторяй и не имитируй их:\n"
+    "{used_titles}\n"
+    "Выбери совершенно другое окружение, персонажей и концепцию.\n\n"
+    "Ответь строго в JSON без пояснений, используя эти поля:\n"
+    "  book_title — короткое броское название на русском, например 'Лесное путешествие',\n"
+    "  book_description — одно предложение с описанием книги на русском,\n"
+    "  page_prompts — массив из {pages_count} объектов вида:\n"
+    '    {{"task": "Помоги медведю найти мёд", "heroes": ["медведь", "пчела"]}},\n'
+    "  image_keywords — массив из {pages_count} массивов по 2-4 ключевых слова "
+    "на английском для иллюстраций.\n"
+    "\nПример ответа для 2 страниц:\n"
+    '{{\n'
+    '  "book_title": "Лесное путешествие",\n'
+    '  "book_description": "Помоги лесным зверятам найти дорогу домой.",\n'
+    '  "page_prompts": [\n'
+    '    {{"task": "Помоги медведю найти мёд", "heroes": ["медведь", "пчела"]}},\n'
+    '    {{"task": "Проведи лису к норке", "heroes": ["лиса", "кролик"]}}\n'
+    '  ],\n'
+    '  "image_keywords": [["bear", "honey", "forest"], ["fox", "den"]]\n'
+    "}}"
+)
+
 HF_IMAGE_MODEL: str = "black-forest-labs/FLUX.1-schnell"
-HF_PROMPT_TEMPLATE: str = (
-    "Children's book illustration, simple line art, {keywords}, "
-    "black and white, white background, pencil sketch style, no shading"
+
+# Список моделей в порядке приоритета — при ошибке 402/429 клиент переходит к следующей
+HF_IMAGE_MODEL_FALLBACKS: list[str] = [
+    "black-forest-labs/FLUX.1-schnell",
+    "stabilityai/stable-diffusion-xl-base-1.0",
+    "stabilityai/stable-diffusion-2-1",        # SDv2, хорошее качество
+    "runwayml/stable-diffusion-v1-5",
+    "prompthero/openjourney-v4",                # Midjourney-стиль, бесплатная
+    "dreamlike-art/dreamlike-photoreal-2.0",   # Мягкий иллюстративный стиль
+    "Lykon/dreamshaper-8",                     # Популярная для иллюстраций
+    "CompVis/stable-diffusion-v1-4",
+]
+
+IMAGE_GENERATOR_PROMPT_TEMPLATE: str = (
+    "Cute cheerful children's book illustration, friendly cartoon style, "
+    "{keywords}, simple line art, black and white, white background, "
+    "clean bold outlines, happy playful mood, kawaii, coloring book style, no shading"
 )
 IMAGE_STORAGE_SUBDIR: str = "illustrations"
 WATERMARK_ALPHA: float = 0.1
+
+# Replicate — список дешёвых моделей для B&W детских иллюстраций.
+# Порядок = приоритет. Клиент резолвит версию каждой и пытается сгенерировать,
+# при неудаче переходит к следующей.
+REPLICATE_IMAGE_MODELS: list[str] = [
+    "bytedance/sdxl-lightning-4step",   # ~$0.0007/img, 4 steps
+    "black-forest-labs/flux-schnell",   # ~$0.004/img, high quality
+    "stability-ai/sdxl",                 # ~$0.0025/img, официальный SDXL
+    "prompthero/openjourney-v4",        # ~$0.002/img, midjourney-style
+    "cjwbw/anything-v3.0",               # ~$0.002/img, anime/cartoon style
+]
+REPLICATE_IMAGE_PARAMS: dict = {
+    "width": 512,
+    "height": 512,
+    "num_inference_steps": 4,
+    "scheduler": "K_EULER",
+    "guidance_scale": 0,
+}
+# Задержка между запросами к Replicate для соблюдения rate limit ~6/min
+REPLICATE_RATE_LIMIT_DELAY: float = 10.0
+
+# Pollinations AI — бесплатный API для генерации изображений
+# Rate limit ~6 запросов/минуту, задержка между запросами в секундах
+POLLINATIONS_PARAMS: dict = {
+    "width": 512,
+    "height": 512,
+    "nologo": "true",
+}
+POLLINATIONS_RATE_LIMIT_DELAY: float = 1.0

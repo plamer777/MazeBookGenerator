@@ -13,10 +13,14 @@ from src.domain.models import (
     Difficulty,
     DifficultyMode,
     MazeShape,
-    PagePrompt,
+
     Theme,
 )
 from src.infrastructure.hf_client import HFClient
+from src.infrastructure.pollinations_client import PollinationsClient
+from src.infrastructure.replicate_client import ReplicateClient
+from src.infrastructure.pdf_renderer import PDFRenderer
+from src.localization import BookTexts, Language
 from src.settings import settings
 
 
@@ -32,6 +36,8 @@ class BookService:
         self._image_generator = container.image_generator
         self._preview_generator = container.preview_generator
         self._hf_client: HFClient = container.hf_client
+        self._pollinations_client: PollinationsClient = container.pollinations_client
+        self._replicate_client: ReplicateClient = container.replicate_client
 
     async def generate_book_with_ai_theme(
         self,
@@ -40,12 +46,15 @@ class BookService:
         maze_size: Tuple[int, int],
         difficulty_mode: DifficultyMode,
         base_difficulty: Difficulty = Difficulty.MEDIUM,
+        language: Language = "en",
     ) -> Book:
         """
         Генерирует книгу с AI-генерированной темой и проверкой дедупликации.
         """
         used_titles = self._mongodb_client.get_used_titles()
-        theme = await self._ai_client.generate_theme(pages_per_book, used_titles=used_titles)
+        theme = await self._ai_client.generate_theme(
+            pages_per_book, used_titles=used_titles, language=language
+        )
         self._mongodb_client.save_theme(theme.book_title)
 
         return self.generate_book(
@@ -55,6 +64,7 @@ class BookService:
             maze_size=maze_size,
             difficulty_mode=difficulty_mode,
             base_difficulty=base_difficulty,
+            language=language,
         )
 
     def generate_book(
@@ -65,10 +75,14 @@ class BookService:
         maze_size: Tuple[int, int],
         difficulty_mode: DifficultyMode,
         base_difficulty: Difficulty = Difficulty.MEDIUM,
+        language: Language = "en",
     ) -> Book:
         """
         Генерирует книгу с лабиринтами на основе выбранной когнитивной стратегии.
         """
+        t = BookTexts(language)
+        answer_key_prompt = t.get("answer_key_prompt")
+
         width, height = maze_size
         pages: list[BookPage] = []
 
@@ -103,8 +117,9 @@ class BookService:
             solution_page = BookPage(
                 maze=maze,
                 title=f"Maze {page_num}",
-                prompt="Answer Key",
+                prompt=answer_key_prompt,
                 page_number=page_num,
+                is_solution=True,
             )
             pages.append(solution_page)
 
@@ -118,40 +133,65 @@ class BookService:
             output_dir=output_dir,
         )
 
-    def render_book_to_pdf(self, book: Book) -> Path:
+    def render_book_to_pdf(self, book: Book, language: Language = "en") -> Path:
         """Рендерит книгу в PDF файл."""
         output_path = Path(book.output_dir) / "book.pdf"
-        self._pdf_renderer.render_book(book, output_path)
+        PDFRenderer(language=language).render_book(book, output_path)
         return output_path
 
     def generate_page_illustrations(self, book: Book) -> list[Path | None]:
         """
-        Генерирует иллюстрации через Hugging Face и прокидывает пути в BookPage.
+        Генерирует иллюстрации и прокидывает пути в BookPage.
 
+        Провайдеры по порядку: Replicate -> Pollinations -> Hugging Face.
         Использует image_keywords из Theme для каждой страницы.
         Пары страниц (maze + solution) используют одинаковую иллюстрацию.
         """
         keywords_per_page = book.theme.image_keywords or []
-        unique_pages = [p for p in book.pages if p.prompt != "Answer Key"]
+        unique_pages = [p for p in book.pages if not p.is_solution]
         unique_keywords = [
             keywords_per_page[p.page_number - 1]
             if p.page_number - 1 < len(keywords_per_page)
             else ["maze", "adventure"]
             for p in unique_pages
         ]
-        print(f'Keywords: {keywords_per_page}, {unique_keywords}')
-        paths = self._hf_client.generate_book_illustrations(
+        book_dir = Path(book.output_dir)
+
+        # 1. Основной провайдер — Replicate (качество + скорость)
+        paths = self._replicate_client.generate_book_illustrations(
             image_keywords=unique_keywords,
-            book_dir=Path(book.output_dir),
+            book_dir=book_dir,
         )
-        print(f'Image paths: {paths}')
+
+        # 2. Fallback — Pollinations для страниц, где Replicate вернул None
+        failed_indices = [i for i, p in enumerate(paths) if p is None]
+        if failed_indices:
+            pollinations_keywords = [unique_keywords[i] for i in failed_indices]
+            pollinations_paths = self._pollinations_client.generate_book_illustrations(
+                image_keywords=pollinations_keywords,
+                book_dir=book_dir,
+            )
+            for list_idx, original_idx in enumerate(failed_indices):
+                paths[original_idx] = pollinations_paths[list_idx]
+
+        # 3. Последний fallback — HF для оставшихся неуспешных
+        failed_indices = [i for i, p in enumerate(paths) if p is None]
+        if failed_indices:
+            hf_keywords = [unique_keywords[i] for i in failed_indices]
+            hf_paths = self._hf_client.generate_book_illustrations(
+                image_keywords=hf_keywords,
+                book_dir=book_dir,
+            )
+            for list_idx, original_idx in enumerate(failed_indices):
+                paths[original_idx] = hf_paths[list_idx]
+
         for page, path in zip(unique_pages, paths):
             if path is not None:
                 str_path = str(path)
                 page.image_path = str_path
                 # Страница-ответ с тем же номером тоже получает путь
                 for sol_page in book.pages:
-                    if sol_page.page_number == page.page_number and sol_page.prompt == "Answer Key":
+                    if sol_page.page_number == page.page_number and sol_page.is_solution:
                         sol_page.image_path = str_path
 
         return paths
@@ -163,6 +203,7 @@ class BookService:
         maze_size: Tuple[int, int],
         difficulty_mode: DifficultyMode,
         base_difficulty: Difficulty = Difficulty.MEDIUM,
+        language: Language = "en",
     ) -> Book:
         """Генерирует полную книгу со всеми медиа-файлами и превью."""
         book = await self.generate_book_with_ai_theme(
@@ -171,18 +212,22 @@ class BookService:
             maze_size=maze_size,
             difficulty_mode=difficulty_mode,
             base_difficulty=base_difficulty,
+            language=language,
         )
 
         self.generate_page_illustrations(book)
-        self.render_book_to_pdf(book)
-        self.generate_previews(book)
+        self.render_book_to_pdf(book, language=language)
+        self.generate_previews(book, language=language)
 
         return book
 
-    def generate_previews(self, book: Book) -> list[Path]:
+    def generate_previews(self, book: Book, language: Language = "en") -> list[Path]:
         """Генерирует маркетинговые preview изображения для книги."""
         output_dir = Path(book.output_dir)
-        return self._preview_generator.generate_previews(output_dir)
+        maze_count = sum(1 for p in book.pages if not p.is_solution)
+        return self._preview_generator.generate_previews(
+            output_dir, maze_count=maze_count, language=language
+        )
 
     async def generate_batch(
         self,
@@ -192,6 +237,7 @@ class BookService:
         difficulty_mode: DifficultyMode,
         base_difficulty: Difficulty = Difficulty.MEDIUM,
         base_seed: int | None = None,
+        language: Language = "en",
     ) -> list[Book]:
         """
         Генерирует пачку книг в batch режиме с гарантированной уникальностью структур.
@@ -203,21 +249,23 @@ class BookService:
             difficulty_mode: Стратегия изменения сложности
             base_difficulty: Начальная сложность
             base_seed: Опциональный seed. Если None — каждый перезапуск скрипта абсолютно рандомен.
+            language: Язык текста книги (ru или en)
         """
         books: list[Book] = []
 
-        for book_id in range(1, number_of_books + 1):
-            print(f"Генерация книги {book_id}/{number_of_books}...")
+        for local_idx in range(1, number_of_books + 1):
+            book_id = self._next_free_book_id(settings.OUTPUT_DIR)
+            print(f"Генерация книги {local_idx}/{number_of_books} (папка book_{book_id})...")
 
             size_variations = [
                 (maze_size[0] - 2, maze_size[1] - 2) if maze_size[0] > 12 else maze_size,  # EASY
                 (maze_size[0], maze_size[1]),  # MEDIUM
                 (maze_size[0] + 2, maze_size[1] + 2),  # HARD
             ]
-            current_maze_size = size_variations[(book_id - 1) % len(size_variations)]
+            current_maze_size = size_variations[(local_idx - 1) % len(size_variations)]
 
             difficulties = [Difficulty.EASY, Difficulty.MEDIUM, Difficulty.HARD]
-            current_difficulty = difficulties[(book_id - 1) % len(difficulties)]
+            current_difficulty = difficulties[(local_idx - 1) % len(difficulties)]
 
             # РЕШЕНИЕ ПРОБЛЕМЫ ПОВТОРОВ:
             # Если base_seed передан — генерируем воспроизводимую цепочку.
@@ -235,12 +283,29 @@ class BookService:
                 maze_size=current_maze_size,
                 difficulty_mode=difficulty_mode,
                 base_difficulty=current_difficulty,
+                language=language,
             )
             books.append(book)
-            print(f"Книга {book_id} завершена: {book.theme.book_title} (seed: {current_seed})")
+            print(f"Книга {local_idx} завершена: {book.theme.book_title} [папка book_{book_id}] (seed: {current_seed})")
 
         return books
 
+    @staticmethod
+    def _next_free_book_id(output_dir: Path) -> int:
+        """
+        Возвращает следующий свободный номер папки book_N в директории вывода.
+
+        Сканирует все естественные числа в существующих поддиректориях book_* и возвращает
+        максимальный существующий + 1. Если папок нет — возвращает 1.
+        """
+        output_dir.mkdir(parents=True, exist_ok=True)
+        existing: list[int] = []
+        for entry in output_dir.iterdir():
+            if entry.is_dir() and entry.name.startswith("book_"):
+                suffix = entry.name[len("book_"):]
+                if suffix.isdigit():
+                    existing.append(int(suffix))
+        return max(existing, default=0) + 1
     # ------------------------------------------------------------------
     # Внутренние алгоритмы распределения сложности и геометрии
     # ------------------------------------------------------------------
@@ -262,23 +327,23 @@ class BookService:
         ]
 
         if mode_str == "FIXED":
-            return base_difficulty
+            selected = base_difficulty
 
         elif mode_str == "INCREMENTAL":
             progress = (page_num - 1) / max(total_pages - 1, 1)
             index = round(progress * (len(all_levels) - 1))
-            return all_levels[index]
+            selected = all_levels[index]
 
         elif mode_str == "RANDOM_RANGE":
-            return random.choice(all_levels)
+            selected = random.choice(all_levels)
 
         elif mode_str == "KIDS_EASY":
             # Стратегия для малышей: строго самые простые и понятные структуры
-            return random.choice([Difficulty.L1, Difficulty.L2])
+            selected = random.choice([Difficulty.L1, Difficulty.L2])
 
         elif mode_str == "CHALLENGE_HARD":
             # Стратегия для продвинутых детей: только хардкор
-            return random.choice([Difficulty.L5, Difficulty.L6, Difficulty.L7])
+            selected = random.choice([Difficulty.L5, Difficulty.L6, Difficulty.L7])
 
         elif mode_str == "STORY_WAVE":
             # Волнообразная нагрузка с общим восходящим трендом (предотвращает утомление)
@@ -287,9 +352,12 @@ class BookService:
             wave_modifier = math.sin(page_num * 1.5) * 1.5  # Периодические колебания вверх-вниз
 
             index = max(0, min(6, round(base_idx + wave_modifier + 1.5)))
-            return all_levels[index]
+            selected = all_levels[index]
 
-        return base_difficulty
+        else:
+            selected = base_difficulty
+
+        return selected
 
     def _get_page_shape(self, page_num: int, total_pages: int, mode: DifficultyMode) -> MazeShape:
         """Подбирает оптимальную форму лабиринта, соответствующую когнитивной нагрузке."""

@@ -3,6 +3,8 @@
 from src.domain.maze_generator import MazeGenerator
 from src.infrastructure.ai_client import AIClient
 from src.infrastructure.hf_client import HFClient
+from src.infrastructure.pollinations_client import PollinationsClient
+from src.infrastructure.replicate_client import ReplicateClient
 from src.infrastructure.image_generator import ImageGenerator
 from src.infrastructure.mongodb_client import MongoDBClient
 from src.infrastructure.pdf_renderer import PDFRenderer
@@ -21,6 +23,8 @@ class Container:
         self._image_generator: ImageGenerator | None = None
         self._preview_generator: PreviewGenerator | None = None
         self._hf_client: HFClient | None = None
+        self._pollinations_client: PollinationsClient | None = None
+        self._replicate_client: ReplicateClient | None = None
 
     @property
     def maze_generator(self) -> MazeGenerator:
@@ -70,6 +74,20 @@ class Container:
         if self._hf_client is None:
             self._hf_client = HFClient()
         return self._hf_client
+
+    @property
+    def pollinations_client(self) -> PollinationsClient:
+        """Получает экземпляр Pollinations клиента."""
+        if self._pollinations_client is None:
+            self._pollinations_client = PollinationsClient()
+        return self._pollinations_client
+
+    @property
+    def replicate_client(self) -> ReplicateClient:
+        """Получает экземпляр Replicate клиента."""
+        if self._replicate_client is None:
+            self._replicate_client = ReplicateClient()
+        return self._replicate_client
 
 
 container = Container()

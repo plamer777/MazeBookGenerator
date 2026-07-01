@@ -8,22 +8,33 @@ from pathlib import Path
 from PIL import Image
 from reportlab.lib.units import mm
 from reportlab.lib.utils import ImageReader
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
 from src.domain.models import Book, BookPage, Maze, MazeShape
 from src.domain.polar_topology_service import PolarTopologyService
+from src.localization import BookTexts, Language
 from src.settings import WATERMARK_ALPHA, settings
+
+_DEJAVU_REGULAR = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+_DEJAVU_BOLD = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+pdfmetrics.registerFont(TTFont("DejaVuSans", _DEJAVU_REGULAR))
+pdfmetrics.registerFont(TTFont("DejaVuSans-Bold", _DEJAVU_BOLD))
 
 
 class PDFRenderer:
     """Рендерер PDF документов с лабиринтами."""
 
-    def __init__(self) -> None:
+    def __init__(self, language: Language = "en") -> None:
         """Инициализация рендерера с настройками из settings."""
         self.page_width = settings.PDF_PAGE_WIDTH * mm
         self.page_height = settings.PDF_PAGE_HEIGHT * mm
         self.margin = settings.PDF_MARGIN * mm
         self.cell_size = settings.DEFAULT_CELL_SIZE * mm
+        self._t = BookTexts(language)
+        self._font = "DejaVuSans"
+        self._font_bold = "DejaVuSans-Bold"
 
     def render_book(self, book: Book, output_path: Path) -> None:
         """
@@ -39,13 +50,20 @@ class PDFRenderer:
         self._render_cover(c, book)
         c.showPage()
 
+        # Страница с введением и правилами
+        self._render_intro_page(c, book)
+        c.showPage()
+
         # Страницы с лабиринтами
         for page in book.pages:
-            if page.prompt == "Answer Key":
+            if page.is_solution:
                 self._render_solution_page(c, page, book.theme.book_title)
             else:
                 self._render_maze_page(c, page, book.theme.book_title)
             c.showPage()
+
+        # Последняя страница с коллажем и напутствием
+        self._render_outro_page(c, book)
 
         c.save()
 
@@ -62,11 +80,11 @@ class PDFRenderer:
             Кортеж из трёх RGB-цветов (0..1)
         """
         palettes = [
-            ((0.10, 0.15, 0.35), (0.20, 0.30, 0.55), (0.95, 0.80, 0.25)),  # синий + золото
-            ((0.12, 0.30, 0.20), (0.22, 0.45, 0.32), (0.90, 0.75, 0.20)),  # зелёный + золото
-            ((0.35, 0.10, 0.15), (0.55, 0.20, 0.25), (0.95, 0.90, 0.60)),  # бордо + кремовый
-            ((0.15, 0.25, 0.40), (0.30, 0.45, 0.60), (1.00, 0.60, 0.20)),  # стальной + оранжевый
-            ((0.25, 0.10, 0.40), (0.40, 0.20, 0.55), (0.85, 0.90, 0.95)),  # фиолетовый + серебро
+            ((0.10, 0.15, 0.35), (0.20, 0.30, 0.55), (0.95, 0.70, 0.10)),  # синий + золото
+            ((0.08, 0.28, 0.15), (0.15, 0.42, 0.28), (0.95, 0.65, 0.05)),  # зелёный + золото
+            ((0.38, 0.08, 0.12), (0.55, 0.15, 0.20), (1.00, 0.55, 0.05)),  # бордо + яркий оранже
+            ((0.12, 0.22, 0.42), (0.25, 0.42, 0.62), (1.00, 0.55, 0.10)),  # стальной + оранжевый
+            ((0.22, 0.08, 0.42), (0.38, 0.18, 0.58), (0.95, 0.40, 0.85)),  # фиолетовый + мажента
         ]
         idx = sum(ord(ch) for ch in seed) % len(palettes)
         return palettes[idx]
@@ -128,8 +146,8 @@ class PDFRenderer:
 
         # Название (тень + основной текст)
         font_size = 34
-        c.setFont("Helvetica-Bold", font_size)
-        tw = c.stringWidth(title, "Helvetica-Bold", font_size)
+        c.setFont(self._font_bold, font_size)
+        tw = c.stringWidth(title, self._font_bold, font_size)
         tx = (self.page_width - tw) / 2
         ty = center_y + 6 * mm
         c.saveState()
@@ -141,9 +159,9 @@ class PDFRenderer:
         c.drawString(tx, ty, title)
 
         # Подзаголовок
-        subtitle = "Maze Book"
-        c.setFont("Helvetica", 16)
-        sw = c.stringWidth(subtitle, "Helvetica", 16)
+        subtitle = self._t.get("subtitle")
+        c.setFont(self._font, 16)
+        sw = c.stringWidth(subtitle, self._font, 16)
         c.saveState()
         c.setFillColorRGB(1, 1, 1)
         c.setFillAlpha(0.80)
@@ -152,6 +170,128 @@ class PDFRenderer:
 
         # Декоративные уголки
         self._render_corner_ornaments(c, accent)
+
+    def _render_intro_page(self, c: canvas.Canvas, book: Book) -> None:
+        """
+        Рендерит страницу с введением и правилами (страница 2 книги).
+
+        Простой минималистичный дизайн с дружелюбным текстом на английском.
+
+        Args:
+            c: Canvas для рисования
+            book: Объект книги
+        """
+        _, _, accent = self._cover_palette(book.theme.book_title)
+
+        # --- Фон ---
+        bg = (0.98, 0.98, 1.0)
+        c.setFillColorRGB(*bg)
+        c.rect(0, 0, self.page_width, self.page_height, fill=1, stroke=0)
+
+        # --- Простая рамка ---
+        margin = 15 * mm
+        c.setStrokeColorRGB(*accent)
+        c.setLineWidth(2.0)
+        c.rect(margin, margin, self.page_width - 2 * margin, self.page_height - 2 * margin, fill=0, stroke=1)
+
+        # --- Заголовок ---
+        c.setFillColorRGB(*accent)
+        c.setFont(self._font_bold, 28)
+        title = self._t.get("intro_heading")
+        tw = c.stringWidth(title, self._font_bold, 28)
+        c.drawString((self.page_width - tw) / 2, self.page_height - 40 * mm, title)
+
+        # --- Текст правил ---
+        c.setFillColorRGB(0.2, 0.2, 0.2)
+        c.setFont(self._font, 14)
+
+        intro_text = self._t.get("intro_body")
+        self._draw_centered_wrapped_text(
+            c=c,
+            text=intro_text,
+            font_name=self._font,
+            font_size=14,
+            start_y=self.page_height - 65 * mm,
+            max_width=self.page_width - 70 * mm,
+            line_height=6 * mm,
+            max_height=self.page_height - 110 * mm,
+            min_font_size=11,
+        )
+
+        # --- Декоративный элемент внизу ---
+        c.setStrokeColorRGB(*accent)
+        c.setLineWidth(1.5)
+        c.line(margin + 20 * mm, margin + 15 * mm, self.page_width - margin - 20 * mm, margin + 15 * mm)
+
+    def _draw_centered_wrapped_text(
+        self,
+        c: canvas.Canvas,
+        text: str,
+        font_name: str,
+        font_size: float,
+        start_y: float,
+        max_width: float,
+        line_height: float,
+        max_height: float,
+        min_font_size: float = 10,
+    ) -> float:
+        """Рисует многострочный центрированный текст с переносами и автоподбором размера."""
+        current_size = font_size
+
+        while current_size >= min_font_size:
+            lines = self._wrap_text_lines(c, text, font_name, current_size, max_width)
+            current_line_height = line_height * (current_size / font_size)
+            total_height = len(lines) * current_line_height
+            if total_height <= max_height:
+                break
+            current_size -= 1
+
+        current_size = max(current_size, min_font_size)
+
+        c.setFont(font_name, current_size)
+        y = start_y
+        current_line_height = line_height * (current_size / font_size)
+
+        for line in lines:
+            if line:
+                lw = c.stringWidth(line, font_name, current_size)
+                c.drawString((self.page_width - lw) / 2, y, line)
+            y -= current_line_height
+
+        return y
+
+    def _wrap_text_lines(
+        self,
+        c: canvas.Canvas,
+        text: str,
+        font_name: str,
+        font_size: float,
+        max_width: float,
+    ) -> list[str]:
+        """Разбивает текст на строки с переносами по ширине."""
+        c.setFont(font_name, font_size)
+        wrapped: list[str] = []
+
+        for paragraph in text.split("\n"):
+            if not paragraph.strip():
+                wrapped.append("")
+                continue
+
+            words = paragraph.split()
+            current_line = ""
+            for word in words:
+                test_line = word if not current_line else f"{current_line} {word}"
+                if c.stringWidth(test_line, font_name, font_size) <= max_width:
+                    current_line = test_line
+                else:
+                    if current_line:
+                        wrapped.append(current_line)
+                    current_line = word
+
+            if current_line:
+                wrapped.append(current_line)
+
+        return wrapped
 
     def _render_maze_band(
         self,
@@ -440,15 +580,16 @@ class PDFRenderer:
                     radius=4 * mm, fill=1, stroke=0)
 
         c.setFillColorRGB(1, 1, 1)
-        c.setFont("Helvetica-Bold", 18)
-        tw = c.stringWidth(page.title, "Helvetica-Bold", 18)
-        c.drawString((self.page_width - tw) / 2, header_y + 7 * mm, page.title)
+        c.setFont(self._font_bold, 18)
+        maze_title = self._t.get("maze_title").replace("{n}", str(page.page_number))
+        tw = c.stringWidth(maze_title, self._font_bold, 18)
+        c.drawString((self.page_width - tw) / 2, header_y + 7 * mm, maze_title)
 
         # Подсказка под плашкой
         prompt_y = header_y - 8 * mm
         c.setFillColorRGB(*accent)
-        c.setFont("Helvetica", 11)
-        pw = c.stringWidth(page.prompt, "Helvetica", 11)
+        c.setFont(self._font, 11)
+        pw = c.stringWidth(page.prompt, self._font, 11)
         c.drawString((self.page_width - pw) / 2, prompt_y, page.prompt)
 
         # --- Лабиринт максимального размера ---
@@ -461,7 +602,6 @@ class PDFRenderer:
         maze_area_h = maze_top - maze_area_y
 
         # --- Водяной знак-иллюстрация под лабиринтом ---
-        print(f'Image path before rendering watermark: {page.image_path}')
         if page.image_path:
             self._render_watermark_image(c, page.image_path, maze_area_x, maze_area_y, maze_area_w, maze_area_h)
 
@@ -469,7 +609,7 @@ class PDFRenderer:
 
         # --- Номер страницы ---
         c.setFillColorRGB(*accent)
-        c.setFont("Helvetica", 9)
+        c.setFont(self._font, 9)
         c.drawRightString(self.page_width - frame_m - 4 * mm, frame_m + 3 * mm, f"#{page.page_number}")
 
     def _render_solution_page(self, c: canvas.Canvas, page: BookPage, book_title: str = "") -> None:
@@ -503,10 +643,10 @@ class PDFRenderer:
                     self.page_width - 2 * frame_m, header_h,
                     radius=4 * mm, fill=1, stroke=0)
 
-        sol_title = f"{page.title} — Answer"
+        sol_title = f"{self._t.get('maze_title').replace('{n}', str(page.page_number))} — {self._t.get('answer_page_suffix')}"
         c.setFillColorRGB(1, 1, 1)
-        c.setFont("Helvetica-Bold", 18)
-        tw = c.stringWidth(sol_title, "Helvetica-Bold", 18)
+        c.setFont(self._font_bold, 18)
+        tw = c.stringWidth(sol_title, self._font_bold, 18)
         c.drawString((self.page_width - tw) / 2, header_y + 7 * mm, sol_title)
 
         deco_margin = 20 * mm
@@ -522,7 +662,7 @@ class PDFRenderer:
         self._render_maze_fitted(c, page.maze, maze_area_x, maze_area_y, maze_area_w, maze_area_h, show_solution=True)
 
         c.setFillColorRGB(*accent)
-        c.setFont("Helvetica", 9)
+        c.setFont(self._font, 9)
         c.drawRightString(self.page_width - frame_m - 4 * mm, frame_m + 3 * mm, f"#{page.page_number}")
 
     def _render_watermark_image(
@@ -581,8 +721,202 @@ class PDFRenderer:
                 mask="auto",
                 preserveAspectRatio=True,
             )
-        except Exception as e:
-            print(f'Failed to render watermark image: {e}'[:200])
+        except Exception:
+            pass
+
+    def _render_image_collage(
+        self,
+        c: canvas.Canvas,
+        illustrations_dir: Path,
+        alpha: float = WATERMARK_ALPHA,
+        count: int = 20,
+        seed: int | None = None,
+    ) -> None:
+        """
+        Рендерит коллаж: 1 крупное изображение по центру + 4 мелких по углам.
+
+        Структура:
+        - Центр: одно изображение 62–70% ширины страницы, поворот ±8°.
+        - Углы (TL, TR, BL, BR): по одному изображению 20–28% ширины, поворот ±15°.
+
+        Args:
+            c: Canvas для рисования
+            illustrations_dir: Папка с PNG-файлами
+            alpha: Прозрачность изображений (не изменяется)
+            count: Не используется (сохранён для совместимости сигнатуры)
+            seed: Seed для детерминированной вариативности коллажа
+        """
+        if not illustrations_dir.exists():
+            return
+
+        images = list(illustrations_dir.glob("*.png"))
+        if not images:
+            return
+
+        rng = random.Random(seed)
+
+        # Перемешиваем и при необходимости повторяем, чтобы хватило на 5 слотов
+        pool = images.copy()
+        rng.shuffle(pool)
+        while len(pool) < 5:
+            pool.append(rng.choice(images))
+
+        pw, ph = self.page_width, self.page_height
+        margin = 12 * mm
+
+        # Слоты: (img_path, scale_range, cx_frac, cy_frac, angle_range)
+        # cx/cy — доля от размера страницы для центра изображения
+        slots = [
+            # --- центральное крупное ---
+            (pool[0], (0.62, 0.70), 0.50, 0.50, (-8.0, 8.0)),
+            # --- углы: TL, TR, BL, BR ---
+            (pool[1], (0.20, 0.28), 0.0, 1.0, (-15.0, 15.0)),  # TL (пересчитывается ниже)
+            (pool[2], (0.20, 0.28), 1.0, 1.0, (-15.0, 15.0)),  # TR
+            (pool[3], (0.20, 0.28), 0.0, 0.0, (-15.0, 15.0)),  # BL
+            (pool[4], (0.20, 0.28), 1.0, 0.0, (-15.0, 15.0)),  # BR
+        ]
+
+        for i, (img_path, scale_range, cx_frac, cy_frac, angle_range) in enumerate(slots):
+            try:
+                img = Image.open(img_path).convert("RGBA")
+
+                r, g, b, a = img.split()
+                a = a.point(lambda v: int(v * alpha))
+                img = Image.merge("RGBA", (r, g, b, a))
+
+                # Размер
+                scale = rng.uniform(*scale_range)
+                draw_w = pw * scale
+                draw_h = draw_w * (img.height / img.width)
+
+                # Поворот
+                angle = rng.uniform(*angle_range)
+                img = img.rotate(angle, expand=True)
+                # После rotate размер расширяется — пересчитываем
+                rot_w = draw_w * abs(math.cos(math.radians(angle))) + draw_h * abs(math.sin(math.radians(angle)))
+                rot_h = draw_w * abs(math.sin(math.radians(angle))) + draw_h * abs(math.cos(math.radians(angle)))
+
+                # Позиция центра слота с небольшим случайным смещением
+                jitter_x = rng.uniform(-margin * 0.5, margin * 0.5)
+                jitter_y = rng.uniform(-margin * 0.5, margin * 0.5)
+                cx = cx_frac * pw + jitter_x
+                cy = cy_frac * ph + jitter_y
+
+                # Для угловых — прижимаем к краю с отступом
+                if i > 0:
+                    half_w = rot_w / 2
+                    half_h = rot_h / 2
+                    cx = margin + half_w if cx_frac == 0.0 else pw - margin - half_w
+                    cy = margin + half_h if cy_frac == 0.0 else ph - margin - half_h
+                    cx += jitter_x
+                    cy += jitter_y
+
+                draw_x = cx - rot_w / 2
+                draw_y = cy - rot_h / 2
+
+                buf = io.BytesIO()
+                img.save(buf, format="PNG")
+                buf.seek(0)
+
+                c.drawImage(
+                    ImageReader(buf),
+                    draw_x, draw_y,
+                    width=rot_w, height=rot_h,
+                    mask="auto",
+                )
+            except Exception:
+                pass
+
+    def _render_outro_page(self, c: canvas.Canvas, book: Book) -> None:
+        """
+        Рендерит последнюю страницу с коллажем иллюстраций и напутствием.
+
+        Args:
+            c: Canvas для рисования
+            book: Объект книги
+        """
+        _, _, accent = self._cover_palette(book.theme.book_title)
+
+        # --- Фон ---
+        bg = (0.95, 0.95, 1.0)
+        c.setFillColorRGB(*bg)
+        c.rect(0, 0, self.page_width, self.page_height, fill=1, stroke=0)
+
+        # --- Коллаж изображений ---
+        illustrations_dir = Path(book.output_dir) / "illustrations"
+        collage_seed = book.id * 1009 + sum(ord(ch) for ch in book.theme.book_title)
+        self._render_image_collage(
+            c,
+            illustrations_dir,
+            alpha=WATERMARK_ALPHA,
+            count=25,
+            seed=collage_seed,
+        )
+
+        # --- Полупрозрачная плашка под текстом ---
+        # padding — симметричный внутренний отступ от рамки до контента сверху и снизу
+        padding = 7 * mm
+        content_h = 36 * mm  # высота зоны контента (заголовок + тело текста)
+        box_h = content_h + 2 * padding
+        box_margin = 30 * mm
+        # Центр плашки совпадает с центром страницы
+        center_y = self.page_height / 2
+        box_bottom = center_y - box_h / 2
+        # Верхняя граница контента: верх плашки минус padding
+        content_top = box_bottom + box_h - padding
+
+        c.saveState()
+        c.setFillColorRGB(1, 1, 1)
+        c.setFillAlpha(0.85)
+        c.roundRect(box_margin, box_bottom,
+                    self.page_width - 2 * box_margin, box_h,
+                    radius=8 * mm, fill=1, stroke=0)
+        c.restoreState()
+
+        # --- Рамка плашки ---
+        c.setStrokeColorRGB(*accent)
+        c.setLineWidth(2.0)
+        c.roundRect(box_margin, box_bottom,
+                    self.page_width - 2 * box_margin, box_h,
+                    radius=8 * mm, fill=0, stroke=1)
+
+        # --- Текст напутствия ---
+        # Заголовок прижат к верху контентной зоны
+        title_font_size = 24
+        title_y = content_top - title_font_size * 0.4  # baseline чуть ниже верхней границы
+        c.setFillColorRGB(*accent)
+        c.setFont(self._font_bold, title_font_size)
+        title = self._t.get("outro_heading")
+        tw = c.stringWidth(title, self._font_bold, title_font_size)
+        c.drawString((self.page_width - tw) / 2, title_y, title)
+
+        # Тело текста начинается через один интервал ниже заголовка
+        body_start_y = title_y - 9 * mm
+        c.setFillColorRGB(0.3, 0.3, 0.3)
+        outro_text = self._t.get("outro_body")
+        self._draw_centered_wrapped_text(
+            c=c,
+            text=outro_text,
+            font_name=self._font,
+            font_size=14,
+            start_y=body_start_y,
+            max_width=self.page_width - 90 * mm,
+            line_height=5.5 * mm,
+            max_height=content_h - title_font_size * 0.4 - 9 * mm,
+            min_font_size=11,
+        )
+
+        # --- Подпись в правом нижнем углу страницы ---
+        signature = self._t.get("outro_signature")
+        sig_font_size = 10
+        sig_margin = 10 * mm
+        c.saveState()
+        c.setFillColorRGB(*accent)
+        c.setFillAlpha(0.65)
+        c.setFont(self._font, sig_font_size)
+        sw = c.stringWidth(signature, self._font, sig_font_size)
+        c.drawString(self.page_width - sig_margin - sw, sig_margin, signature)
+        c.restoreState()
 
     def _render_maze_fitted(
         self,
@@ -831,7 +1165,7 @@ class PDFRenderer:
             if maze_x_min < x < maze_x_max and maze_y_min < y < maze_y_max:
                 return
             c.setFillColorRGB(*color)
-            c.setFont("Helvetica-Bold", size)
+            c.setFont(self._font_bold, size)
             c.drawCentredString(x, y - size * 0.3, sym)
 
         # ============================================================

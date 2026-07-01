@@ -21,16 +21,40 @@ class MazeGenerator:
             random.seed()
 
     @staticmethod
-    def _lerp(level: int, lo: float, hi: float) -> float:
+    def _lerp(level: float, lo: float, hi: float) -> float:
         """
         Линейная интерполяция параметра по уровню сложности 1-7.
 
         Args:
-            level: Уровень 1..7
+            level: Уровень 1..7 (допускается float)
             lo: Значение для уровня 1
             hi: Значение для уровня 7
         """
         return lo + (hi - lo) * (level - 1) / 6.0
+
+    @staticmethod
+    def _effective_level(difficulty: Difficulty) -> float:
+        """
+        Перекалиброванный уровень сложности для более плавной градации.
+
+        Цели:
+        - поднять минимальный порог (L1 ≈ прежний L3–L4),
+        - сохранить верхнюю границу L7 = 7.0 без изменений,
+        - сделать шаги между уровнями плавными через степенную кривую
+          (power < 1 даёт concave-профиль: нижние уровни поднимаются сильно,
+          верхние почти не затрагиваются).
+
+        Таблица значений (lo=3.5, hi=7.0, power=0.55):
+            L1 → 3.50  |  L2 → 4.27  |  L3 → 4.90
+            L4 → 5.44  |  L5 → 5.93  |  L6 → 6.47  |  L7 → 7.00
+
+        Returns:
+            Эффективный уровень в диапазоне [3.5 .. 7.0]
+        """
+        lvl = difficulty.level
+        lo, hi, power = 3.5, 7.0, 0.55
+        t = (lvl - 1) / 6.0  # нормированное значение 0..1
+        return lo + (hi - lo) * (t ** power)
 
     def generate(
         self,
@@ -58,8 +82,8 @@ class MazeGenerator:
         if shape == MazeShape.CIRCULAR:
             return self._generate_circular_maze(width, height, difficulty)
 
-        # L1=0.45 (редкая сетка) … L7=2.0 (очень плотная)
-        scale = self._lerp(difficulty.level, 0.45, 2.0)
+        # Используем перекалиброванный уровень: минимум сложнее, рост плавный.
+        scale = self._lerp(self._effective_level(difficulty), 0.45, 2.0)
         scaled_w = max(6, round(width * scale))
         scaled_h = max(5, round(height * scale))
 
@@ -463,7 +487,7 @@ class MazeGenerator:
         """
         Создаёт топологию полярного лабиринта с динамическим разбиением (subdivision).
         """
-        lvl = difficulty.level
+        lvl = self._effective_level(difficulty)
         num_rings = max(4, round(self._lerp(lvl, 5, 15)))
 
         base_sectors = max(6, round(self._lerp(lvl, 6, 12)))
@@ -540,7 +564,7 @@ class MazeGenerator:
         """Добавляет дополнительные проходы в зависимости от сложности."""
 
         # L1=7% петель (меньше тупиков) … L7=0% (чистое дерево)
-        passage_rate = max(0.0, self._lerp(difficulty.level, 0.07, 0.0))
+        passage_rate = max(0.0, self._lerp(self._effective_level(difficulty), 0.07, 0.0))
 
         extra_edges = int(topology.total_cells() * passage_rate)
         if extra_edges == 0:
@@ -594,7 +618,7 @@ class MazeGenerator:
         radial = [n for n in neighbors if n[0] != ring]
         angular = [n for n in neighbors if n[0] == ring]
 
-        lvl = difficulty.level
+        lvl = self._effective_level(difficulty)
         # L1=80% bias к радиальным (прямые пути к центру)
         # L7=80% bias к угловым (спирали, больше тупиков)
         radial_bias  = self._lerp(lvl, 0.80, 0.0)
@@ -625,7 +649,7 @@ class MazeGenerator:
         """
         # Для хаотичной формы слегка увеличиваем сетку, чтобы итоговая фигура
         # занимала примерно ту же площадь, что и другие типы лабиринтов.
-        shape_scale = self._lerp(difficulty.level, 1.22, 1.08)
+        shape_scale = self._lerp(self._effective_level(difficulty), 1.22, 1.08)
         grid_width = max(8, round(width * shape_scale))
         grid_height = max(7, round(height * shape_scale))
 
@@ -693,7 +717,7 @@ class MazeGenerator:
         mask = [[False for _ in range(width)] for _ in range(height)]
 
         total_cells = width * height
-        fill_ratio = self._lerp(difficulty.level, 0.82, 0.92)
+        fill_ratio = self._lerp(self._effective_level(difficulty), 0.82, 0.92)
         target_cells = max(min(total_cells, int(total_cells * fill_ratio)), max(width, height) * 2)
 
         cx = width // 2
@@ -835,9 +859,9 @@ class MazeGenerator:
         if not inside_cells:
             return
 
-        num_walks = max(2, round(self._lerp(difficulty.level, 6, 18)))
+        num_walks = max(2, round(self._lerp(self._effective_level(difficulty), 6, 18)))
         walk_len_min = 4
-        walk_len_max = max(walk_len_min + 1, round(self._lerp(difficulty.level, 10, 20)))
+        walk_len_max = max(walk_len_min + 1, round(self._lerp(self._effective_level(difficulty), 10, 20)))
 
         for _ in range(num_walks):
             x, y = random.choice(inside_cells)
@@ -1060,7 +1084,7 @@ class MazeGenerator:
         same = [d for d in candidates if d[2] == prev_wall]
         other = [d for d in candidates if d[2] != prev_wall]
 
-        lvl = difficulty.level
+        lvl = self._effective_level(difficulty)
         # L1=80% продолжить прямо (длинные коридоры)
         # L7=80% сменить направление (больше развилок и тупиков)
         straight_bias = self._lerp(lvl, 0.80, 0.0)
@@ -1095,7 +1119,7 @@ class MazeGenerator:
             mask: Маска формы или None для прямоугольника
         """
         # L1=6% петель, L7=0% (чистое дерево без доп. проходов)
-        loop_rate = max(0.0, self._lerp(difficulty.level, 0.06, 0.0))
+        loop_rate = max(0.0, self._lerp(self._effective_level(difficulty), 0.06, 0.0))
 
         if loop_rate == 0.0:
             return

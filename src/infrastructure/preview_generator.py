@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Optional
 
 from pdf2image import convert_from_path
-from PIL import Image, ImageDraw, ImageFilter
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 
 class PreviewGenerator:
@@ -29,6 +29,10 @@ class PreviewGenerator:
     # Цвет линий стыка деревянных планок стола
     PLANK_LINE_COLOR: tuple[int, int, int] = (236, 233, 224)
 
+    # Размер миниатюр отдельных страниц (A4 portrait, 96 dpi эквивалент)
+    PAGE_THUMB_W: int = 800
+    PAGE_THUMB_H: int = 1131
+
     def __init__(self) -> None:
         """Инициализация генератора."""
         self.preview_width = 600
@@ -38,9 +42,46 @@ class PreviewGenerator:
     # Публичный API
     # ------------------------------------------------------------------
 
-    def generate_previews(self, output_dir: Path) -> list[Path]:
+    @staticmethod
+    def _pluralize_mazes_ru(count: int) -> str:
+        """
+        Правильное склонение слова «лабиринт» для любого числа.
+
+        Правило:
+        - 11–14: всегда «лабиринтов»
+        - последняя цифра 1: «лабиринт»
+        - последняя цифра 2–4: «лабиринта»
+        - остальные: «лабиринтов»
+        """
+        last2 = count % 100
+        last1 = count % 10
+        if 11 <= last2 <= 14:
+            return "ЛАБИРИНТОВ"
+        if last1 == 1:
+            return "ЛАБИРИНТ"
+        if 2 <= last1 <= 4:
+            return "ЛАБИРИНТА"
+        return "ЛАБИРИНТОВ"
+
+    def _maze_count_label(self, count: int, language: str) -> tuple[str, str]:
+        """Возвращает пару строк (число, слово) для бейджа с количеством лабиринтов."""
+        if language == "ru":
+            return (f"{count}", self._pluralize_mazes_ru(count))
+        return (f"{count}", "MAZES")
+
+    def generate_previews(
+        self,
+        output_dir: Path,
+        maze_count: int = 0,
+        language: str = "en",
+    ) -> list[Path]:
         """
         Генерирует полный расширенный пакет preview изображений для книги.
+
+        Args:
+            output_dir: Директория книги
+            maze_count: Реальное количество лабиринтов в книге (0 = не указывать)
+            language: Язык книги ("en" или "ru") для текста бейджей
         """
         paths: list[Path] = []
 
@@ -73,13 +114,13 @@ class PreviewGenerator:
         # 4. Превью страницы ответов
         if solution_img is not None:
             answer_path = output_dir / "preview_answer.png"
-            self._generate_answer_preview(solution_img, answer_path)
+            self._generate_answer_preview(solution_img, answer_path, maze_count, language)
             paths.append(answer_path)
 
         # 5. Продающий промо-баннер со стикером
         if cover_img is not None:
             promo_path = output_dir / "preview_promo.png"
-            self._generate_promo_banner(cover_img, page_imgs, promo_path)
+            self._generate_promo_banner(cover_img, page_imgs, promo_path, maze_count, language)
             paths.append(promo_path)
 
         return paths
@@ -122,14 +163,22 @@ class PreviewGenerator:
             return [self._make_placeholder(i + 1) for i in range(count)]
 
     def _load_solution_page(self, output_dir: Path) -> Optional[Image.Image]:
-        """Загружает страницу с ответами (последняя страница PDF)."""
+        """
+        Загружает первую страницу с ответами из PDF.
+
+        Структура PDF: [обложка, intro, maze1, solution1, maze2, solution2, ..., outro].
+        Первая solution-страница находится на индексе 3 (0-based).
+        """
         pdf_path = output_dir / "book.pdf"
         if not pdf_path.exists():
             return None
         try:
             images = convert_from_path(str(pdf_path), dpi=150)
+            # Индекс 3: обложка(0) + intro(1) + maze1(2) + solution1(3)
+            if len(images) > 3:
+                return images[3].convert("RGB")
             if len(images) > 1:
-                return images[-1].convert("RGB")
+                return images[1].convert("RGB")
         except Exception:
             pass
         return None
@@ -216,7 +265,13 @@ class PreviewGenerator:
         output_path.parent.mkdir(parents=True, exist_ok=True)
         collage.save(output_path, "PNG", quality=95)
 
-    def _generate_answer_preview(self, solution_page: Image.Image, output_path: Path) -> None:
+    def _generate_answer_preview(
+        self,
+        solution_page: Image.Image,
+        output_path: Path,
+        maze_count: int = 0,
+        language: str = "en",
+    ) -> None:
         """Создаёт превью страницы ответов на детском столике."""
         canvas = Image.new("RGB", (self.CANVAS_W, self.CANVAS_H), self.TABLE_COLOR)
         self._draw_wood_table_texture(canvas)
@@ -231,13 +286,28 @@ class PreviewGenerator:
 
         self._paste_with_shadow(canvas, pimg, px, py, angle=-3, shadow_offset=16)
 
-        # Маркетинговый стикер в углу страницы
-        self._draw_marketing_badge(canvas, "SOLUTIONS", "INCLUDED!", x=self.CANVAS_W - 220, y=180, color=(235, 70, 50))
+        # Маркетинговый стикер
+        if language == "ru":
+            line1, line2 = "ОТВЕТЫ", "ВКЛЮЧЕНЫ!"
+        else:
+            line1, line2 = "SOLUTIONS", "INCLUDED!"
+        self._draw_marketing_badge(
+            canvas, line1, line2,
+            x=self.CANVAS_W - 210, y=175,
+            color=(220, 55, 40), text_color=(255, 255, 255),
+        )
 
         output_path.parent.mkdir(parents=True, exist_ok=True)
         canvas.save(output_path, "PNG", quality=95)
 
-    def _generate_promo_banner(self, cover: Image.Image, pages: list[Image.Image], output_path: Path) -> None:
+    def _generate_promo_banner(
+        self,
+        cover: Image.Image,
+        pages: list[Image.Image],
+        output_path: Path,
+        maze_count: int = 0,
+        language: str = "en",
+    ) -> None:
         """Создаёт рекламный баннер для маркетплейса."""
         canvas = Image.new("RGB", (self.CANVAS_W, self.CANVAS_H), self.TABLE_COLOR)
         self._draw_wood_table_texture(canvas)
@@ -253,7 +323,15 @@ class PreviewGenerator:
         self._paste_with_shadow(canvas, cimg, 140, 130, angle=-1, shadow_offset=22)
 
         # Большой привлекающий внимание бейдж справа
-        self._draw_marketing_badge(canvas, "50+ MAZES", "AGES 4-8", x=860, y=400, radius=170, color=(255, 130, 0))
+        if maze_count > 0:
+            line1, line2 = self._maze_count_label(maze_count, language)
+        else:
+            line1, line2 = ("50+", "MAZES") if language == "en" else ("50+", "ЛАБИРИНТОВ")
+        self._draw_marketing_badge(
+            canvas, line1, line2,
+            x=860, y=400, radius=170,
+            color=(255, 140, 0), text_color=(25, 20, 10),
+        )
 
         output_path.parent.mkdir(parents=True, exist_ok=True)
         canvas.save(output_path, "PNG", quality=95)
@@ -355,25 +433,62 @@ class PreviewGenerator:
         x: int,
         y: int,
         radius: int = 110,
-        color: tuple[int, int, int] = (255, 120, 0)
+        color: tuple[int, int, int] = (255, 140, 0),
+        text_color: tuple[int, int, int] = (25, 20, 10),
     ) -> None:
-        """Рисует объемный круглый стикер с кантиком и аккуратной тенью."""
+        """Рисует объёмный круглый стикер с кантиком, тенью и правильно центрированным текстом."""
         badge_canvas = Image.new("RGBA", (canvas.width, canvas.height), (0, 0, 0, 0))
         b_draw = ImageDraw.Draw(badge_canvas)
 
         # Тень стикера
-        b_draw.ellipse([(x - radius + 6, y - radius + 10), (x + radius + 6, y + radius + 10)], fill=(40, 38, 35, 35))
-        badge_canvas = badge_canvas.filter(ImageFilter.GaussianBlur(radius=6))
+        b_draw.ellipse(
+            [(x - radius + 6, y - radius + 10), (x + radius + 6, y + radius + 10)],
+            fill=(40, 38, 35, 50),
+        )
+        badge_canvas = badge_canvas.filter(ImageFilter.GaussianBlur(radius=8))
         canvas.paste(Image.alpha_composite(canvas.convert("RGBA"), badge_canvas).convert("RGB"))
 
-        # Круг стикера
         draw = ImageDraw.Draw(canvas)
-        draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill=color)
-        draw.ellipse([(x - radius + 8, y - radius + 8), (x + radius - 8, y + radius - 8)], outline=(255, 255, 255), width=3)
 
-        # Отрисовка текста по центру бейджа
-        draw.text((x - len(text1) * 5, y - 24), text1, fill=(255, 255, 255), stroke_width=1, stroke_fill=(0, 0, 0))
-        draw.text((x - len(text2) * 5, y + 4), text2, fill=(255, 255, 255), stroke_width=1, stroke_fill=(0, 0, 0))
+        # Основной круг
+        draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill=color)
+        # Белый кант
+        draw.ellipse(
+            [(x - radius + 7, y - radius + 7), (x + radius - 7, y + radius - 7)],
+            outline=(255, 255, 255), width=3,
+        )
+
+        _FONT_PATH = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+        # Доступная ширина внутри канта (диаметр внутренней окружности минус отступы)
+        inner_w = (radius - 16) * 2
+        gap = max(4, radius // 16)
+
+        def _fit_font(text: str, max_w: int, start_size: int, min_size: int = 10) -> ImageFont.FreeTypeFont:
+            """Подбирает максимальный размер шрифта чтобы text влезал в max_w."""
+            try:
+                for size in range(start_size, min_size - 1, -1):
+                    f = ImageFont.truetype(_FONT_PATH, size)
+                    bb = draw.textbbox((0, 0), text, font=f)
+                    if bb[2] - bb[0] <= max_w:
+                        return f
+                return ImageFont.truetype(_FONT_PATH, min_size)
+            except OSError:
+                return ImageFont.load_default()
+
+        font1 = _fit_font(text1, inner_w, start_size=max(14, radius // 3))
+        font2 = _fit_font(text2, inner_w, start_size=max(10, radius // 5))
+
+        bbox1 = draw.textbbox((0, 0), text1, font=font1)
+        tw1, th1 = bbox1[2] - bbox1[0], bbox1[3] - bbox1[1]
+        bbox2 = draw.textbbox((0, 0), text2, font=font2)
+        tw2, th2 = bbox2[2] - bbox2[0], bbox2[3] - bbox2[1]
+
+        total_h = th1 + gap + th2
+        y1 = y - total_h // 2
+        y2 = y1 + th1 + gap
+
+        draw.text((x - tw1 // 2, y1), text1, font=font1, fill=text_color)
+        draw.text((x - tw2 // 2, y2), text2, font=font2, fill=text_color)
 
     def _fit_to_cell(self, img: Image.Image, cell_w: int, cell_h: int) -> Image.Image:
         """Вписывает изображение внутрь ячейки коллажа."""
@@ -392,8 +507,8 @@ class PreviewGenerator:
         return img.resize((max(1, int(src_w * scale)), max(1, int(src_h * scale))), Image.Resampling.LANCZOS)
 
     def _save_thumbnail(self, img: Image.Image, path: Path) -> None:
-        """Сохраняет уменьшенную копию."""
-        thumb = self._fit_image(img, self.preview_width, self.preview_height)
+        """Сохраняет уменьшенную копию в A4-portrait пропорциях."""
+        thumb = self._fit_image(img, self.PAGE_THUMB_W, self.PAGE_THUMB_H)
         path.parent.mkdir(parents=True, exist_ok=True)
         thumb.save(path, "PNG")
 

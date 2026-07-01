@@ -9,10 +9,13 @@ from typing import Any
 from openai import AsyncOpenAI
 
 from src.domain.models import PagePrompt, Theme
+from src.localization import BookTexts, Language
 from src.settings import (
     OPEN_AI_THEME_MODEL,
     OPEN_AI_THEME_PROMPT,
+    OPEN_AI_THEME_PROMPT_RU,
     OPEN_AI_THEME_SYSTEM,
+    OPEN_AI_THEME_SYSTEM_RU,
     OPEN_AI_THEME_TEMPERATURE,
     settings,
 )
@@ -27,13 +30,19 @@ class AIClient:
             AsyncOpenAI(api_key=settings.OPEN_AI_KEY) if settings.OPEN_AI_KEY else None
         )
 
-    async def generate_theme(self, pages_count: int, used_titles: list[str] | None = None) -> Theme:
+    async def generate_theme(
+        self,
+        pages_count: int,
+        used_titles: list[str] | None = None,
+        language: Language = "en",
+    ) -> Theme:
         """
         Генерирует тему книги через OpenAI.
 
         Args:
             pages_count: Количество страниц в книге
             used_titles: Список уже использованных названий для исключения повторений
+            language: Язык генерируемого контента ('en' или 'ru')
 
         Returns:
             Объект Theme с заголовком, заданиями и ключевыми словами
@@ -44,33 +53,40 @@ class AIClient:
         titles_block = (
             "\n".join(f"- {t}" for t in used_titles)
             if used_titles
-            else "none yet"
+            else ("none yet" if language == "en" else "пока нет")
         )
-        prompt = OPEN_AI_THEME_PROMPT.format(pages_count=pages_count, used_titles=titles_block)
+
+        system = OPEN_AI_THEME_SYSTEM if language == "en" else OPEN_AI_THEME_SYSTEM_RU
+        prompt_tpl = OPEN_AI_THEME_PROMPT if language == "en" else OPEN_AI_THEME_PROMPT_RU
+        prompt = prompt_tpl.format(pages_count=pages_count, used_titles=titles_block)
 
         for _ in range(3):
             try:
+                # ~50 токенов на страницу + 300 на заголовок/описание/структуру JSON
+                max_tokens = 300 + pages_count * 50
                 response = await self._client.chat.completions.create(
                     model=OPEN_AI_THEME_MODEL,
                     temperature=OPEN_AI_THEME_TEMPERATURE,
-                    max_tokens=700,
+                    max_tokens=max_tokens,
                     messages=[
-                        {"role": "system", "content": OPEN_AI_THEME_SYSTEM},
+                        {"role": "system", "content": system},
                         {"role": "user", "content": prompt},
                     ],
                 )
                 text = response.choices[0].message.content or ""
-                parsed = self._parse_theme_response(text, pages_count)
+                
+                parsed = self._parse_theme_response(text, pages_count, language)
                 if parsed is not None:
                     return parsed
+
                 await asyncio.sleep(1)
 
-            except Exception:
-                pass
+            except Exception as e:
+                print(f'Failed to generate theme: {e}')
 
         raise ValueError("Failed to generate theme after 3 attempts")
 
-    def _parse_theme_response(self, raw: str, pages_count: int) -> Theme | None:
+    def _parse_theme_response(self, raw: str, pages_count: int, language: Language = "en") -> Theme | None:
         """
         Парсит JSON-ответ OpenAI в структуру Theme.
 
@@ -95,24 +111,30 @@ class AIClient:
         except json.JSONDecodeError:
             return None
 
+        t = BookTexts(language)
+
         raw_prompts: list[Any] = payload.get("page_prompts", [])
         prompts: list[PagePrompt] = []
         for item in raw_prompts:
             if isinstance(item, dict):
                 prompts.append(PagePrompt(
-                    task=item.get("task", "Find the path through the maze"),
+                    task=item.get("task", t.get("fallback_maze_task")),
                     heroes=item.get("heroes", []),
                 ))
         while len(prompts) < pages_count:
-            prompts.append(PagePrompt(task=f"Find the path through maze #{len(prompts) + 1}", heroes=[]))
+            n = len(prompts) + 1
+            prompts.append(PagePrompt(
+                task=t.get("fallback_maze_task_n").replace("{n}", str(n)),
+                heroes=[],
+            ))
 
         keywords: list[list[str]] = payload.get("image_keywords", [])
         while len(keywords) < pages_count:
-            keywords.append(["maze", "adventure"])
+            keywords.append(t.get("fallback_keywords").split(","))
 
         return Theme(
-            book_title=payload.get("book_title", "Maze Adventure"),
-            book_description=payload.get("book_description", "An exciting maze adventure."),
+            book_title=payload.get("book_title", t.get("fallback_book_title")),
+            book_description=payload.get("book_description", t.get("fallback_book_description")),
             page_prompts=prompts,
             image_notes=payload.get("image_notes"),
             image_keywords=keywords,

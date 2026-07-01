@@ -2,14 +2,16 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from pathlib import Path
+from time import sleep
 
 import requests
 
 from src.settings import (
-    HF_IMAGE_MODEL,
-    HF_PROMPT_TEMPLATE,
+    HF_IMAGE_MODEL_FALLBACKS,
+    IMAGE_GENERATOR_PROMPT_TEMPLATE,
     IMAGE_STORAGE_SUBDIR,
     settings,
 )
@@ -35,7 +37,7 @@ class HFClient:
         Returns:
             Готовый текстовый промпт
         """
-        return HF_PROMPT_TEMPLATE.format(keywords=", ".join(keywords))
+        return IMAGE_GENERATOR_PROMPT_TEMPLATE.format(keywords=", ".join(keywords))
 
     def generate_illustration(
         self,
@@ -54,24 +56,37 @@ class HFClient:
         """
         prompt = self._build_prompt(keywords)
         output_path = output_path.with_suffix(".png")
-        url = _HF_API_BASE + HF_IMAGE_MODEL
 
-        try:
-            resp = requests.post(
-                url,
-                headers=self._headers,
-                json={"inputs": prompt},
-                timeout=120,
-            )
-            resp.raise_for_status()
+        for model in HF_IMAGE_MODEL_FALLBACKS:
+            url = _HF_API_BASE + model
+            for attempt in range(2):
+                try:
+                    resp = requests.post(
+                        url,
+                        headers=self._headers,
+                        json={"inputs": prompt},
+                        timeout=120,
+                    )
+                    # 402/429 — квота исчерпана, переходим к следующей модели
+                    if resp.status_code in (402, 429):
+                        _logger.warning(
+                            "Model %s unavailable (%s), trying next",
+                            model, resp.status_code,
+                        )
+                        break
+                    resp.raise_for_status()
 
-            output_path.parent.mkdir(parents=True, exist_ok=True)
-            output_path.write_bytes(resp.content)
-            return output_path
+                    output_path.parent.mkdir(parents=True, exist_ok=True)
+                    output_path.write_bytes(resp.content)
+                    return output_path
 
-        except Exception as exc:
-            _logger.warning("HF image generation failed: %s", exc)
-            return None
+                except Exception as exc:
+                    _logger.warning(
+                        "HF image generation failed [%s, attempt %d]: %s",
+                        model, attempt + 1, exc,
+                    )
+                    if attempt == 0:
+                        sleep(2)
 
     def generate_book_illustrations(
         self,

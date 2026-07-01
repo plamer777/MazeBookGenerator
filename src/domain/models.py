@@ -94,6 +94,7 @@ class BookPage:
     prompt: str
     page_number: int
     image_path: str | None = None
+    is_solution: bool = False
 
 
 @dataclass
