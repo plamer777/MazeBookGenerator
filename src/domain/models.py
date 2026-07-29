@@ -1,8 +1,8 @@
 """Модели данных для MazeBookGenerator."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, Set, Tuple
+from typing import Dict, Set, Tuple, Literal
 
 
 class Difficulty(str, Enum):
@@ -84,6 +84,27 @@ class Theme:
     page_prompts: list[PagePrompt]
     image_notes: str | None = None
     image_keywords: list[list[str]] = None  # type: ignore[assignment]
+    marketplace_title: str | None = None
+    marketplace_description: str | None = None
+
+
+@dataclass
+class BookConfig:
+    """Конфигурация отображения и метаданных книги."""
+
+    language: Literal["en", "ru"] = "en"
+    title: str | None = None
+    subtitle: str | None = None
+    theme_name: str | None = None
+    age_range: str | None = None
+    target_age: str | None = None
+    child_name: str | None = None
+    child_age: str | None = None
+    maze_count: int | None = None
+    include_contents_page: bool = True
+    show_start_finish_labels: bool = True
+    generate_print_friendly_version: bool = False
+    difficulty_label: str | None = None
 
 
 @dataclass
@@ -95,6 +116,7 @@ class BookPage:
     page_number: int
     image_path: str | None = None
     is_solution: bool = False
+    difficulty_label: str | None = None
 
 
 @dataclass
@@ -104,3 +126,4 @@ class Book:
     theme: Theme
     pages: list[BookPage]
     output_dir: str
+    config: BookConfig = field(default_factory=BookConfig)

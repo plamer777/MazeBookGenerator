@@ -6,6 +6,7 @@ from typing import Optional
 
 from pdf2image import convert_from_path
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
+from src.utils import format_count_with_plural_ru
 
 
 class PreviewGenerator:
@@ -42,31 +43,16 @@ class PreviewGenerator:
     # Публичный API
     # ------------------------------------------------------------------
 
-    @staticmethod
-    def _pluralize_mazes_ru(count: int) -> str:
-        """
-        Правильное склонение слова «лабиринт» для любого числа.
-
-        Правило:
-        - 11–14: всегда «лабиринтов»
-        - последняя цифра 1: «лабиринт»
-        - последняя цифра 2–4: «лабиринта»
-        - остальные: «лабиринтов»
-        """
-        last2 = count % 100
-        last1 = count % 10
-        if 11 <= last2 <= 14:
-            return "ЛАБИРИНТОВ"
-        if last1 == 1:
-            return "ЛАБИРИНТ"
-        if 2 <= last1 <= 4:
-            return "ЛАБИРИНТА"
-        return "ЛАБИРИНТОВ"
-
     def _maze_count_label(self, count: int, language: str) -> tuple[str, str]:
         """Возвращает пару строк (число, слово) для бейджа с количеством лабиринтов."""
         if language == "ru":
-            return (f"{count}", self._pluralize_mazes_ru(count))
+            label = format_count_with_plural_ru(
+                count=count,
+                forms=("лабиринт", "лабиринта", "лабиринтов"),
+                text_case="upper",
+            )
+            number, noun = label.split(" ", maxsplit=1)
+            return number, noun
         return (f"{count}", "MAZES")
 
     def generate_previews(
@@ -175,8 +161,8 @@ class PreviewGenerator:
         try:
             images = convert_from_path(str(pdf_path), dpi=150)
             # Индекс 3: обложка(0) + intro(1) + maze1(2) + solution1(3)
-            if len(images) > 3:
-                return images[3].convert("RGB")
+            if len(images) > 4:
+                return images[4].convert("RGB")
             if len(images) > 1:
                 return images[1].convert("RGB")
         except Exception:

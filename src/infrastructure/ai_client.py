@@ -35,6 +35,10 @@ class AIClient:
         pages_count: int,
         used_titles: list[str] | None = None,
         language: Language = "en",
+        book_title_hint: str | None = None,
+        theme_hint: str | None = None,
+        age_range: str | None = None,
+        print_friendly: bool = False,
     ) -> Theme:
         """
         Генерирует тему книги через OpenAI.
@@ -58,12 +62,27 @@ class AIClient:
 
         system = OPEN_AI_THEME_SYSTEM if language == "en" else OPEN_AI_THEME_SYSTEM_RU
         prompt_tpl = OPEN_AI_THEME_PROMPT if language == "en" else OPEN_AI_THEME_PROMPT_RU
-        prompt = prompt_tpl.format(pages_count=pages_count, used_titles=titles_block)
+        language_name = "Russian" if language == "ru" else "English"
+        prompt = prompt_tpl.format(
+            pages_count=pages_count,
+            used_titles=titles_block,
+            language_name=language_name,
+            book_title_hint=self._safe_prompt_value(book_title_hint or "auto"),
+            theme_hint=self._safe_prompt_value(theme_hint or "auto"),
+            age_range=self._safe_prompt_value(age_range or ("4-7 years" if language == "en" else "4-7 лет")),
+            answers_included=("yes" if language == "en" else "да"),
+            print_friendly=(
+                "yes" if language == "en" and print_friendly else
+                "no" if language == "en" else
+                "да" if print_friendly else
+                "нет"
+            ),
+        )
 
         for _ in range(3):
             try:
-                # ~50 токенов на страницу + 300 на заголовок/описание/структуру JSON
-                max_tokens = 300 + pages_count * 50
+                # Увеличенный бюджет токенов для структурированного маркетплейс-описания.
+                max_tokens = 500 + pages_count * 60
                 response = await self._client.chat.completions.create(
                     model=OPEN_AI_THEME_MODEL,
                     temperature=OPEN_AI_THEME_TEMPERATURE,
@@ -85,6 +104,11 @@ class AIClient:
                 print(f'Failed to generate theme: {e}')
 
         raise ValueError("Failed to generate theme after 3 attempts")
+
+    @staticmethod
+    def _safe_prompt_value(value: str) -> str:
+        """Экранирует фигурные скобки, чтобы не ломать format-шаблон."""
+        return value.replace("{", "(").replace("}", ")")
 
     def _parse_theme_response(self, raw: str, pages_count: int, language: Language = "en") -> Theme | None:
         """
@@ -132,10 +156,17 @@ class AIClient:
         while len(keywords) < pages_count:
             keywords.append(t.get("fallback_keywords").split(","))
 
+        book_title = payload.get("book_title", t.get("fallback_book_title"))
+        book_description = payload.get("book_description", t.get("fallback_book_description"))
+        marketplace_title = payload.get("marketplace_title") or book_title
+        marketplace_description = payload.get("marketplace_description") or book_description
+
         return Theme(
-            book_title=payload.get("book_title", t.get("fallback_book_title")),
-            book_description=payload.get("book_description", t.get("fallback_book_description")),
+            book_title=book_title,
+            book_description=book_description,
             page_prompts=prompts,
             image_notes=payload.get("image_notes"),
             image_keywords=keywords,
+            marketplace_title=marketplace_title,
+            marketplace_description=marketplace_description,
         )

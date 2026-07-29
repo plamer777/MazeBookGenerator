@@ -9,6 +9,7 @@ from src.container import container
 from src.domain.maze_generator import MazeGenerator
 from src.domain.models import (
     Book,
+    BookConfig,
     BookPage,
     Difficulty,
     DifficultyMode,
@@ -47,13 +48,26 @@ class BookService:
         difficulty_mode: DifficultyMode,
         base_difficulty: Difficulty = Difficulty.MEDIUM,
         language: Language = "en",
+        book_config: BookConfig | None = None,
     ) -> Book:
         """
         Генерирует книгу с AI-генерированной темой и проверкой дедупликации.
         """
+        effective_language = self._resolve_language(language, book_config)
         used_titles = self._mongodb_client.get_used_titles()
+        age_range = (
+            book_config.age_range if book_config and book_config.age_range
+            else book_config.target_age if book_config and book_config.target_age
+            else ("4-7 years" if effective_language == "en" else "4-7 лет")
+        )
         theme = await self._ai_client.generate_theme(
-            pages_per_book, used_titles=used_titles, language=language
+            pages_per_book,
+            used_titles=used_titles,
+            language=effective_language,
+            book_title_hint=book_config.title if book_config else None,
+            theme_hint=book_config.theme_name if book_config else None,
+            age_range=age_range,
+            print_friendly=book_config.generate_print_friendly_version if book_config else False,
         )
         self._mongodb_client.save_theme(theme.book_title)
 
@@ -64,7 +78,8 @@ class BookService:
             maze_size=maze_size,
             difficulty_mode=difficulty_mode,
             base_difficulty=base_difficulty,
-            language=language,
+            language=effective_language,
+            book_config=book_config,
         )
 
     def generate_book(
@@ -76,12 +91,21 @@ class BookService:
         difficulty_mode: DifficultyMode,
         base_difficulty: Difficulty = Difficulty.MEDIUM,
         language: Language = "en",
+        book_config: BookConfig | None = None,
     ) -> Book:
         """
         Генерирует книгу с лабиринтами на основе выбранной когнитивной стратегии.
         """
-        t = BookTexts(language)
+        effective_language = self._resolve_language(language, book_config)
+        t = BookTexts(effective_language)
         answer_key_prompt = t.get("answer_key_prompt")
+        effective_config = self._build_book_config(
+            pages_per_book=pages_per_book,
+            language=effective_language,
+            theme=theme,
+            base_difficulty=base_difficulty,
+            config=book_config,
+        )
 
         width, height = maze_size
         pages: list[BookPage] = []
@@ -110,6 +134,7 @@ class BookService:
                 title=f"Maze {page_num}",
                 prompt=prompt,
                 page_number=page_num,
+                difficulty_label=self._difficulty_to_label(difficulty, t),
             )
             pages.append(page)
 
@@ -120,23 +145,68 @@ class BookService:
                 prompt=answer_key_prompt,
                 page_number=page_num,
                 is_solution=True,
+                difficulty_label=page.difficulty_label,
             )
             pages.append(solution_page)
 
         output_dir = str(settings.OUTPUT_DIR / f"book_{book_id}")
         Path(output_dir).mkdir(parents=True, exist_ok=True)
 
+        self._save_marketplace_info(
+            output_dir=Path(output_dir),
+            theme=theme,
+            language=effective_language,
+        )
+
         return Book(
             id=book_id,
             theme=theme,
             pages=pages,
             output_dir=output_dir,
+            config=effective_config,
         )
 
-    def render_book_to_pdf(self, book: Book, language: Language = "en") -> Path:
+    def _save_marketplace_info(self, output_dir: Path, theme: Theme, language: Language) -> None:
+        """Сохраняет маркетинговые title/description в файл book_into.txt."""
+        title = theme.marketplace_title or theme.book_title
+        description = theme.marketplace_description or theme.book_description
+
+        if language == "ru":
+            content = (
+                f"Заголовок для маркетплейса:\n{title}\n\n"
+                f"Описание для маркетплейса:\n{description}\n"
+            )
+        else:
+            content = (
+                f"Marketplace title:\n{title}\n\n"
+                f"Marketplace description:\n{description}\n"
+            )
+
+        info_path = output_dir / "book_into.txt"
+        info_path.write_text(content, encoding="utf-8")
+
+    def render_book_to_pdf(
+        self,
+        book: Book,
+        language: Language = "en",
+        book_config: BookConfig | None = None,
+    ) -> Path:
         """Рендерит книгу в PDF файл."""
+        effective_config = book_config or book.config
+        effective_language = self._resolve_language(language, effective_config)
         output_path = Path(book.output_dir) / "book.pdf"
-        PDFRenderer(language=language).render_book(book, output_path)
+        renderer = PDFRenderer(language=effective_language, book_config=effective_config)
+        renderer.render_book(book, output_path)
+
+        if effective_config.generate_print_friendly_version:
+            print_output_path = Path(book.output_dir) / "book_print_friendly.pdf"
+            print_renderer = PDFRenderer(
+                language=effective_language,
+                book_config=effective_config,
+                print_friendly=True,
+            )
+            print_renderer.render_book(book, print_output_path)
+
         return output_path
 
     def generate_page_illustrations(self, book: Book) -> list[Path | None]:
@@ -204,29 +274,33 @@ class BookService:
         difficulty_mode: DifficultyMode,
         base_difficulty: Difficulty = Difficulty.MEDIUM,
         language: Language = "en",
+        book_config: BookConfig | None = None,
     ) -> Book:
         """Генерирует полную книгу со всеми медиа-файлами и превью."""
+        effective_language = self._resolve_language(language, book_config)
         book = await self.generate_book_with_ai_theme(
             book_id=book_id,
             pages_per_book=pages_per_book,
             maze_size=maze_size,
             difficulty_mode=difficulty_mode,
             base_difficulty=base_difficulty,
-            language=language,
+            language=effective_language,
+            book_config=book_config,
         )
 
         self.generate_page_illustrations(book)
-        self.render_book_to_pdf(book, language=language)
-        self.generate_previews(book, language=language)
+        self.render_book_to_pdf(book, language=effective_language, book_config=book_config)
+        self.generate_previews(book, language=effective_language)
 
         return book
 
     def generate_previews(self, book: Book, language: Language = "en") -> list[Path]:
         """Генерирует маркетинговые preview изображения для книги."""
+        effective_language = self._resolve_language(language, book.config)
         output_dir = Path(book.output_dir)
         maze_count = sum(1 for p in book.pages if not p.is_solution)
         return self._preview_generator.generate_previews(
-            output_dir, maze_count=maze_count, language=language
+            output_dir, maze_count=maze_count, language=effective_language
         )
 
     async def generate_batch(
@@ -238,6 +312,7 @@ class BookService:
         base_difficulty: Difficulty = Difficulty.MEDIUM,
         base_seed: int | None = None,
         language: Language = "en",
+        book_config: BookConfig | None = None,
     ) -> list[Book]:
         """
         Генерирует пачку книг в batch режиме с гарантированной уникальностью структур.
@@ -250,9 +325,13 @@ class BookService:
             base_difficulty: Начальная сложность
             base_seed: Опциональный seed. Если None — каждый перезапуск скрипта абсолютно рандомен.
             language: Язык текста книги (ru или en)
+            book_config: Опциональный конфиг с дополнительными параметрами для генерации книги
         """
         books: list[Book] = []
-
+        if any([number_of_books <= 0, pages_per_book <= 0]):
+            print("Кол-во книг и страниц в каждой книге должно быть больше 0")
+            return books
+        
         for local_idx in range(1, number_of_books + 1):
             book_id = self._next_free_book_id(settings.OUTPUT_DIR)
             print(f"Генерация книги {local_idx}/{number_of_books} (папка book_{book_id})...")
@@ -284,6 +363,7 @@ class BookService:
                 difficulty_mode=difficulty_mode,
                 base_difficulty=current_difficulty,
                 language=language,
+                book_config=book_config,
             )
             books.append(book)
             print(f"Книга {local_idx} завершена: {book.theme.book_title} [папка book_{book_id}] (seed: {current_seed})")
@@ -306,6 +386,58 @@ class BookService:
                 if suffix.isdigit():
                     existing.append(int(suffix))
         return max(existing, default=0) + 1
+
+    def _difficulty_to_label(self, difficulty: Difficulty, texts: BookTexts) -> str:
+        """Возвращает локализованный читаемый уровень сложности."""
+        if difficulty.level <= 2:
+            return texts.get("difficulty_easy")
+        if difficulty.level <= 4:
+            return texts.get("difficulty_medium")
+        return texts.get("difficulty_hard")
+
+    def _build_book_config(
+        self,
+        pages_per_book: int,
+        language: Language,
+        theme: Theme,
+        base_difficulty: Difficulty,
+        config: BookConfig | None,
+    ) -> BookConfig:
+        """Собирает итоговую конфигурацию книги с безопасными дефолтами."""
+        effective_language = self._resolve_language(language, config)
+        t = BookTexts(effective_language)
+
+        if config is None:
+            return BookConfig(
+                language=effective_language,
+                title=theme.book_title,
+                subtitle=t.get("subtitle"),
+                theme_name=theme.book_title,
+                maze_count=pages_per_book,
+                difficulty_label=self._difficulty_to_label(base_difficulty, t),
+            )
+
+        return BookConfig(
+            language=effective_language,
+            title=config.title or theme.book_title,
+            subtitle=config.subtitle or t.get("subtitle"),
+            theme_name=config.theme_name or theme.book_title,
+            age_range=config.age_range,
+            target_age=config.target_age,
+            child_name=config.child_name,
+            child_age=config.child_age,
+            maze_count=config.maze_count or pages_per_book,
+            include_contents_page=config.include_contents_page,
+            show_start_finish_labels=config.show_start_finish_labels,
+            generate_print_friendly_version=config.generate_print_friendly_version,
+            difficulty_label=config.difficulty_label or self._difficulty_to_label(base_difficulty, t),
+        )
+
+    @staticmethod
+    def _resolve_language(language: Language, config: BookConfig | None) -> Language:
+        """Определяет итоговый язык: приоритет у BookConfig, параметр language — fallback."""
+        return config.language if config else language
+
     # ------------------------------------------------------------------
     # Внутренние алгоритмы распределения сложности и геометрии
     # ------------------------------------------------------------------
