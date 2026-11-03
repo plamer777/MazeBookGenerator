@@ -183,6 +183,12 @@ tests/                        # pytest, зеркалит структуру src
 - `except Exception` → конкретные типы + logger; `try/except/pass` → `contextlib.suppress`
   только осознанно; неиспользуемые аргументы — замкнуть или убрать
 - Верификация: pytest зелёный, `quality-gate all`
+- Выполнено (624cd9f + bc1483c): BookSpec закрыл все PLR0913; generate_theme
+  → ThemeHints; images-провайдеры перенесены в infrastructure/images/,
+  fallback пишет page_N по исходному номеру страницы (фикс коллизии имён);
+  pymongo → optional-dependency `[mongodb]`, MONGODB_ENABLED вместо
+  автодетекта URI; preview_generator: BadgeStyle + сплит spread/badge;
+  ai_client/preview: except Exception → APIError/httpx/requests/pdf2image/OSError
 
 ### Этап 7 — CLI + финал
 - `cli.py`: `mazebook generate --books 1 --pages 30 --size 15x11
@@ -190,6 +196,8 @@ tests/                        # pytest, зеркалит структуру src
 - `main.py` → тонкий shim `cli.main()`; `__main__.py` для `python -m`
 - README: установка (uv/pip), quickstart CLI, пресеты, структура, license badge
 - Добить docstrings публичных API; `quality-gate all` → baseline commit → push
+- Выполнено (73abb1f): cli.py + флаги with_illustrations/with_previews в
+  BookService; полный README (CLI-таблица, пресеты, структура, badges)
 
 ### Этап 8 — Независимая приёмка (reviewer-агент)
 - После зелёного `quality-gate all` + pytest + coverage ≥80% запускается
