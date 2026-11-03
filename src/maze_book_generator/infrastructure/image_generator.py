@@ -4,6 +4,8 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
+from maze_book_generator.utils import create_rng
+
 
 class ImageGenerator:
     """Генератор изображений для обложек и иллюстраций книг."""
@@ -14,6 +16,8 @@ class ImageGenerator:
         self.cover_height = 800
         self.illustration_width = 300
         self.illustration_height = 300
+        # Собственный RNG для декоративных элементов — не трогаем глобальный random
+        self._rng = create_rng()
 
     def generate_cover(self, title: str, output_path: Path) -> Path:
         """
@@ -134,7 +138,6 @@ class ImageGenerator:
 
     def _draw_mini_maze(self, draw: ImageDraw.Draw, width: int, height: int) -> None:
         """Рисует мини-лабиринт как иллюстрацию с более реалистичной структурой."""
-        import random
 
         # Размер мини-лабиринта
         maze_size = 7
@@ -152,7 +155,7 @@ class ImageGenerator:
         # Простой путь
         directions = [(1, 0), (0, 1), (-1, 0), (0, -1)]
         for _ in range(maze_size * 2):
-            random.shuffle(directions)
+            self._rng.shuffle(directions)
             moved = False
             for dx, dy in directions:
                 nx, ny = x + dx, y + dy
@@ -169,8 +172,8 @@ class ImageGenerator:
 
         # Добавляем несколько случайных проходов
         for _ in range(5):
-            rx = random.randint(0, maze_size - 1)
-            ry = random.randint(0, maze_size - 1)
+            rx = self._rng.randint(0, maze_size - 1)
+            ry = self._rng.randint(0, maze_size - 1)
             grid[ry][rx] = 1
 
         # Рисуем сетку

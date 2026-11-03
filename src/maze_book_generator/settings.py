@@ -218,3 +218,44 @@ POLLINATIONS_PARAMS: dict = {
     "nologo": "true",
 }
 POLLINATIONS_RATE_LIMIT_DELAY: float = 1.0
+
+# --- Базовые URL внешних API ---
+HF_API_BASE_URL: str = "https://router.huggingface.co/hf-inference/models/"
+POLLINATIONS_BASE_URL: str = "https://image.pollinations.ai/prompt"
+
+# --- Таймауты HTTP-запросов внешних клиентов (секунды) ---
+HF_REQUEST_TIMEOUT: float = 120.0
+POLLINATIONS_REQUEST_TIMEOUT: float = 60.0
+REPLICATE_DOWNLOAD_TIMEOUT: float = 60.0
+
+# --- Шрифты PDF ---
+FONT_DEJAVU_REGULAR: str = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+FONT_DEJAVU_BOLD: str = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+
+# --- Preview-генератор: геометрия и цвета канваса ---
+PREVIEW_CANVAS_WIDTH: int = 1200
+PREVIEW_CANVAS_HEIGHT: int = 800
+PREVIEW_TABLE_COLOR: tuple[int, int, int] = (248, 246, 240)
+PREVIEW_PLANK_LINE_COLOR: tuple[int, int, int] = (236, 233, 224)
+PREVIEW_PAGE_THUMB_WIDTH: int = 800
+PREVIEW_PAGE_THUMB_HEIGHT: int = 1131
+
+# --- Параметры генерации лабиринтов и книг ---
+# Масштаб сетки лабиринта относительно базового размера (L1 → MIN, L7 → MAX)
+MAZE_GRID_SCALE_MIN: float = 0.45
+MAZE_GRID_SCALE_MAX: float = 2.0
+# Кривая прогрессии сложности: effective_level = lerp(level) с учётом power
+EFFECTIVE_LEVEL_MIN: float = 3.5
+EFFECTIVE_LEVEL_MAX: float = 7.0
+EFFECTIVE_LEVEL_POWER: float = 0.55
+# Шаг seed между книгами в batch-генерации
+BOOK_SEED_STRIDE: int = 1337
+# Диапазон случайного seed, если base_seed не задан
+RANDOM_SEED_MIN: int = 1
+RANDOM_SEED_MAX: int = 999_999_999
+# Вариация размера лабиринта в batch: ±клеток, если ширина больше порога
+BATCH_SIZE_VARIATION: int = 2
+BATCH_SIZE_VARIATION_THRESHOLD: int = 12
+# Режим сложности STORY_WAVE: тренд роста + синусоидальные колебания
+STORY_WAVE_TREND_SLOPE: float = 3.5
+STORY_WAVE_AMPLITUDE: float = 1.5

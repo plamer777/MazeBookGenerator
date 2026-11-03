@@ -12,6 +12,7 @@ import replicate
 from maze_book_generator.settings import (
     IMAGE_GENERATOR_PROMPT_TEMPLATE,
     IMAGE_STORAGE_SUBDIR,
+    REPLICATE_DOWNLOAD_TIMEOUT,
     REPLICATE_IMAGE_MODELS,
     REPLICATE_IMAGE_PARAMS,
     REPLICATE_RATE_LIMIT_DELAY,
@@ -65,7 +66,7 @@ class ReplicateClient:
                 )
                 result = output[0] if isinstance(output, list) else output
                 url = str(result)
-                response = httpx.get(url, timeout=60, follow_redirects=True)
+                response = httpx.get(url, timeout=REPLICATE_DOWNLOAD_TIMEOUT, follow_redirects=True)
                 response.raise_for_status()
                 return response.content
             except replicate.exceptions.ReplicateError as exc:

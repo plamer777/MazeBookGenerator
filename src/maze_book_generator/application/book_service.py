@@ -1,7 +1,6 @@
 """Сервис генерации книг с лабиринтами."""
 
 import math
-import random
 from pathlib import Path
 
 from maze_book_generator.container import container
@@ -20,7 +19,17 @@ from maze_book_generator.infrastructure.pdf_renderer import PDFRenderer
 from maze_book_generator.infrastructure.pollinations_client import PollinationsClient
 from maze_book_generator.infrastructure.replicate_client import ReplicateClient
 from maze_book_generator.localization import BookTexts, Language
-from maze_book_generator.settings import settings
+from maze_book_generator.settings import (
+    BATCH_SIZE_VARIATION,
+    BATCH_SIZE_VARIATION_THRESHOLD,
+    BOOK_SEED_STRIDE,
+    RANDOM_SEED_MAX,
+    RANDOM_SEED_MIN,
+    STORY_WAVE_AMPLITUDE,
+    STORY_WAVE_TREND_SLOPE,
+    settings,
+)
+from maze_book_generator.utils import create_rng
 
 
 class BookService:
@@ -37,6 +46,9 @@ class BookService:
         self._hf_client: HFClient = container.hf_client
         self._pollinations_client: PollinationsClient = container.pollinations_client
         self._replicate_client: ReplicateClient = container.replicate_client
+        # Собственный RNG сервиса — не делит состояние с глобальным random
+        # и с генераторами лабиринтов (у каждого свой seed).
+        self._rng = create_rng()
 
     async def generate_book_with_ai_theme(
         self,
@@ -336,9 +348,9 @@ class BookService:
             print(f"Генерация книги {local_idx}/{number_of_books} (папка book_{book_id})...")
 
             size_variations = [
-                (maze_size[0] - 2, maze_size[1] - 2) if maze_size[0] > 12 else maze_size,  # EASY
+                (maze_size[0] - BATCH_SIZE_VARIATION, maze_size[1] - BATCH_SIZE_VARIATION) if maze_size[0] > BATCH_SIZE_VARIATION_THRESHOLD else maze_size,  # EASY
                 (maze_size[0], maze_size[1]),  # MEDIUM
-                (maze_size[0] + 2, maze_size[1] + 2),  # HARD
+                (maze_size[0] + BATCH_SIZE_VARIATION, maze_size[1] + BATCH_SIZE_VARIATION),  # HARD
             ]
             current_maze_size = size_variations[(local_idx - 1) % len(size_variations)]
 
@@ -349,9 +361,9 @@ class BookService:
             # Если base_seed передан — генерируем воспроизводимую цепочку.
             # Если нет — берем случайное число, исключая повторение лабиринтов при перезапусках.
             current_seed = (
-                base_seed + book_id * 1337
+                base_seed + book_id * BOOK_SEED_STRIDE
                 if base_seed is not None
-                else random.randint(1, 999999999)
+                else self._rng.randint(RANDOM_SEED_MIN, RANDOM_SEED_MAX)
             )
 
             self._maze_generator = MazeGenerator(seed=current_seed)
@@ -467,23 +479,23 @@ class BookService:
             selected = all_levels[index]
 
         elif mode_str == "RANDOM_RANGE":
-            selected = random.choice(all_levels)
+            selected = self._rng.choice(all_levels)
 
         elif mode_str == "KIDS_EASY":
             # Стратегия для малышей: строго самые простые и понятные структуры
-            selected = random.choice([Difficulty.L1, Difficulty.L2])
+            selected = self._rng.choice([Difficulty.L1, Difficulty.L2])
 
         elif mode_str == "CHALLENGE_HARD":
             # Стратегия для продвинутых детей: только хардкор
-            selected = random.choice([Difficulty.L5, Difficulty.L6, Difficulty.L7])
+            selected = self._rng.choice([Difficulty.L5, Difficulty.L6, Difficulty.L7])
 
         elif mode_str == "STORY_WAVE":
             # Волнообразная нагрузка с общим восходящим трендом (предотвращает утомление)
             progress = (page_num - 1) / max(total_pages - 1, 1)
-            base_idx = progress * 3.5  # Базовый тренд медленно растет
-            wave_modifier = math.sin(page_num * 1.5) * 1.5  # Периодические колебания вверх-вниз
+            base_idx = progress * STORY_WAVE_TREND_SLOPE  # Базовый тренд медленно растет
+            wave_modifier = math.sin(page_num * STORY_WAVE_AMPLITUDE) * STORY_WAVE_AMPLITUDE  # Периодические колебания вверх-вниз
 
-            index = max(0, min(6, round(base_idx + wave_modifier + 1.5)))
+            index = max(0, min(6, round(base_idx + wave_modifier + STORY_WAVE_AMPLITUDE)))
             selected = all_levels[index]
 
         else:
@@ -498,7 +510,7 @@ class BookService:
         if mode_str in ("KIDS_EASY", "KIDS_SIMPLE"):
             # Для малышей убираем запутывающие сетки (круглые, треугольные, хаотичные).
             # Оставляем только простые и хорошо читаемые формы.
-            return random.choice([MazeShape.RECTANGULAR, MazeShape.SQUARE, MazeShape.DIAMOND])
+            return self._rng.choice([MazeShape.RECTANGULAR, MazeShape.SQUARE, MazeShape.DIAMOND])
 
         if mode_str in ("CHALLENGE_HARD", "MEGA_HARD"):
             # Для экспертов сразу выкатываем сложные альтернативные топологии
@@ -516,10 +528,10 @@ class BookService:
             # Эволюция форм: от простых к сложным по мере пролистывания книги
             progress = (page_num - 1) / max(total_pages - 1, 1)
             if progress < 0.35:
-                return random.choice([MazeShape.RECTANGULAR, MazeShape.SQUARE, MazeShape.DIAMOND])
+                return self._rng.choice([MazeShape.RECTANGULAR, MazeShape.SQUARE, MazeShape.DIAMOND])
             if progress < 0.70:
-                return random.choice([MazeShape.SQUARE, MazeShape.CIRCULAR, MazeShape.TRIANGULAR, MazeShape.DIAMOND])
-            return random.choice(
+                return self._rng.choice([MazeShape.SQUARE, MazeShape.CIRCULAR, MazeShape.TRIANGULAR, MazeShape.DIAMOND])
+            return self._rng.choice(
                 [
                     MazeShape.CIRCULAR,
                     MazeShape.TRIANGULAR,

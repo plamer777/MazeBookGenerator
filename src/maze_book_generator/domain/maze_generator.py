@@ -1,11 +1,11 @@
 """Генератор лабиринтов с различными уровнями сложности."""
 
 import math
-import random
 from collections import deque
 
 from maze_book_generator.domain.models import Difficulty, Maze, MazeShape
 from maze_book_generator.domain.polar_topology_service import Cell, Connections, PolarTopologyService
+from maze_book_generator.utils import create_rng
 
 
 class MazeGenerator:
@@ -13,11 +13,9 @@ class MazeGenerator:
 
     def __init__(self, seed: int | None = None) -> None:
         """Инициализация генератора с опциональным seed для воспроизводимости."""
-        if seed is not None:
-            random.seed(seed)
-        else:
-            # Разный seed для каждого экземпляра для вариативности
-            random.seed()
+        # Собственный RNG: seed делает генерацию воспроизводимой,
+        # при этом не затрагивается глобальное состояние random.
+        self._rng = create_rng(seed)
 
     @staticmethod
     def _lerp(level: float, lo: float, hi: float) -> float:
@@ -548,7 +546,7 @@ class MazeGenerator:
                 continue
 
             biased_neighbors = self._apply_difficulty_bias(current, neighbors, difficulty)
-            chosen = random.choice(biased_neighbors)
+            chosen = self._rng.choice(biased_neighbors)
             self._connect_cells(connections, current, chosen)
             visited.add(chosen)
             stack.append(chosen)
@@ -570,11 +568,11 @@ class MazeGenerator:
 
         cells = list(topology.iter_cells())
         for _ in range(extra_edges):
-            cell = random.choice(cells)
+            cell = self._rng.choice(cells)
             candidates = topology.iter_neighbor_candidates(*cell)
             if not candidates:
                 continue
-            neighbor = random.choice(candidates)
+            neighbor = self._rng.choice(candidates)
             if neighbor in connections[cell]:
                 continue
             self._connect_cells(connections, cell, neighbor)
@@ -621,9 +619,9 @@ class MazeGenerator:
         radial_bias  = self._lerp(lvl, 0.80, 0.0)
         angular_bias = self._lerp(lvl, 0.0, 0.80)
 
-        if radial and random.random() < radial_bias:
+        if radial and self._rng.random() < radial_bias:
             return radial
-        if angular and random.random() < angular_bias:
+        if angular and self._rng.random() < angular_bias:
             return angular
         return neighbors
 
@@ -735,10 +733,10 @@ class MazeGenerator:
                 ]
                 if not connected_cells:
                     break
-                frontier.append(random.choice(connected_cells))
+                frontier.append(self._rng.choice(connected_cells))
 
-            x, y = random.choice(frontier)
-            random.shuffle(directions)
+            x, y = self._rng.choice(frontier)
+            self._rng.shuffle(directions)
             expanded = False
 
             for dx, dy in directions:
@@ -752,7 +750,7 @@ class MazeGenerator:
                 max_dist = max(1, cx + cy)
                 distance_penalty = dist / max_dist
                 growth_chance = 0.92 - 0.30 * distance_penalty
-                if random.random() > growth_chance:
+                if self._rng.random() > growth_chance:
                     continue
 
                 mask[ny][nx] = True
@@ -861,8 +859,8 @@ class MazeGenerator:
         walk_len_max = max(walk_len_min + 1, round(self._lerp(self._effective_level(difficulty), 10, 20)))
 
         for _ in range(num_walks):
-            x, y = random.choice(inside_cells)
-            walk_length = random.randint(walk_len_min, walk_len_max)
+            x, y = self._rng.choice(inside_cells)
+            walk_length = self._rng.randint(walk_len_min, walk_len_max)
 
             for _ in range(walk_length):
                 candidates = []
@@ -874,7 +872,7 @@ class MazeGenerator:
                 if not candidates:
                     break
 
-                nx, ny, wall_current, wall_neighbor = random.choice(candidates)
+                nx, ny, wall_current, wall_neighbor = self._rng.choice(candidates)
                 walls[y][x][wall_current] = False
                 walls[ny][nx][wall_neighbor] = False
                 x, y = nx, ny
@@ -1073,7 +1071,7 @@ class MazeGenerator:
             Выбранное направление
         """
         if prev_wall is None or len(candidates) == 1:
-            return random.choice(candidates)
+            return self._rng.choice(candidates)
 
         same = [d for d in candidates if d[2] == prev_wall]
         other = [d for d in candidates if d[2] != prev_wall]
@@ -1084,11 +1082,11 @@ class MazeGenerator:
         straight_bias = self._lerp(lvl, 0.80, 0.0)
         turn_bias     = self._lerp(lvl, 0.0, 0.80)
 
-        if same and random.random() < straight_bias:
+        if same and self._rng.random() < straight_bias:
             return same[0]
-        if other and random.random() < turn_bias:
-            return random.choice(other)
-        return random.choice(candidates)
+        if other and self._rng.random() < turn_bias:
+            return self._rng.choice(other)
+        return self._rng.choice(candidates)
 
     def _add_loops_by_difficulty(
         self,
@@ -1138,8 +1136,8 @@ class MazeGenerator:
         attempts = 0
         while added < num_loops and attempts < num_loops * 10:
             attempts += 1
-            x, y = random.choice(candidates)
-            dx, dy, wc, wn = random.choice(directions)
+            x, y = self._rng.choice(candidates)
+            dx, dy, wc, wn = self._rng.choice(directions)
             nx, ny = x + dx, y + dy
             in_bounds = 0 <= nx < width and 0 <= ny < height
             in_mask = mask is None or (in_bounds and mask[ny][nx])
@@ -1254,7 +1252,7 @@ class MazeGenerator:
                 max_distance = min(width, height) // 2
                 if distance < max_distance:
                     # Добавляем случайность
-                    noise = random.random() * 0.3
+                    noise = self._rng.random() * 0.3
                     if distance / max_distance + noise < 0.8:
                         mask[y][x] = True
 

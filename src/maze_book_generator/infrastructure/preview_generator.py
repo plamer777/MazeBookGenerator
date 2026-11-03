@@ -6,6 +6,15 @@ from pathlib import Path
 from pdf2image import convert_from_path
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
+from maze_book_generator.settings import (
+    FONT_DEJAVU_BOLD,
+    PREVIEW_CANVAS_HEIGHT,
+    PREVIEW_CANVAS_WIDTH,
+    PREVIEW_PAGE_THUMB_HEIGHT,
+    PREVIEW_PAGE_THUMB_WIDTH,
+    PREVIEW_PLANK_LINE_COLOR,
+    PREVIEW_TABLE_COLOR,
+)
 from maze_book_generator.utils import format_count_with_plural_ru
 
 
@@ -21,18 +30,6 @@ class PreviewGenerator:
     - preview_answer.png: демонстрация страницы с ответами
     - preview_promo.png: продающий промо-баннер со стикером
     """
-
-    CANVAS_W: int = 1200
-    CANVAS_H: int = 800
-
-    # Цвет детского столика (нежный, теплый пастельно-кремовый оттенок)
-    TABLE_COLOR: tuple[int, int, int] = (248, 246, 240)
-    # Цвет линий стыка деревянных планок стола
-    PLANK_LINE_COLOR: tuple[int, int, int] = (236, 233, 224)
-
-    # Размер миниатюр отдельных страниц (A4 portrait, 96 dpi эквивалент)
-    PAGE_THUMB_W: int = 800
-    PAGE_THUMB_H: int = 1131
 
     def __init__(self) -> None:
         """Инициализация генератора."""
@@ -180,22 +177,22 @@ class PreviewGenerator:
         output_path: Path,
     ) -> None:
         """Создаёт красивый реалистичный разворот страниц на детском столе."""
-        canvas = Image.new("RGB", (self.CANVAS_W, self.CANVAS_H), self.TABLE_COLOR)
+        canvas = Image.new("RGB", (PREVIEW_CANVAS_WIDTH, PREVIEW_CANVAS_HEIGHT), PREVIEW_TABLE_COLOR)
         self._draw_wood_table_texture(canvas)
 
-        cx = self.CANVAS_W // 2
-        cy = self.CANVAS_H // 2
+        cx = PREVIEW_CANVAS_WIDTH // 2
+        cy = PREVIEW_CANVAS_HEIGHT // 2
 
         # Оптимальные размеры страниц для разворота
-        page_h = int(self.CANVAS_H * 0.50)
+        page_h = int(PREVIEW_CANVAS_HEIGHT * 0.50)
         page_w = int(page_h * 210 / 297) if (pages and pages[0].height > pages[0].width) else int(page_h * 297 / 210)
 
         # Координаты веера страниц вокруг центра
         layout: list[tuple[float, int, int]] = [
-            (-14, -int(self.CANVAS_W * 0.23), -int(self.CANVAS_H * 0.12)),  # Верхняя левая
-            ( 12,  int(self.CANVAS_W * 0.23), -int(self.CANVAS_H * 0.10)),  # Верхняя правая
-            ( -8, -int(self.CANVAS_W * 0.21),  int(self.CANVAS_H * 0.14)),  # Нижняя левая
-            ( 15,  int(self.CANVAS_W * 0.22),  int(self.CANVAS_H * 0.12)),  # Нижняя правая
+            (-14, -int(PREVIEW_CANVAS_WIDTH * 0.23), -int(PREVIEW_CANVAS_HEIGHT * 0.12)),  # Верхняя левая
+            ( 12,  int(PREVIEW_CANVAS_WIDTH * 0.23), -int(PREVIEW_CANVAS_HEIGHT * 0.10)),  # Верхняя правая
+            ( -8, -int(PREVIEW_CANVAS_WIDTH * 0.21),  int(PREVIEW_CANVAS_HEIGHT * 0.14)),  # Нижняя левая
+            ( 15,  int(PREVIEW_CANVAS_WIDTH * 0.22),  int(PREVIEW_CANVAS_HEIGHT * 0.12)),  # Нижняя правая
         ]
 
         for i, (angle, dx, dy) in enumerate(layout):
@@ -208,7 +205,7 @@ class PreviewGenerator:
             self._paste_with_shadow(canvas, pimg, px, py, angle=angle, shadow_offset=12)
 
         # Центральная обложка (крупнее остальных)
-        cover_h = int(self.CANVAS_H * 0.56)
+        cover_h = int(PREVIEW_CANVAS_HEIGHT * 0.56)
         cover_w = int(cover_h * 210 / 297) if (cover and cover.height > cover.width) else int(cover_h * 297 / 210)
         cover_src = cover if cover is not None else self._make_placeholder(0)
         cover_img = self._fit_image(cover_src, cover_w, cover_h)
@@ -230,7 +227,7 @@ class PreviewGenerator:
     ) -> None:
         """Создаёт аккуратный заполненный коллаж 2×2."""
         gap = 12
-        collage = Image.new("RGB", (self.CANVAS_W, self.CANVAS_H), (235, 235, 240))
+        collage = Image.new("RGB", (PREVIEW_CANVAS_WIDTH, PREVIEW_CANVAS_HEIGHT), (235, 235, 240))
 
         sources: list[Image.Image] = [cover if cover is not None else self._make_placeholder(0)]
         sources.extend(
@@ -240,13 +237,13 @@ class PreviewGenerator:
 
         positions = [
             (gap, gap),
-            (self.CANVAS_W // 2 + gap // 2, gap),
-            (gap, self.CANVAS_H // 2 + gap // 2),
-            (self.CANVAS_W // 2 + gap // 2, self.CANVAS_H // 2 + gap // 2),
+            (PREVIEW_CANVAS_WIDTH // 2 + gap // 2, gap),
+            (gap, PREVIEW_CANVAS_HEIGHT // 2 + gap // 2),
+            (PREVIEW_CANVAS_WIDTH // 2 + gap // 2, PREVIEW_CANVAS_HEIGHT // 2 + gap // 2),
         ]
 
         for src, (px, py) in zip(sources, positions, strict=True):
-            cell = self._fit_to_cell(src, self.CANVAS_W // 2 - int(gap * 1.5), self.CANVAS_H // 2 - int(gap * 1.5))
+            cell = self._fit_to_cell(src, PREVIEW_CANVAS_WIDTH // 2 - int(gap * 1.5), PREVIEW_CANVAS_HEIGHT // 2 - int(gap * 1.5))
             collage.paste(cell, (px, py))
 
         output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -259,16 +256,16 @@ class PreviewGenerator:
         language: str = "en",
     ) -> None:
         """Создаёт превью страницы ответов на детском столике."""
-        canvas = Image.new("RGB", (self.CANVAS_W, self.CANVAS_H), self.TABLE_COLOR)
+        canvas = Image.new("RGB", (PREVIEW_CANVAS_WIDTH, PREVIEW_CANVAS_HEIGHT), PREVIEW_TABLE_COLOR)
         self._draw_wood_table_texture(canvas)
 
-        page_h = int(self.CANVAS_H * 0.75)
+        page_h = int(PREVIEW_CANVAS_HEIGHT * 0.75)
         page_w = int(page_h * 210 / 297) if solution_page.height > solution_page.width else int(page_h * 297 / 210)
 
         pimg = self._fit_image(solution_page, page_w, page_h)
         pw, ph = pimg.size
-        px = self.CANVAS_W // 2 - pw // 2
-        py = self.CANVAS_H // 2 - ph // 2
+        px = PREVIEW_CANVAS_WIDTH // 2 - pw // 2
+        py = PREVIEW_CANVAS_HEIGHT // 2 - ph // 2
 
         self._paste_with_shadow(canvas, pimg, px, py, angle=-3, shadow_offset=16)
 
@@ -279,7 +276,7 @@ class PreviewGenerator:
             line1, line2 = "SOLUTIONS", "INCLUDED!"
         self._draw_marketing_badge(
             canvas, line1, line2,
-            x=self.CANVAS_W - 210, y=175,
+            x=PREVIEW_CANVAS_WIDTH - 210, y=175,
             color=(220, 55, 40), text_color=(255, 255, 255),
         )
 
@@ -295,10 +292,10 @@ class PreviewGenerator:
         language: str = "en",
     ) -> None:
         """Создаёт рекламный баннер для маркетплейса."""
-        canvas = Image.new("RGB", (self.CANVAS_W, self.CANVAS_H), self.TABLE_COLOR)
+        canvas = Image.new("RGB", (PREVIEW_CANVAS_WIDTH, PREVIEW_CANVAS_HEIGHT), PREVIEW_TABLE_COLOR)
         self._draw_wood_table_texture(canvas)
 
-        page_h = int(self.CANVAS_H * 0.65)
+        page_h = int(PREVIEW_CANVAS_HEIGHT * 0.65)
         page_w = int(page_h * 210 / 297) if cover.height > cover.width else int(page_h * 297 / 210)
 
         if pages:
@@ -335,16 +332,16 @@ class PreviewGenerator:
 
         # 1. Нарезаем стол на продольные деревянные доски (ширина доски 140px)
         plank_width = 140
-        for x in range(0, self.CANVAS_W, plank_width):
+        for x in range(0, PREVIEW_CANVAS_WIDTH, plank_width):
             # Проводим аккуратную тонкую линию стыка досок
-            draw.line([(x, 0), (x, self.CANVAS_H)], fill=self.PLANK_LINE_COLOR, width=2)
+            draw.line([(x, 0), (x, PREVIEW_CANVAS_HEIGHT)], fill=PREVIEW_PLANK_LINE_COLOR, width=2)
 
         # 2. Накладываем эффект мягкого студийного освещения (виньетка)
         # Центр кадра слегка подсвечиваем, а края уводим в мягкий уютный тон
-        overlay = Image.new("RGBA", (self.CANVAS_W, self.CANVAS_H), (0, 0, 0, 0))
+        overlay = Image.new("RGBA", (PREVIEW_CANVAS_WIDTH, PREVIEW_CANVAS_HEIGHT), (0, 0, 0, 0))
         o_draw = ImageDraw.Draw(overlay)
 
-        cx, cy = self.CANVAS_W // 2, self.CANVAS_H // 2
+        cx, cy = PREVIEW_CANVAS_WIDTH // 2, PREVIEW_CANVAS_HEIGHT // 2
         max_r = int(math.hypot(cx, cy))
 
         for r in range(max_r, 0, -8):
@@ -444,7 +441,6 @@ class PreviewGenerator:
             outline=(255, 255, 255), width=3,
         )
 
-        font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
         # Доступная ширина внутри канта (диаметр внутренней окружности минус отступы)
         inner_w = (radius - 16) * 2
         gap = max(4, radius // 16)
@@ -453,11 +449,11 @@ class PreviewGenerator:
             """Подбирает максимальный размер шрифта чтобы text влезал в max_w."""
             try:
                 for size in range(start_size, min_size - 1, -1):
-                    f = ImageFont.truetype(font_path, size)
+                    f = ImageFont.truetype(FONT_DEJAVU_BOLD, size)
                     bb = draw.textbbox((0, 0), text, font=f)
                     if bb[2] - bb[0] <= max_w:
                         return f
-                return ImageFont.truetype(font_path, min_size)
+                return ImageFont.truetype(FONT_DEJAVU_BOLD, min_size)
             except OSError:
                 return ImageFont.load_default()
 
@@ -494,7 +490,7 @@ class PreviewGenerator:
 
     def _save_thumbnail(self, img: Image.Image, path: Path) -> None:
         """Сохраняет уменьшенную копию в A4-portrait пропорциях."""
-        thumb = self._fit_image(img, self.PAGE_THUMB_W, self.PAGE_THUMB_H)
+        thumb = self._fit_image(img, PREVIEW_PAGE_THUMB_WIDTH, PREVIEW_PAGE_THUMB_HEIGHT)
         path.parent.mkdir(parents=True, exist_ok=True)
         thumb.save(path, "PNG")
 

@@ -2,7 +2,6 @@
 
 import io
 import math
-import random
 from itertools import pairwise
 from pathlib import Path
 
@@ -17,6 +16,8 @@ from maze_book_generator.domain.models import Book, BookConfig, BookPage, Maze, 
 from maze_book_generator.domain.polar_topology_service import PolarTopologyService
 from maze_book_generator.localization import BookTexts, Language
 from maze_book_generator.settings import (
+    FONT_DEJAVU_BOLD,
+    FONT_DEJAVU_REGULAR,
     WATERMARK_ALPHA,
     WATERMARK_BG_DIFF_GAIN,
     WATERMARK_BG_DIFF_THRESHOLD,
@@ -24,12 +25,10 @@ from maze_book_generator.settings import (
     WATERMARK_EDGE_FADE_INSET_RATIO,
     settings,
 )
-from maze_book_generator.utils import format_count_with_plural_ru
+from maze_book_generator.utils import create_rng, format_count_with_plural_ru
 
-_DEJAVU_REGULAR = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-_DEJAVU_BOLD = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
-pdfmetrics.registerFont(TTFont("DejaVuSans", _DEJAVU_REGULAR))
-pdfmetrics.registerFont(TTFont("DejaVuSans-Bold", _DEJAVU_BOLD))
+pdfmetrics.registerFont(TTFont("DejaVuSans", FONT_DEJAVU_REGULAR))
+pdfmetrics.registerFont(TTFont("DejaVuSans-Bold", FONT_DEJAVU_BOLD))
 
 
 class PDFRenderer:
@@ -598,7 +597,7 @@ class PDFRenderer:
         c.setLineWidth(1.0)
         cols = int(self.page_width / cell) + 1
         rows = int(band_h / cell) + 1
-        rng = random.Random(int(y_bottom + band_h * 7))
+        rng = create_rng(int(y_bottom + band_h * 7))
         for row in range(rows):
             for col in range(cols):
                 x0 = col * cell
@@ -795,6 +794,7 @@ class PDFRenderer:
             Список точек (x, y)
         """
         points = [(start_x, start_y)]
+        rng = create_rng()
 
         if is_horizontal:
             current = start_x
@@ -804,10 +804,10 @@ class PDFRenderer:
             limit = end_y
 
         while (direction == 1 and current < limit) or (direction == -1 and current > limit):
-            step = random.randint(10, 30) * mm
+            step = rng.randint(10, 30) * mm
             current = min(current + step * direction, limit) if direction == 1 else max(current + step * direction, limit)
 
-            indent = random.randint(0, 1) * random.randint(int(min_indent / mm), int(max_indent / mm)) * mm
+            indent = rng.randint(0, 1) * rng.randint(int(min_indent / mm), int(max_indent / mm)) * mm
             if is_horizontal:
                 other = start_y + indent * indent_direction
                 points.append((current, other))
@@ -1111,7 +1111,7 @@ class PDFRenderer:
         if not images:
             return
 
-        rng = random.Random(seed)
+        rng = create_rng(seed)
 
         # Перемешиваем и при необходимости повторяем, чтобы хватило на 5 слотов
         pool = images.copy()
@@ -1509,7 +1509,7 @@ class PDFRenderer:
             page_seed: Номер страницы для уникального seed
         """
         frame_m = 8 * mm
-        rng = random.Random(page_seed * 997 + 13)
+        rng = create_rng(page_seed * 997 + 13)
 
         colors = [
             accent,

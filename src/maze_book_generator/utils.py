@@ -1,5 +1,6 @@
 """Общие утилиты работы с текстом и числовыми формами."""
 
+import random
 from typing import Literal
 
 TextCase = Literal["raw", "lower", "upper", "capitalize"]
@@ -57,3 +58,20 @@ def format_count_with_plural_ru(
         noun = noun.capitalize()
 
     return f"{count} {noun}"
+
+
+def create_rng(seed: int | None = None) -> random.Random:
+    """
+    Создаёт экземплярный генератор случайных чисел.
+
+    Используется для лабиринтов и декоративных элементов, где нужна
+    воспроизводимость по seed и недопустимо изменение глобального
+    состояния модуля random.
+
+    Args:
+        seed: Зерно генератора (None — непредсказуемая последовательность)
+
+    Returns:
+        Независимый экземпляр random.Random
+    """
+    return random.Random(seed)  # noqa: S311 — криптостойкость не требуется

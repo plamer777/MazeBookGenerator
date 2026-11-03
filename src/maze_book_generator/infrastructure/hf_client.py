@@ -9,13 +9,14 @@ from time import sleep
 import requests
 
 from maze_book_generator.settings import (
+    HF_API_BASE_URL,
     HF_IMAGE_MODEL_FALLBACKS,
+    HF_REQUEST_TIMEOUT,
     IMAGE_GENERATOR_PROMPT_TEMPLATE,
     IMAGE_STORAGE_SUBDIR,
     settings,
 )
 
-_HF_API_BASE = "https://router.huggingface.co/hf-inference/models/"
 _logger = logging.getLogger(__name__)
 
 
@@ -57,14 +58,14 @@ class HFClient:
         output_path = output_path.with_suffix(".png")
 
         for model in HF_IMAGE_MODEL_FALLBACKS:
-            url = _HF_API_BASE + model
+            url = HF_API_BASE_URL + model
             for attempt in range(2):
                 try:
                     resp = requests.post(
                         url,
                         headers=self._headers,
                         json={"inputs": prompt},
-                        timeout=120,
+                        timeout=HF_REQUEST_TIMEOUT,
                     )
                     # 402/429 — квота исчерпана, переходим к следующей модели
                     if resp.status_code in (402, 429):

@@ -12,8 +12,10 @@ import httpx
 from maze_book_generator.settings import (
     IMAGE_GENERATOR_PROMPT_TEMPLATE,
     IMAGE_STORAGE_SUBDIR,
+    POLLINATIONS_BASE_URL,
     POLLINATIONS_PARAMS,
     POLLINATIONS_RATE_LIMIT_DELAY,
+    POLLINATIONS_REQUEST_TIMEOUT,
 )
 
 
@@ -22,7 +24,7 @@ class PollinationsClient:
 
     def __init__(self) -> None:
         """Инициализация клиента с базовым URL и параметрами."""
-        self._base_url = "https://image.pollinations.ai/prompt"
+        self._base_url = POLLINATIONS_BASE_URL
         self._rate_limit_delay = POLLINATIONS_RATE_LIMIT_DELAY
         self._logger = logging.getLogger(__name__)
 
@@ -65,7 +67,7 @@ class PollinationsClient:
 
         for attempt in range(2):
             try:
-                response = httpx.get(url, timeout=60, follow_redirects=True)
+                response = httpx.get(url, timeout=POLLINATIONS_REQUEST_TIMEOUT, follow_redirects=True)
                 response.raise_for_status()
 
                 # Pollinations может вернуть ошибку внутри JSON даже при 200
