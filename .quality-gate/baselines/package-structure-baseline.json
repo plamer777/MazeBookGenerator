@@ -1,0 +1,11 @@
+{
+  "generated_at": "2026-11-03T05:59:10.682003+00:00",
+  "max_python_modules": 15,
+  "counts": {
+    "src": 4,
+    "src/application": 2,
+    "src/domain": 3,
+    "src/infrastructure": 8,
+    "tests": 9
+  }
+}
