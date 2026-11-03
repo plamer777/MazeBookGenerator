@@ -14,6 +14,7 @@ from maze_book_generator.infrastructure.images.providers import (
 from maze_book_generator.settings import (
     HF_API_BASE_URL,
     HF_IMAGE_MODEL_FALLBACKS,
+    HF_RATE_LIMIT_DELAY,
     HF_REQUEST_TIMEOUT,
     IMAGE_GENERATOR_PROMPT_TEMPLATE,
     settings,
@@ -110,6 +111,6 @@ class HFClient:
             self.generate_illustration,
             image_keywords,
             output_paths,
-            rate_limit_delay=0,
+            rate_limit_delay=HF_RATE_LIMIT_DELAY,
             logger=_logger,
         )
