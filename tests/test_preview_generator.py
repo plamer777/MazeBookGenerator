@@ -1,42 +1,41 @@
 """Unit-тесты для PreviewGenerator с моками."""
 
-import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 from src.infrastructure.preview_generator import PreviewGenerator
 
 
-class TestPreviewGenerator(unittest.TestCase):
+class TestPreviewGenerator:
     """Проверяет логику генератора preview с моками."""
 
-    def setUp(self) -> None:
+    def setup_method(self) -> None:
         """Инициализация генератора."""
         self.generator = PreviewGenerator()
 
     def test_maze_count_label_english(self) -> None:
         """Бейдж количества лабиринтов для английского."""
         number, noun = self.generator._maze_count_label(5, "en")
-        self.assertEqual(number, "5")
-        self.assertEqual(noun, "MAZES")
+        assert number == "5"
+        assert noun == "MAZES"
 
     def test_maze_count_label_russian_singular(self) -> None:
         """Бейдж количества лабиринтов для русского (1)."""
         number, noun = self.generator._maze_count_label(1, "ru")
-        self.assertEqual(number, "1")
-        self.assertEqual(noun, "ЛАБИРИНТ")
+        assert number == "1"
+        assert noun == "ЛАБИРИНТ"
 
     def test_maze_count_label_russian_few(self) -> None:
         """Бейдж количества лабиринтов для русского (2-4)."""
         number, noun = self.generator._maze_count_label(3, "ru")
-        self.assertEqual(number, "3")
-        self.assertEqual(noun, "ЛАБИРИНТА")
+        assert number == "3"
+        assert noun == "ЛАБИРИНТА"
 
     def test_maze_count_label_russian_many(self) -> None:
         """Бейдж количества лабиринтов для русского (5+)."""
         number, noun = self.generator._maze_count_label(10, "ru")
-        self.assertEqual(number, "10")
-        self.assertEqual(noun, "ЛАБИРИНТОВ")
+        assert number == "10"
+        assert noun == "ЛАБИРИНТОВ"
 
     def test_load_cover_from_pdf(self) -> None:
         """Загрузка обложки из PDF."""
@@ -51,7 +50,7 @@ class TestPreviewGenerator(unittest.TestCase):
 
             cover = self.generator._load_cover(output_dir)
 
-            self.assertIsNotNone(cover)
+            assert cover is not None
             mock_convert.assert_called_once()
 
     def test_load_cover_no_pdf(self) -> None:
@@ -61,7 +60,7 @@ class TestPreviewGenerator(unittest.TestCase):
 
         cover = self.generator._load_cover(output_dir)
 
-        self.assertIsNone(cover)
+        assert cover is None
 
     def test_load_cover_conversion_error(self) -> None:
         """Обработка ошибки при конвертации PDF."""
@@ -74,7 +73,7 @@ class TestPreviewGenerator(unittest.TestCase):
 
             cover = self.generator._load_cover(output_dir)
 
-            self.assertIsNone(cover)
+            assert cover is None
 
     def test_load_pages_from_pdf(self) -> None:
         """Загрузка страниц из PDF."""
@@ -90,7 +89,7 @@ class TestPreviewGenerator(unittest.TestCase):
 
             pages = self.generator._load_pages_from_pdf(output_dir, count=3)
 
-            self.assertEqual(len(pages), 3)
+            assert len(pages) == 3
             mock_convert.assert_called_once()
 
     def test_load_pages_no_pdf(self) -> None:
@@ -100,7 +99,7 @@ class TestPreviewGenerator(unittest.TestCase):
 
         pages = self.generator._load_pages_from_pdf(output_dir, count=3)
 
-        self.assertEqual(len(pages), 3)
+        assert len(pages) == 3
 
     def test_load_pages_conversion_error(self) -> None:
         """Обработка ошибки при конвертации страниц."""
@@ -113,7 +112,7 @@ class TestPreviewGenerator(unittest.TestCase):
 
             pages = self.generator._load_pages_from_pdf(output_dir, count=3)
 
-            self.assertEqual(len(pages), 3)  # плейсхолдеры
+            assert len(pages) == 3  # плейсхолдеры
 
     def test_generate_previews_with_mock_dependencies(self) -> None:
         """Генерация preview с моками зависимостей."""
@@ -140,7 +139,7 @@ class TestPreviewGenerator(unittest.TestCase):
                                             output_dir, maze_count=5, language="en"
                                         )
 
-                                        self.assertGreater(len(paths), 0)
+                                        assert len(paths) > 0
                                         mock_save_thumb.assert_called()
                                         mock_spread.assert_called_once()
                                         mock_collage.assert_called_once()
@@ -172,7 +171,7 @@ class TestPreviewGenerator(unittest.TestCase):
                                         )
 
                                         # Без обложки не должно быть cover thumbnail и promo
-                                        self.assertGreater(len(paths), 0)
+                                        assert len(paths) > 0
                                         mock_promo.assert_not_called()
 
     def test_generate_previews_no_solution(self) -> None:
@@ -200,9 +199,5 @@ class TestPreviewGenerator(unittest.TestCase):
                                         )
 
                                         # Без solution не должно быть answer preview
-                                        self.assertGreater(len(paths), 0)
+                                        assert len(paths) > 0
                                         mock_answer.assert_not_called()
-
-
-if __name__ == "__main__":
-    unittest.main()

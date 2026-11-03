@@ -1,8 +1,9 @@
 """Unit-тесты для AIClient с моками OpenAI."""
 
+import pytest
+
 import asyncio
 import json
-import unittest
 from unittest.mock import AsyncMock, MagicMock, patch
 
 from src.domain.models import PagePrompt, Theme
@@ -10,10 +11,10 @@ from src.infrastructure.ai_client import AIClient
 from src.localization import Language
 
 
-class TestAIClient(unittest.TestCase):
+class TestAIClient:
     """Проверяет логику клиента OpenAI с моками."""
 
-    def setUp(self) -> None:
+    def setup_method(self) -> None:
         """Инициализация клиента."""
         self.client = AIClient()
 
@@ -22,20 +23,20 @@ class TestAIClient(unittest.TestCase):
         with patch("src.infrastructure.ai_client.settings") as mock_settings:
             mock_settings.OPEN_AI_KEY = "test-key"
             client = AIClient()
-            self.assertIsNotNone(client._client)
+            assert client._client is not None
 
     def test_initialization_without_key(self) -> None:
         """Инициализация без ключа должна создавать None клиент."""
         with patch("src.infrastructure.ai_client.settings") as mock_settings:
             mock_settings.OPEN_AI_KEY = None
             client = AIClient()
-            self.assertIsNone(client._client)
+            assert client._client is None
 
     def test_safe_prompt_value_escapes_braces(self) -> None:
         """Экранирование фигурных скобок."""
-        self.assertEqual(AIClient._safe_prompt_value("test{value}"), "test(value)")
-        self.assertEqual(AIClient._safe_prompt_value("test}value{"), "test)value(")
-        self.assertEqual(AIClient._safe_prompt_value("no_braces"), "no_braces")
+        assert AIClient._safe_prompt_value("test{value}") == "test(value)"
+        assert AIClient._safe_prompt_value("test}value{") == "test)value("
+        assert AIClient._safe_prompt_value("no_braces") == "no_braces"
 
     def test_parse_theme_response_valid_json(self) -> None:
         """Парсинг валидного JSON ответа."""
@@ -52,12 +53,12 @@ class TestAIClient(unittest.TestCase):
         })
 
         theme = self.client._parse_theme_response(raw, 2, "en")
-        self.assertIsNotNone(theme)
-        self.assertEqual(theme.book_title, "Test Title")
-        self.assertEqual(theme.book_description, "Test Description")
-        self.assertEqual(len(theme.page_prompts), 2)
-        self.assertEqual(theme.page_prompts[0].task, "Task 1")
-        self.assertEqual(theme.marketplace_title, "Marketplace Title")
+        assert theme is not None
+        assert theme.book_title == "Test Title"
+        assert theme.book_description == "Test Description"
+        assert len(theme.page_prompts) == 2
+        assert theme.page_prompts[0].task == "Task 1"
+        assert theme.marketplace_title == "Marketplace Title"
 
     def test_parse_theme_response_with_json_prefix(self) -> None:
         """Парсинг JSON с префиксом ```json."""
@@ -69,8 +70,8 @@ class TestAIClient(unittest.TestCase):
         }) + "\n```"
 
         theme = self.client._parse_theme_response(raw, 1, "en")
-        self.assertIsNotNone(theme)
-        self.assertEqual(theme.book_title, "Test Title")
+        assert theme is not None
+        assert theme.book_title == "Test Title"
 
     def test_parse_theme_response_with_extra_text(self) -> None:
         """Парсинг JSON с дополнительным текстом."""
@@ -82,20 +83,20 @@ class TestAIClient(unittest.TestCase):
         }) + "\nSome text after"
 
         theme = self.client._parse_theme_response(raw, 1, "en")
-        self.assertIsNotNone(theme)
-        self.assertEqual(theme.book_title, "Test Title")
+        assert theme is not None
+        assert theme.book_title == "Test Title"
 
     def test_parse_theme_response_invalid_json(self) -> None:
         """Парсинг невалидного JSON должен возвращать None."""
         raw = "not a json"
         theme = self.client._parse_theme_response(raw, 1, "en")
-        self.assertIsNone(theme)
+        assert theme is None
 
     def test_parse_theme_response_no_json_object(self) -> None:
         """Отсутствие JSON объекта должно возвращать None."""
         raw = "some text without braces"
         theme = self.client._parse_theme_response(raw, 1, "en")
-        self.assertIsNone(theme)
+        assert theme is None
 
     def test_parse_theme_response_fills_missing_prompts(self) -> None:
         """Заполнение недостающих промптов fallback значениями."""
@@ -107,10 +108,10 @@ class TestAIClient(unittest.TestCase):
         })
 
         theme = self.client._parse_theme_response(raw, 3, "en")
-        self.assertEqual(len(theme.page_prompts), 3)
-        self.assertEqual(theme.page_prompts[0].task, "Task 1")
-        self.assertIn("maze", theme.page_prompts[1].task.lower())
-        self.assertIn("maze", theme.page_prompts[2].task.lower())
+        assert len(theme.page_prompts) == 3
+        assert theme.page_prompts[0].task == "Task 1"
+        assert "maze" in theme.page_prompts[1].task.lower()
+        assert "maze" in theme.page_prompts[2].task.lower()
 
     def test_parse_theme_response_fills_missing_keywords(self) -> None:
         """Заполнение недостающих keywords fallback значениями."""
@@ -122,10 +123,10 @@ class TestAIClient(unittest.TestCase):
         })
 
         theme = self.client._parse_theme_response(raw, 3, "en")
-        self.assertEqual(len(theme.image_keywords), 3)
-        self.assertEqual(theme.image_keywords[0], ["key1"])
-        self.assertEqual(theme.image_keywords[1], ["maze", "adventure"])
-        self.assertEqual(theme.image_keywords[2], ["maze", "adventure"])
+        assert len(theme.image_keywords) == 3
+        assert theme.image_keywords[0] == ["key1"]
+        assert theme.image_keywords[1] == ["maze", "adventure"]
+        assert theme.image_keywords[2] == ["maze", "adventure"]
 
     def test_parse_theme_response_fallback_title_description(self) -> None:
         """Fallback для title и description при отсутствии."""
@@ -135,8 +136,8 @@ class TestAIClient(unittest.TestCase):
         })
 
         theme = self.client._parse_theme_response(raw, 1, "en")
-        self.assertIsNotNone(theme.book_title)
-        self.assertIsNotNone(theme.book_description)
+        assert theme.book_title is not None
+        assert theme.book_description is not None
 
     def test_parse_theme_response_marketplace_fallback(self) -> None:
         """Fallback для marketplace полей к базовым."""
@@ -148,8 +149,8 @@ class TestAIClient(unittest.TestCase):
         })
 
         theme = self.client._parse_theme_response(raw, 1, "en")
-        self.assertEqual(theme.marketplace_title, "Test Title")
-        self.assertEqual(theme.marketplace_description, "Test Description")
+        assert theme.marketplace_title == "Test Title"
+        assert theme.marketplace_description == "Test Description"
 
     def test_parse_theme_response_empty_prompts_list(self) -> None:
         """Обработка пустого списка промптов."""
@@ -161,8 +162,8 @@ class TestAIClient(unittest.TestCase):
         })
 
         theme = self.client._parse_theme_response(raw, 2, "en")
-        self.assertEqual(len(theme.page_prompts), 2)
-        self.assertEqual(len(theme.image_keywords), 2)
+        assert len(theme.page_prompts) == 2
+        assert len(theme.image_keywords) == 2
 
     def test_parse_theme_response_malformed_prompt_item(self) -> None:
         """Обработка некорректного элемента в page_prompts."""
@@ -174,11 +175,11 @@ class TestAIClient(unittest.TestCase):
         })
 
         theme = self.client._parse_theme_response(raw, 2, "en")
-        self.assertEqual(len(theme.page_prompts), 2)
+        assert len(theme.page_prompts) == 2
         # Первый элемент (строка) пропускается, второй валидный
-        self.assertEqual(theme.page_prompts[0].task, "Task 1")
+        assert theme.page_prompts[0].task == "Task 1"
         # Третий элемент заполняется fallback
-        self.assertIn("maze", theme.page_prompts[1].task.lower())
+        assert "maze" in theme.page_prompts[1].task.lower()
 
     async def test_generate_theme_with_mock_openai(self) -> None:
         """Генерация темы с моком OpenAI."""
@@ -209,8 +210,8 @@ class TestAIClient(unittest.TestCase):
                 language="en",
             )
 
-            self.assertEqual(theme.book_title, "AI Title")
-            self.assertEqual(len(theme.page_prompts), 2)
+            assert theme.book_title == "AI Title"
+            assert len(theme.page_prompts) == 2
 
     async def test_generate_theme_without_client_raises(self) -> None:
         """Генерация без клиента должна вызывать ValueError."""
@@ -218,7 +219,7 @@ class TestAIClient(unittest.TestCase):
             mock_settings.OPEN_AI_KEY = None
             client = AIClient()
 
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 await client.generate_theme(pages_count=2, language="en")
 
     async def test_generate_theme_retry_on_failure(self) -> None:
@@ -244,8 +245,8 @@ class TestAIClient(unittest.TestCase):
 
             theme = await client.generate_theme(pages_count=1, language="en")
 
-            self.assertEqual(theme.book_title, "AI Title")
-            self.assertEqual(mock_openai.chat.completions.create.call_count, 3)
+            assert theme.book_title == "AI Title"
+            assert mock_openai.chat.completions.create.call_count == 3
 
     async def test_generate_theme_fails_after_max_retries(self) -> None:
         """Ошибка после максимального количества попыток."""
@@ -259,7 +260,7 @@ class TestAIClient(unittest.TestCase):
             )
             client._client = mock_openai
 
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 await client.generate_theme(pages_count=1, language="en")
 
     def test_parse_theme_response_russian_language(self) -> None:
@@ -272,10 +273,6 @@ class TestAIClient(unittest.TestCase):
         })
 
         theme = self.client._parse_theme_response(raw, 1, "ru")
-        self.assertIsNotNone(theme)
+        assert theme is not None
         # Fallback промпт должен быть на русском
-        self.assertIn("лабиринт", theme.page_prompts[0].task.lower())
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert "лабиринт" in theme.page_prompts[0].task.lower()

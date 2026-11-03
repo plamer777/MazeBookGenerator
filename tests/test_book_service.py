@@ -1,6 +1,5 @@
 """Unit-тесты для BookService с моками зависимостей."""
 
-import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -9,10 +8,10 @@ from src.domain.models import BookConfig, Difficulty, DifficultyMode, MazeShape,
 from src.localization import BookTexts
 
 
-class TestBookService(unittest.TestCase):
+class TestBookService:
     """Проверяет логику сервиса генерации книг с моками."""
 
-    def setUp(self) -> None:
+    def setup_method(self) -> None:
         """Инициализация сервиса с моками контейнера."""
         with patch("src.application.book_service.container") as mock_container:
             mock_container.maze_generator = MagicMock()
@@ -31,36 +30,36 @@ class TestBookService(unittest.TestCase):
         """Язык из BookConfig имеет приоритет."""
         config = BookConfig(language="ru")
         result = BookService._resolve_language("en", config)
-        self.assertEqual(result, "ru")
+        assert result == "ru"
 
     def test_resolve_language_without_config(self) -> None:
         """Язык из параметра при отсутствии config."""
         result = BookService._resolve_language("ru", None)
-        self.assertEqual(result, "ru")
+        assert result == "ru"
 
     def test_difficulty_to_label_easy(self) -> None:
         """Лейбл для лёгкой сложности."""
         texts = BookTexts("en")
         label = self.service._difficulty_to_label(Difficulty.L1, texts)
-        self.assertEqual(label, "Easy")
+        assert label == "Easy"
 
     def test_difficulty_to_label_medium(self) -> None:
         """Лейбл для средней сложности."""
         texts = BookTexts("en")
         label = self.service._difficulty_to_label(Difficulty.L4, texts)
-        self.assertEqual(label, "Medium")
+        assert label == "Medium"
 
     def test_difficulty_to_label_hard(self) -> None:
         """Лейбл для сложной сложности."""
         texts = BookTexts("en")
         label = self.service._difficulty_to_label(Difficulty.L7, texts)
-        self.assertEqual(label, "Hard")
+        assert label == "Hard"
 
     def test_difficulty_to_label_russian(self) -> None:
         """Лейбл для сложности на русском."""
         texts = BookTexts("ru")
         label = self.service._difficulty_to_label(Difficulty.L1, texts)
-        self.assertEqual(label, "Легкий")
+        assert label == "Легкий"
 
     def test_build_book_config_without_input(self) -> None:
         """Построение конфигурации без входного config."""
@@ -79,10 +78,10 @@ class TestBookService(unittest.TestCase):
             config=None,
         )
 
-        self.assertEqual(config.language, "en")
-        self.assertEqual(config.title, "Test Theme")
-        self.assertEqual(config.maze_count, 5)
-        self.assertIsNotNone(config.difficulty_label)
+        assert config.language == "en"
+        assert config.title == "Test Theme"
+        assert config.maze_count == 5
+        assert config.difficulty_label is not None
 
     def test_build_book_config_with_input(self) -> None:
         """Построение конфигурации с входным config."""
@@ -107,17 +106,17 @@ class TestBookService(unittest.TestCase):
             config=input_config,
         )
 
-        self.assertEqual(config.language, "ru")
-        self.assertEqual(config.title, "Custom Title")
-        self.assertEqual(config.age_range, "5-8 years")
-        self.assertEqual(config.maze_count, 10)
+        assert config.language == "ru"
+        assert config.title == "Custom Title"
+        assert config.age_range == "5-8 years"
+        assert config.maze_count == 10
 
     def test_get_page_difficulty_fixed(self) -> None:
         """Режим FIXED возвращает базовую сложность."""
         difficulty = self.service._get_page_difficulty(
             DifficultyMode.FIXED, 1, 10, Difficulty.HARD
         )
-        self.assertEqual(difficulty, Difficulty.HARD)
+        assert difficulty == Difficulty.HARD
 
     def test_get_page_difficulty_incremental(self) -> None:
         """Режим INCREMENTAL увеличивает сложность."""
@@ -128,31 +127,31 @@ class TestBookService(unittest.TestCase):
             DifficultyMode.INCREMENTAL, 10, 10, Difficulty.L1
         )
 
-        self.assertLess(difficulty_start.level, difficulty_end.level)
+        assert difficulty_start.level < difficulty_end.level
 
     def test_get_page_difficulty_random_range(self) -> None:
         """Режим RANDOM_RANGE возвращает случайную сложность."""
         difficulty = self.service._get_page_difficulty(
             DifficultyMode.RANDOM_RANGE, 1, 10, Difficulty.MEDIUM
         )
-        self.assertIn(difficulty, [
+        assert difficulty in [
             Difficulty.L1, Difficulty.L2, Difficulty.L3, Difficulty.L4,
             Difficulty.L5, Difficulty.L6, Difficulty.L7,
-        ])
+        ]
 
     def test_get_page_difficulty_kids_easy(self) -> None:
         """Режим KIDS_EASY возвращает только простые уровни."""
         difficulty = self.service._get_page_difficulty(
             DifficultyMode.KIDS_EASY, 1, 10, Difficulty.MEDIUM
         )
-        self.assertIn(difficulty, [Difficulty.L1, Difficulty.L2])
+        assert difficulty in [Difficulty.L1, Difficulty.L2]
 
     def test_get_page_difficulty_challenge_hard(self) -> None:
         """Режим CHALLENGE_HARD возвращает только сложные уровни."""
         difficulty = self.service._get_page_difficulty(
             DifficultyMode.CHALLENGE_HARD, 1, 10, Difficulty.MEDIUM
         )
-        self.assertIn(difficulty, [Difficulty.L5, Difficulty.L6, Difficulty.L7])
+        assert difficulty in [Difficulty.L5, Difficulty.L6, Difficulty.L7]
 
     def test_get_page_difficulty_story_wave(self) -> None:
         """Режим STORY_WAVE создаёт волновую сложность."""
@@ -162,12 +161,12 @@ class TestBookService(unittest.TestCase):
         ]
         # Проверяем, что есть вариация
         levels = [d.level for d in difficulties]
-        self.assertGreater(max(levels) - min(levels), 0)
+        assert max(levels) - min(levels) > 0
 
     def test_get_page_shape_kids_easy(self) -> None:
         """Режим KIDS_EASY использует простые формы."""
         shape = self.service._get_page_shape(1, 10, DifficultyMode.KIDS_EASY)
-        self.assertIn(shape, [MazeShape.RECTANGULAR, MazeShape.SQUARE, MazeShape.DIAMOND])
+        assert shape in [MazeShape.RECTANGULAR, MazeShape.SQUARE, MazeShape.DIAMOND]
 
     def test_get_page_shape_challenge_hard(self) -> None:
         """Режим CHALLENGE_HARD использует сложные формы."""
@@ -176,7 +175,7 @@ class TestBookService(unittest.TestCase):
             MazeShape.TRIANGULAR, MazeShape.CIRCULAR, MazeShape.CHAOTIC,
             MazeShape.RANDOM, MazeShape.DIAMOND, MazeShape.HEART,
         ]
-        self.assertIn(shape, complex_shapes)
+        assert shape in complex_shapes
 
     def test_get_page_shape_incremental_progression(self) -> None:
         """Режим INCREMENTAL эволюционирует от простых к сложным."""
@@ -184,15 +183,15 @@ class TestBookService(unittest.TestCase):
         shape_late = self.service._get_page_shape(9, 10, DifficultyMode.INCREMENTAL)
 
         # Ранние страницы - простые формы
-        self.assertIn(shape_early, [
+        assert shape_early in [
             MazeShape.RECTANGULAR, MazeShape.SQUARE, MazeShape.DIAMOND,
             MazeShape.TRIANGULAR, MazeShape.CIRCULAR,
-        ])
+        ]
         # Поздние страницы - все формы
-        self.assertIn(shape_late, [
+        assert shape_late in [
             MazeShape.CIRCULAR, MazeShape.TRIANGULAR, MazeShape.CHAOTIC,
             MazeShape.RANDOM, MazeShape.DIAMOND, MazeShape.HEART,
-        ])
+        ]
 
     def test_get_page_shape_default_rotation(self) -> None:
         """Дефолтный режим чередует все формы."""
@@ -201,7 +200,7 @@ class TestBookService(unittest.TestCase):
             for i in range(1, 9)
         ]
         # Проверяем, что формы чередуются
-        self.assertEqual(len(set(shapes)), 8)
+        assert len(set(shapes)) == 8
 
     def test_get_page_prompt_from_theme(self) -> None:
         """Получение промпта из темы."""
@@ -216,7 +215,7 @@ class TestBookService(unittest.TestCase):
         )
 
         prompt = self.service._get_page_prompt(theme, 0)
-        self.assertEqual(prompt, "Task 1")
+        assert prompt == "Task 1"
 
     def test_get_page_prompt_fallback(self) -> None:
         """Fallback промпт при отсутствии в теме."""
@@ -228,8 +227,8 @@ class TestBookService(unittest.TestCase):
         )
 
         prompt = self.service._get_page_prompt(theme, 5)
-        self.assertIn("maze", prompt.lower())
-        self.assertIn("6", prompt)  # index + 1
+        assert "maze" in prompt.lower()
+        assert "6" in prompt  # index + 1
 
     def test_next_free_book_id_empty_dir(self) -> None:
         """Следующий ID в пустой директории."""
@@ -238,7 +237,7 @@ class TestBookService(unittest.TestCase):
             Path("/tmp/test_empty").mkdir(parents=True, exist_ok=True)
 
             book_id = BookService._next_free_book_id(mock_settings.OUTPUT_DIR)
-            self.assertEqual(book_id, 1)
+            assert book_id == 1
 
     def test_next_free_book_id_with_existing(self) -> None:
         """Следующий ID с существующими папками."""
@@ -252,7 +251,7 @@ class TestBookService(unittest.TestCase):
             (Path("/tmp/test_existing_unique") / "book_3").mkdir()
 
             book_id = BookService._next_free_book_id(mock_settings.OUTPUT_DIR)
-            self.assertEqual(book_id, 4)
+            assert book_id == 4
 
     def test_save_marketplace_info_english(self) -> None:
         """Сохранение маркетинговой информации на английском."""
@@ -271,10 +270,10 @@ class TestBookService(unittest.TestCase):
         self.service._save_marketplace_info(output_dir, theme, "en")
 
         info_path = output_dir / "book_into.txt"
-        self.assertTrue(info_path.exists())
+        assert info_path.exists()
         content = info_path.read_text(encoding="utf-8")
-        self.assertIn("Marketplace title", content)
-        self.assertIn("Marketplace Title", content)
+        assert "Marketplace title" in content
+        assert "Marketplace Title" in content
 
     def test_save_marketplace_info_russian(self) -> None:
         """Сохранение маркетинговой информации на русском."""
@@ -293,10 +292,10 @@ class TestBookService(unittest.TestCase):
         self.service._save_marketplace_info(output_dir, theme, "ru")
 
         info_path = output_dir / "book_into.txt"
-        self.assertTrue(info_path.exists())
+        assert info_path.exists()
         content = info_path.read_text(encoding="utf-8")
-        self.assertIn("Заголовок для маркетплейса", content)
-        self.assertIn("Маркетплейс заголовок", content)
+        assert "Заголовок для маркетплейса" in content
+        assert "Маркетплейс заголовок" in content
 
     def test_save_marketplace_info_fallback(self) -> None:
         """Fallback на базовые поля при отсутствии marketplace полей."""
@@ -314,9 +313,5 @@ class TestBookService(unittest.TestCase):
 
         info_path = output_dir / "book_into.txt"
         content = info_path.read_text(encoding="utf-8")
-        self.assertIn("Base Title", content)
-        self.assertIn("Base Description", content)
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert "Base Title" in content
+        assert "Base Description" in content
