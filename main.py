@@ -15,17 +15,17 @@ async def main() -> None:
 
     # Параметры генерации
     number_of_books = 1
-    mazes_per_book = 2
+    mazes_per_book = 30
     maze_size = (15, 11)
-    difficulty_mode = DifficultyMode.INCREMENTAL
-    base_difficulty = Difficulty.MEDIUM
+    difficulty_mode = DifficultyMode.KIDS_EASY
+    base_difficulty = Difficulty.EASY
 
     # Выбираем пресет конфигурации книги.
     # Доступные пресеты: en_kids_basic, en_kids_printable, en_school, en_school_printable,
     #                    en_challenge, ru_kids_basic, ru_kids_printable, ru_school,
     #                    ru_school_printable, ru_challenge
     # Для персонализации: personalized("en_kids_basic", child_name="Emma", child_age="6")
-    book_config = PRESETS["ru_kids_printable"]
+    book_config = PRESETS["ru_kids_easy"]
 
     print(f"Начинаем batch генерацию {number_of_books} книг...")
     print(

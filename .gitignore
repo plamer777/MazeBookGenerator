@@ -34,3 +34,4 @@ output
 /.quality-gate/cache/
 /.quality-gate/tmp/
 /.quality-gate/observations/
+.coverage

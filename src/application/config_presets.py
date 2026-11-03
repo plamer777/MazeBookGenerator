@@ -62,7 +62,14 @@ PRESETS: dict[str, BookConfig] = {
     # ------------------------------------------------------------------
     # Русский язык
     # ------------------------------------------------------------------
-
+    "ru_kids_easy": BookConfig(
+        language="ru",
+        subtitle="Книга лабиринтов",
+        age_range="4–5",
+        include_contents_page=True,
+        show_start_finish_labels=True,
+        generate_print_friendly_version=True,
+    ),
     "ru_kids_basic": BookConfig(
         language="ru",
         subtitle="Книга лабиринтов",
