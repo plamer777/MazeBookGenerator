@@ -13,7 +13,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
 from maze_book_generator.domain.models import Book, BookConfig, BookPage, Maze, MazeShape
-from maze_book_generator.domain.polar_topology_service import PolarTopologyService
+from maze_book_generator.domain.maze.polar import PolarTopologyService
 from maze_book_generator.localization import BookTexts, Language
 from maze_book_generator.settings import (
     FONT_DEJAVU_BOLD,

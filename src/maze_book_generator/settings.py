@@ -244,6 +244,9 @@ PREVIEW_PAGE_THUMB_HEIGHT: int = 1131
 # Масштаб сетки лабиринта относительно базового размера (L1 → MIN, L7 → MAX)
 MAZE_GRID_SCALE_MIN: float = 0.45
 MAZE_GRID_SCALE_MAX: float = 2.0
+# Максимум попыток построить проходимый лабиринт внутри маски
+MAZE_MASKED_MAX_ATTEMPTS: int = 10
+MAZE_CHAOTIC_MAX_ATTEMPTS: int = 8
 # Кривая прогрессии сложности: effective_level = lerp(level) с учётом power
 EFFECTIVE_LEVEL_MIN: float = 3.5
 EFFECTIVE_LEVEL_MAX: float = 7.0

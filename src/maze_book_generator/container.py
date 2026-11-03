@@ -1,6 +1,6 @@
 """Контейнер зависимостей для MazeBookGenerator."""
 
-from maze_book_generator.domain.maze_generator import MazeGenerator
+from maze_book_generator.domain.maze import MazeGenerator
 from maze_book_generator.infrastructure.ai_client import AIClient
 from maze_book_generator.infrastructure.hf_client import HFClient
 from maze_book_generator.infrastructure.image_generator import ImageGenerator

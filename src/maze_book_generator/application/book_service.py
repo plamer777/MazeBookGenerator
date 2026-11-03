@@ -4,7 +4,7 @@ import math
 from pathlib import Path
 
 from maze_book_generator.container import container
-from maze_book_generator.domain.maze_generator import MazeGenerator
+from maze_book_generator.domain.maze import MazeGenerator
 from maze_book_generator.domain.models import (
     Book,
     BookConfig,

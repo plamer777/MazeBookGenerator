@@ -4,7 +4,7 @@ import math
 
 import pytest
 
-from maze_book_generator.domain.polar_topology_service import PolarTopologyService
+from maze_book_generator.domain.maze.polar import PolarTopologyService
 
 
 class TestPolarTopologyService:

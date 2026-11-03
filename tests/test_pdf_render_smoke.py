@@ -7,7 +7,7 @@ import pytest
 from PIL import Image
 
 from maze_book_generator.application.config_presets import PRESETS
-from maze_book_generator.domain.maze_generator import MazeGenerator
+from maze_book_generator.domain.maze import MazeGenerator
 from maze_book_generator.domain.models import (
     Book,
     BookConfig,

@@ -3,7 +3,14 @@
 
 import pytest
 
-from maze_book_generator.domain.maze_generator import MazeGenerator
+from maze_book_generator.domain.maze import MazeGenerator
+from maze_book_generator.domain.maze.difficulty import effective_level, lerp
+from maze_book_generator.domain.maze.masks import (
+    diamond_mask,
+    heart_mask,
+    is_boundary_cell,
+    pick_boundary_cell,
+)
 from maze_book_generator.domain.models import Difficulty, MazeShape
 
 
@@ -17,17 +24,17 @@ class TestMazeGenerator:
     def test_lerp_interpolation(self) -> None:
         """Линейная интерполяция должна корректно вычислять значения."""
         # level=1 -> lo, level=7 -> hi
-        assert MazeGenerator._lerp(1, 10, 20) == pytest.approx(10.0, abs=10**-7)
-        assert MazeGenerator._lerp(7, 10, 20) == pytest.approx(20.0, abs=10**-7)
-        assert MazeGenerator._lerp(4, 10, 20) == pytest.approx(15.0, abs=10**-7)
+        assert lerp(1, 10, 20) == pytest.approx(10.0, abs=10**-7)
+        assert lerp(7, 10, 20) == pytest.approx(20.0, abs=10**-7)
+        assert lerp(4, 10, 20) == pytest.approx(15.0, abs=10**-7)
 
     def test_effective_level_calibration(self) -> None:
         """Эффективный уровень должен быть перекалиброван согласно таблице."""
         # L1 ≈ 3.5, L7 = 7.0
-        assert MazeGenerator._effective_level(Difficulty.L1) == pytest.approx(3.5, abs=10**-1)
-        assert MazeGenerator._effective_level(Difficulty.L7) == pytest.approx(7.0, abs=10**-1)
+        assert effective_level(Difficulty.L1) == pytest.approx(3.5, abs=10**-1)
+        assert effective_level(Difficulty.L7) == pytest.approx(7.0, abs=10**-1)
         # L4 ≈ 5.89 (фактическое значение)
-        assert MazeGenerator._effective_level(Difficulty.L4) == pytest.approx(5.89, abs=10**-1)
+        assert effective_level(Difficulty.L4) == pytest.approx(5.89, abs=10**-1)
 
     def test_rectangular_maze_generation(self) -> None:
         """Генерация прямоугольного лабиринта должна создавать валидный объект Maze."""
@@ -153,13 +160,13 @@ class TestMazeGenerator:
         ]
 
         # Угловые ячейки - граничные
-        assert self.generator._is_mask_boundary_cell(mask, 0, 0, 3, 3)
-        assert self.generator._is_mask_boundary_cell(mask, 2, 0, 3, 3)
-        assert self.generator._is_mask_boundary_cell(mask, 0, 2, 3, 3)
-        assert self.generator._is_mask_boundary_cell(mask, 2, 2, 3, 3)
+        assert is_boundary_cell(mask, 0, 0, 3, 3)
+        assert is_boundary_cell(mask, 2, 0, 3, 3)
+        assert is_boundary_cell(mask, 0, 2, 3, 3)
+        assert is_boundary_cell(mask, 2, 2, 3, 3)
 
         # Центральная ячейка (False) - не граничная
-        assert not self.generator._is_mask_boundary_cell(mask, 1, 1, 3, 3)
+        assert not is_boundary_cell(mask, 1, 1, 3, 3)
 
     def test_pick_boundary_cell(self) -> None:
         """Выбор граничной ячейки должен возвращать валидную ячейку."""
@@ -169,14 +176,14 @@ class TestMazeGenerator:
             [True, True, True],
         ]
 
-        cell = self.generator._pick_boundary_cell(mask, 3, 3)
+        cell = pick_boundary_cell(mask, 3, 3)
         assert cell is not None
         assert cell[0] in [0, 1, 2]
         assert cell[1] in [0, 1, 2]
 
     def test_diamond_mask_creation(self) -> None:
         """Маска ромба должна иметь форму ромба."""
-        mask = self.generator._create_diamond_mask(10, 10)
+        mask = diamond_mask(10, 10)
 
         # Центр должен быть заполнен
         assert mask[5][5]
@@ -188,7 +195,7 @@ class TestMazeGenerator:
 
     def test_heart_mask_creation(self) -> None:
         """Маска сердца должна иметь форму сердца."""
-        mask = self.generator._create_heart_mask(10, 10)
+        mask = heart_mask(10, 10)
 
         # В верхней части должны быть заполненные ячейки (верхушки сердца)
         top_filled = any(mask[0][x] for x in range(10))
