@@ -4,7 +4,11 @@ import math
 
 import pytest
 
-from maze_book_generator.domain.maze.polar import PolarTopologyService
+from maze_book_generator.domain.maze.polar import (
+    PolarTopologyService,
+    radial_angle,
+    validate_connections,
+)
 
 
 class TestPolarTopologyService:
@@ -84,6 +88,9 @@ class TestPolarTopologyService:
         center = service.get_sector_center_angle(1, 0)
         assert center == pytest.approx(0.7854, abs=10**-4)  # π/4
 
+class TestPolarRadialNeighbors:
+    """Проверяет радиальных соседей и угловые интервалы."""
+
     def test_get_inner_neighbor_center(self) -> None:
         """Внутренний сосед для центральной ячейки должен быть None."""
         cells_per_ring = [1, 6]
@@ -153,6 +160,9 @@ class TestPolarTopologyService:
         assert len(neighbors) == 2
         assert (2, 0) in neighbors  # 0 * 2 = 0
         assert (2, 1) in neighbors  # 0 * 2 + 1 = 1
+
+class TestPolarRingNeighbors:
+    """Проверяет кольцевых соседей и кандидатов для обхода."""
 
     def test_get_clockwise_neighbor(self) -> None:
         """Сосед по часовой стрелке."""
@@ -225,6 +235,9 @@ class TestPolarTopologyService:
         intervals = service.outer_neighbor_intervals(1, 0)
         assert len(intervals) == 0
 
+class TestPolarConnections:
+    """Проверяет валидацию графа соединений и граничные углы."""
+
     def test_radial_angle(self) -> None:
         """Радиальный угол для соседей."""
         cells_per_ring = [1, 6, 12]
@@ -232,7 +245,7 @@ class TestPolarTopologyService:
 
         inner = (1, 0)
         outer = (2, 0)
-        angle = service.radial_angle(inner, outer)
+        angle = radial_angle(service, inner, outer)
         assert angle > 0.0
         assert angle < 2 * 3.141592653589793
 
@@ -243,7 +256,7 @@ class TestPolarTopologyService:
 
         connections = {}
         with pytest.raises(ValueError, match="изолированные области"):
-            service.validate_connections(connections)
+            validate_connections(service, connections)
 
     def test_validate_connections_symmetry(self) -> None:
         """Валидация должна проверять симметрию соединений."""
@@ -260,7 +273,7 @@ class TestPolarTopologyService:
         }
 
         # Должно пройти без ошибок
-        service.validate_connections(connections)
+        validate_connections(service, connections)
 
     def test_validate_connections_asymmetry_raises(self) -> None:
         """Нарушение симметрии должно вызывать ValueError."""
@@ -276,7 +289,7 @@ class TestPolarTopologyService:
         }
 
         with pytest.raises(ValueError, match="симметрия"):
-            service.validate_connections(connections)
+            validate_connections(service, connections)
 
     def test_validate_connectivity(self) -> None:
         """Валидация должна проверять связность графа."""
@@ -292,7 +305,7 @@ class TestPolarTopologyService:
             (1, 3): {(1, 2)},
         }
 
-        service.validate_connections(connections)
+        validate_connections(service, connections)
 
     def test_validate_isolated_raises(self) -> None:
         """Изолированные области должны вызывать ValueError."""
@@ -309,7 +322,7 @@ class TestPolarTopologyService:
         }
 
         with pytest.raises(ValueError, match="изолированные области"):
-            service.validate_connections(connections)
+            validate_connections(service, connections)
 
     def test_validate_cell_invalid_ring_raises(self) -> None:
         """Некорректное кольцо должно вызывать ValueError."""

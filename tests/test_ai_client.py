@@ -42,6 +42,14 @@ class TestAIClient:
         assert AIClient._safe_prompt_value("test}value{") == "test)value("
         assert AIClient._safe_prompt_value("no_braces") == "no_braces"
 
+class TestAIClientParse:
+    """Набор тестов."""
+
+    def setup_method(self) -> None:
+        """Инициализация клиента."""
+        self.client = AIClient()
+
+
     def test_parse_theme_response_valid_json(self) -> None:
         """Парсинг валидного JSON ответа."""
         raw = json.dumps({
@@ -184,6 +192,14 @@ class TestAIClient:
         assert theme.page_prompts[0].task == "Task 1"
         # Третий элемент заполняется fallback
         assert "maze" in theme.page_prompts[1].task.lower()
+
+class TestAIClientGenerate:
+    """Набор тестов."""
+
+    def setup_method(self) -> None:
+        """Инициализация клиента."""
+        self.client = AIClient()
+
 
     async def test_generate_theme_with_mock_openai(self) -> None:
         """Генерация темы с моком OpenAI."""

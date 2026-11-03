@@ -135,43 +135,6 @@ class PolarTopologyService:
             intervals.append((neighbor, n_start, n_end))
         return intervals
 
-    def radial_angle(self, inner_cell: Cell, outer_cell: Cell) -> float:
-        """Возвращает угол радиальной границы между двумя смежными ячейками."""
-        inner_start, inner_end = self.get_sector_bounds(*inner_cell)
-        outer_start, outer_end = self.get_sector_bounds(*outer_cell)
-        overlap_start = max(inner_start, outer_start)
-        overlap_end = min(inner_end, outer_end)
-        if overlap_start >= overlap_end:
-            return (inner_start + inner_end) / 2
-        return (overlap_start + overlap_end) / 2
-
-    def validate_connections(self, connections: Connections) -> None:
-        """Проверяет симметрию и связность графа соединений."""
-        all_cells = list(self.iter_cells())
-        for cell in all_cells:
-            connections.setdefault(cell, set())
-
-        for cell, neighbors in connections.items():
-            for neighbor in neighbors:
-                if cell not in connections.get(neighbor, set()):
-                    msg = f"Нарушена симметрия между {cell} и {neighbor}"
-                    raise ValueError(msg)
-
-        start = (0, 0)
-        visited = {start}
-        queue = deque([start])
-
-        while queue:
-            current = queue.popleft()
-            for neighbor in connections[current]:
-                if neighbor not in visited:
-                    visited.add(neighbor)
-                    queue.append(neighbor)
-
-        if len(visited) != len(all_cells):
-            msg = "Граф содержит изолированные области"
-            raise ValueError(msg)
-
     def _compute_bounds(self, ring: int, sector: int) -> tuple[float, float]:
         if ring == 0:
             return 0.0, 2 * math.pi
@@ -297,6 +260,52 @@ def connect_cells(connections: Connections, cell_a: Cell, cell_b: Cell) -> None:
     connections[cell_b].add(cell_a)
 
 
+def radial_angle(
+    topology: PolarTopologyService,
+    inner_cell: Cell,
+    outer_cell: Cell,
+) -> float:
+    """Возвращает угол радиальной границы между двумя смежными ячейками."""
+    inner_start, inner_end = topology.get_sector_bounds(*inner_cell)
+    outer_start, outer_end = topology.get_sector_bounds(*outer_cell)
+    overlap_start = max(inner_start, outer_start)
+    overlap_end = min(inner_end, outer_end)
+    if overlap_start >= overlap_end:
+        return (inner_start + inner_end) / 2
+    return (overlap_start + overlap_end) / 2
+
+
+def validate_connections(
+    topology: PolarTopologyService,
+    connections: Connections,
+) -> None:
+    """Проверяет симметрию и связность графа соединений."""
+    all_cells = list(topology.iter_cells())
+    for cell in all_cells:
+        connections.setdefault(cell, set())
+
+    for cell, neighbors in connections.items():
+        for neighbor in neighbors:
+            if cell not in connections.get(neighbor, set()):
+                msg = f"Нарушена симметрия между {cell} и {neighbor}"
+                raise ValueError(msg)
+
+    start = (0, 0)
+    visited = {start}
+    queue = deque([start])
+
+    while queue:
+        current = queue.popleft()
+        for neighbor in connections[current]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+
+    if len(visited) != len(all_cells):
+        msg = "Граф содержит изолированные области"
+        raise ValueError(msg)
+
+
 def _apply_difficulty_bias(
     rng: random.Random,
     current: Cell,
@@ -378,7 +387,7 @@ def generate_maze(
 
     topology = build_topology(difficulty)
     connections = build_connections(rng, topology, difficulty)
-    topology.validate_connections(connections)
+    validate_connections(topology, connections)
 
     start = (0, 0)
     outer_cells = topology.cells_per_ring[-1]
@@ -386,24 +395,12 @@ def generate_maze(
 
     solution = solve(connections, start, end)
 
-    # Создаём минимальный grid ТОЛЬКО для обратной совместимости и визуализации
-    grid = [[0 for _ in range(grid_size)] for _ in range(grid_size)]
-    center = grid_size // 2
-    max_radius = grid_size // 2 - 1
-
-    for y in range(grid_size):
-        for x in range(grid_size):
-            dx = x - center
-            dy = y - center
-            distance = math.sqrt(dx * dx + dy * dy)
-            if distance <= max_radius:
-                grid[y][x] = 1
+    grid, center, max_radius = _compatibility_grid(grid_size)
 
     # Конвертируем полярные координаты старта и конца в декартовы для совместимости
     start_cartesian = (center, center)
-    end_radius = max_radius
     end_angle = end[1] * 2 * math.pi / outer_cells
-    end_cartesian = (int(center + end_radius * math.cos(end_angle)), int(center + end_radius * math.sin(end_angle)))
+    end_cartesian = (int(center + max_radius * math.cos(end_angle)), int(center + max_radius * math.sin(end_angle)))
 
     # Создаём декартовы стены для совместимости
     walls = [[[True, True, True, True] for _ in range(grid_size)] for _ in range(grid_size)]
@@ -422,3 +419,25 @@ def generate_maze(
         num_rings=topology.num_rings,
         cells_per_ring=list(topology.cells_per_ring),
     )
+
+
+def _compatibility_grid(grid_size: int) -> tuple[list[list[int]], int, int]:
+    """
+    Строит минимальный декартов grid для обратной совместимости и визуализации.
+
+    Возвращает (grid, center, max_radius): круг единиц внутри радиуса,
+    центр сетки и внутренний радиус в ячейках.
+    """
+    grid = [[0 for _ in range(grid_size)] for _ in range(grid_size)]
+    center = grid_size // 2
+    max_radius = grid_size // 2 - 1
+
+    for y in range(grid_size):
+        for x in range(grid_size):
+            dx = x - center
+            dy = y - center
+            distance = math.sqrt(dx * dx + dy * dy)
+            if distance <= max_radius:
+                grid[y][x] = 1
+
+    return grid, center, max_radius

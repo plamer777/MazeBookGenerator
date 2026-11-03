@@ -46,7 +46,7 @@ def solve_with_walls(
 
         for nx, ny in iter_wall_neighbors(walls, x, y, width, height):
             if (nx, ny) not in parents:
-                parents[(nx, ny)] = (x, y)
+                parents[nx, ny] = (x, y)
                 queue.append((nx, ny))
 
     if end not in parents:
@@ -76,7 +76,7 @@ def find_farthest_boundary_cell(
 
     while queue:
         x, y = queue.popleft()
-        current_distance = distances[(x, y)]
+        current_distance = distances[x, y]
 
         if is_boundary_cell(mask, x, y, width, height) and current_distance > farthest_distance:
             farthest = (x, y)
@@ -87,7 +87,7 @@ def find_farthest_boundary_cell(
                 continue
             if (nx, ny) in distances:
                 continue
-            distances[(nx, ny)] = current_distance + 1
+            distances[nx, ny] = current_distance + 1
             queue.append((nx, ny))
 
     if farthest == start:

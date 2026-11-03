@@ -41,7 +41,7 @@ def build_rectangular(
     # Маска прямоугольной формы (все ячейки внутри)
     mask = [[True for _ in range(grid_width)] for _ in range(grid_height)]
 
-    carving.carve_passages(rng, walls, mask, 0, 0, difficulty)
+    carving.carve_passages(rng, walls, mask, x=0, y=0, difficulty=difficulty)
 
     start = (0, 0)
     end = (grid_width - 1, grid_height - 1)
@@ -76,7 +76,7 @@ def build_square(
     walls = _new_walls(size, size)
     mask = [[True for _ in range(size)] for _ in range(size)]
 
-    carving.carve_passages(rng, walls, mask, 0, 0, difficulty)
+    carving.carve_passages(rng, walls, mask, x=0, y=0, difficulty=difficulty)
 
     start = (0, 0)
     end = (size - 1, size - 1)
@@ -102,6 +102,7 @@ def build_masked(
     width: int,
     height: int,
     difficulty: Difficulty,
+    *,
     shape: MazeShape,
     raw_mask: Mask,
 ) -> Maze:
@@ -123,7 +124,7 @@ def build_diamond(
     difficulty: Difficulty,
 ) -> Maze:
     """Генерирует лабиринт в форме ромба."""
-    return build_masked(rng, width, height, difficulty, MazeShape.DIAMOND, masks.diamond_mask(width, height))
+    return build_masked(rng, width, height, difficulty, shape=MazeShape.DIAMOND, raw_mask=masks.diamond_mask(width, height))
 
 
 def build_heart(
@@ -133,7 +134,7 @@ def build_heart(
     difficulty: Difficulty,
 ) -> Maze:
     """Генерирует лабиринт в форме сердца."""
-    return build_masked(rng, width, height, difficulty, MazeShape.HEART, masks.heart_mask(width, height))
+    return build_masked(rng, width, height, difficulty, shape=MazeShape.HEART, raw_mask=masks.heart_mask(width, height))
 
 
 def build_triangular(
@@ -150,7 +151,7 @@ def build_triangular(
         return build_rectangular(rng, width, height, difficulty)
 
     walls = _new_walls(width, height)
-    carving.carve_passages(rng, walls, mask, start[0], start[1], difficulty)
+    carving.carve_passages(rng, walls, mask, x=start[0], y=start[1], difficulty=difficulty)
 
     end = masks.last_cell(mask) or (width - 1, height - 1)
 
@@ -246,9 +247,9 @@ def _try_carved_maze(
     if start is None:
         return None
 
-    carving.carve_passages(rng, walls, mask, start[0], start[1], difficulty)
+    carving.carve_passages(rng, walls, mask, x=start[0], y=start[1], difficulty=difficulty)
     if chaotic:
-        carving.add_chaotic_shortcuts(rng, walls, mask, width, height, difficulty)
+        carving.add_chaotic_shortcuts(rng, walls, mask, width=width, height=height, difficulty=difficulty)
 
     end = solver.find_farthest_boundary_cell(walls, mask, start, width, height)
     if end is None or end == start:

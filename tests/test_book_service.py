@@ -1,7 +1,7 @@
 """Unit-тесты для BookService и функций book_factory/marketplace с моками."""
 
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 from maze_book_generator.application.book_factory import (
     build_book_config,
@@ -12,7 +12,6 @@ from maze_book_generator.application.book_factory import (
     page_shape,
     resolve_language,
 )
-from maze_book_generator.application.book_service import BookService
 from maze_book_generator.domain.models import (
     BookConfig,
     Difficulty,
@@ -31,18 +30,6 @@ from maze_book_generator.utils import create_rng
 class TestBookService:
     """Проверяет логику сервиса генерации книг с моками."""
 
-    def setup_method(self) -> None:
-        """Инициализация сервиса с моками контейнера."""
-        with patch("maze_book_generator.application.book_service.container") as mock_container:
-            mock_container.maze_generator = MagicMock()
-            mock_container.ai_client = MagicMock()
-            mock_container.theme_repository = MagicMock()
-            mock_container.preview_generator = MagicMock()
-            mock_container.hf_client = MagicMock()
-            mock_container.pollinations_client = MagicMock()
-            mock_container.replicate_client = MagicMock()
-
-            self.service = BookService()
 
     def test_resolve_language_with_config(self) -> None:
         """Язык из BookConfig имеет приоритет."""
@@ -139,6 +126,10 @@ class TestBookService:
         assert config.title == "Custom Title"
         assert config.age_range == "5-8 years"
         assert config.maze_count == 10
+
+class TestPageStrategies:
+    """Набор тестов."""
+
 
     def test_get_page_difficulty_fixed(self) -> None:
         """Режим FIXED возвращает базовую сложность."""
@@ -259,6 +250,10 @@ class TestBookService:
         prompt = page_prompt(theme, 5)
         assert "maze" in prompt.lower()
         assert "6" in prompt  # index + 1
+
+class TestMarketplaceStorage:
+    """Набор тестов."""
+
 
     def test_next_free_book_id_empty_dir(self, tmp_path: Path) -> None:
         """Следующий ID в пустой директории."""

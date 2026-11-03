@@ -8,6 +8,9 @@ from maze_book_generator.domain.maze.difficulty import effective_level, lerp
 from maze_book_generator.domain.maze.types import Mask, Point
 from maze_book_generator.domain.models import Difficulty
 
+# Шаги к 4-соседям: вверх, вправо, вниз, влево
+_neighbor_steps: list[Point] = [(0, -1), (1, 0), (0, 1), (-1, 0)]
+
 
 def diamond_mask(width: int, height: int) -> Mask:
     """Создаёт маску ромба."""
@@ -113,7 +116,6 @@ def chaotic_connected_mask(
 
     frontier: list[Point] = [(cx, cy)]
     carved = 1
-    directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]
 
     while carved < target_cells:
         if not frontier:
@@ -127,34 +129,81 @@ def chaotic_connected_mask(
                 break
             frontier.append(rng.choice(connected_cells))
 
-        x, y = rng.choice(frontier)
-        rng.shuffle(directions)
-        expanded = False
-
-        for dx, dy in directions:
-            nx, ny = x + dx, y + dy
-            if not (0 <= nx < width and 0 <= ny < height):
-                continue
-            if mask[ny][nx]:
-                continue
-
-            dist = abs(nx - cx) + abs(ny - cy)
-            max_dist = max(1, cx + cy)
-            distance_penalty = dist / max_dist
-            growth_chance = 0.92 - 0.30 * distance_penalty
-            if rng.random() > growth_chance:
-                continue
-
-            mask[ny][nx] = True
-            frontier.append((nx, ny))
+        point = rng.choice(frontier)
+        grown = _grow_cell(rng, mask, point, center=(cx, cy), size=(width, height))
+        if grown is not None:
+            frontier.append(grown)
             carved += 1
-            expanded = True
-            break
-
-        if not expanded and (x, y) in frontier:
-            frontier.remove((x, y))
+        elif point in frontier:
+            frontier.remove(point)
 
     return mask
+
+
+def _grow_cell(
+    rng: random.Random,
+    mask: Mask,
+    point: Point,
+    *,
+    center: Point,
+    size: tuple[int, int],
+) -> Point | None:
+    """
+    Пытается вырасти из point в случайном направлении.
+
+    Вероятность роста падает с удалением от центра — маска получается
+    компактной, но с хаотичными краями. Возвращает новую ячейку или None.
+    """
+    width, height = size
+    x, y = point
+    directions = list(_neighbor_steps)
+    rng.shuffle(directions)
+
+    for dx, dy in directions:
+        nx, ny = x + dx, y + dy
+        if not (0 <= nx < width and 0 <= ny < height):
+            continue
+        if mask[ny][nx]:
+            continue
+
+        dist = abs(nx - center[0]) + abs(ny - center[1])
+        max_dist = max(1, center[0] + center[1])
+        distance_penalty = dist / max_dist
+        growth_chance = 0.92 - 0.30 * distance_penalty
+        if rng.random() > growth_chance:
+            continue
+
+        mask[ny][nx] = True
+        return (nx, ny)
+    return None
+
+
+def _flood_component(
+    mask: Mask,
+    start: Point,
+    visited: set[Point],
+    width: int,
+    height: int,
+) -> set[Point]:
+    """Собирает 4-связную компоненту от start, пополняя visited (BFS)."""
+    component: set[Point] = set()
+    queue = deque([start])
+    visited.add(start)
+
+    while queue:
+        cx, cy = queue.popleft()
+        component.add((cx, cy))
+
+        for dx, dy in _neighbor_steps:
+            nx, ny = cx + dx, cy + dy
+            if not (0 <= nx < width and 0 <= ny < height):
+                continue
+            if not mask[ny][nx] or (nx, ny) in visited:
+                continue
+            visited.add((nx, ny))
+            queue.append((nx, ny))
+
+    return component
 
 
 def extract_largest_component(mask: Mask, width: int, height: int) -> Mask:
@@ -167,23 +216,7 @@ def extract_largest_component(mask: Mask, width: int, height: int) -> Mask:
             if not mask[y][x] or (x, y) in visited:
                 continue
 
-            component: set[Point] = set()
-            queue = deque([(x, y)])
-            visited.add((x, y))
-
-            while queue:
-                cx, cy = queue.popleft()
-                component.add((cx, cy))
-
-                for dx, dy in ((0, -1), (1, 0), (0, 1), (-1, 0)):
-                    nx, ny = cx + dx, cy + dy
-                    if not (0 <= nx < width and 0 <= ny < height):
-                        continue
-                    if not mask[ny][nx] or (nx, ny) in visited:
-                        continue
-                    visited.add((nx, ny))
-                    queue.append((nx, ny))
-
+            component = _flood_component(mask, (x, y), visited, width, height)
             if len(component) > len(largest_component):
                 largest_component = component
 

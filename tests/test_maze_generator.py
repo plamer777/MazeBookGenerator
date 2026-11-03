@@ -36,6 +36,14 @@ class TestMazeGenerator:
         # L4 ≈ 5.89 (фактическое значение)
         assert effective_level(Difficulty.L4) == pytest.approx(5.89, abs=10**-1)
 
+class TestMazeShapes:
+    """Набор тестов."""
+
+    def setup_method(self) -> None:
+        """Инициализация генератора с фиксированным seed для воспроизводимости."""
+        self.generator = MazeGenerator(seed=42)
+
+
     def test_rectangular_maze_generation(self) -> None:
         """Генерация прямоугольного лабиринта должна создавать валидный объект Maze."""
         maze = self.generator.generate(10, 8, Difficulty.MEDIUM, MazeShape.RECTANGULAR)
@@ -128,6 +136,14 @@ class TestMazeGenerator:
                 assert isinstance(cell[1], bool)
                 assert isinstance(cell[2], bool)
                 assert isinstance(cell[3], bool)
+
+class TestMazeDifficultyAndMasks:
+    """Набор тестов."""
+
+    def setup_method(self) -> None:
+        """Инициализация генератора с фиксированным seed для воспроизводимости."""
+        self.generator = MazeGenerator(seed=42)
+
 
     def test_difficulty_scaling(self) -> None:
         """Сложность должна влиять на размер сетки."""

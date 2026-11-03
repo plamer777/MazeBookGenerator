@@ -39,6 +39,14 @@ class TestPreviewGenerator:
         assert number == "10"
         assert noun == "ЛАБИРИНТОВ"
 
+class TestPreviewLoading:
+    """Набор тестов."""
+
+    def setup_method(self) -> None:
+        """Инициализация генератора."""
+        self.generator = PreviewGenerator()
+
+
     def test_load_cover_from_pdf(self, tmp_path: Path) -> None:
         """Загрузка обложки из PDF."""
         with patch("maze_book_generator.infrastructure.preview_generator.convert_from_path") as mock_convert:
@@ -101,6 +109,14 @@ class TestPreviewGenerator:
             pages = self.generator._load_pages_from_pdf(tmp_path, count=3)
 
             assert len(pages) == 3  # плейсхолдеры
+
+class TestPreviewGeneration:
+    """Набор тестов."""
+
+    def setup_method(self) -> None:
+        """Инициализация генератора."""
+        self.generator = PreviewGenerator()
+
 
     def test_generate_previews_with_mock_dependencies(self, tmp_path: Path) -> None:
         """Генерация preview с моками зависимостей."""

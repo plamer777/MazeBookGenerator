@@ -22,6 +22,7 @@ def carve_passages(
     rng: random.Random,
     walls: Walls,
     mask: Mask,
+    *,
     x: int,
     y: int,
     difficulty: Difficulty,
@@ -120,6 +121,7 @@ def add_loops_by_difficulty(
     width: int,
     height: int,
     difficulty: Difficulty,
+    *,
     mask: Mask | None,
 ) -> None:
     """
@@ -142,20 +144,13 @@ def add_loops_by_difficulty(
     if loop_rate <= 0.0:
         return
 
-    total_cells = sum(
-        1
-        for y in range(height)
-        for x in range(width)
-        if mask is None or mask[y][x]
-    )
-    num_loops = int(total_cells * loop_rate)
-
     candidates = [
         (x, y)
         for y in range(height)
         for x in range(width)
         if mask is None or mask[y][x]
     ]
+    num_loops = int(len(candidates) * loop_rate)
 
     added = 0
     attempts = 0
@@ -176,6 +171,7 @@ def add_chaotic_shortcuts(
     rng: random.Random,
     walls: Walls,
     mask: Mask,
+    *,
     width: int,
     height: int,
     difficulty: Difficulty,

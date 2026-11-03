@@ -159,7 +159,8 @@ def _render_page_maze(
 
 
 
-def render_maze_fitted(ctx: RenderContext,
+def render_maze_fitted(
+    ctx: RenderContext,
     c: canvas.Canvas,
     maze: Maze,
     area: Rect,
@@ -185,7 +186,8 @@ def render_maze_fitted(ctx: RenderContext,
 
 
 
-def _render_polar_fitted(ctx: RenderContext,
+def _render_polar_fitted(
+    ctx: RenderContext,
     c: canvas.Canvas,
     maze: Maze,
     area: Rect,
@@ -203,7 +205,8 @@ def _render_polar_fitted(ctx: RenderContext,
 
 
 
-def _render_grid_fitted(ctx: RenderContext,
+def _render_grid_fitted(
+    ctx: RenderContext,
     c: canvas.Canvas,
     maze: Maze,
     area: Rect,

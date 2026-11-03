@@ -24,7 +24,7 @@ class TestPDFRenderer:
 
     def test_book_title_from_config(self) -> None:
         """Название книги должно браться из конфигурации, если задано."""
-        book = self._create_test_book()
+        book = _create_test_book()
         self.config.title = "Custom Title"
 
         title = cover.book_title(self.renderer.ctx, book)
@@ -32,7 +32,7 @@ class TestPDFRenderer:
 
     def test_book_title_from_theme(self) -> None:
         """Название книги должно браться из темы, если не задано в конфигурации."""
-        book = self._create_test_book()
+        book = _create_test_book()
         self.config.title = None
 
         title = cover.book_title(self.renderer.ctx, book)
@@ -47,7 +47,7 @@ class TestPDFRenderer:
 
     def test_book_maze_count_from_config(self) -> None:
         """Количество лабиринтов должно браться из конфигурации, если задано."""
-        book = self._create_test_book()
+        book = _create_test_book()
         self.config.maze_count = 15
 
         count = cover.book_maze_count(self.renderer.ctx, book)
@@ -55,7 +55,7 @@ class TestPDFRenderer:
 
     def test_book_maze_count_from_book(self) -> None:
         """Количество лабиринтов должно считаться из страниц, если не задано в конфигурации."""
-        book = self._create_test_book()
+        book = _create_test_book()
         self.config.maze_count = None
 
         count = cover.book_maze_count(self.renderer.ctx, book)
@@ -85,6 +85,15 @@ class TestPDFRenderer:
 
         label = cover.book_age_label(self.renderer.ctx)
         assert label is None
+
+class TestCoverAndText:
+    """Набор тестов."""
+
+    def setup_method(self) -> None:
+        """Инициализация рендерера с тестовой конфигурацией."""
+        self.config = BookConfig(language="en")
+        self.renderer = PDFRenderer(language="en", book_config=self.config)
+
 
     def test_cover_mazes_label_english(self) -> None:
         """Метка количества лабиринтов должна быть локализована для английского."""
@@ -201,9 +210,18 @@ class TestPDFRenderer:
         )
         assert font_size < 34  # начальный размер
 
+class TestRenderBook:
+    """Набор тестов."""
+
+    def setup_method(self) -> None:
+        """Инициализация рендерера с тестовой конфигурацией."""
+        self.config = BookConfig(language="en")
+        self.renderer = PDFRenderer(language="en", book_config=self.config)
+
+
     def test_render_book_calls_render_cover(self) -> None:
         """Рендер книги должен вызывать рендер обложки."""
-        book = self._create_test_book()
+        book = _create_test_book()
         output_path = MagicMock()
 
         with (
@@ -223,7 +241,7 @@ class TestPDFRenderer:
 
     def test_render_book_with_contents_page(self) -> None:
         """При include_contents_page=True должна рендериться страница contents."""
-        book = self._create_test_book()
+        book = _create_test_book()
         self.config.include_contents_page = True
         output_path = MagicMock()
 
@@ -245,7 +263,7 @@ class TestPDFRenderer:
 
     def test_render_book_without_contents_page(self) -> None:
         """При include_contents_page=False страница contents не должна рендериться."""
-        book = self._create_test_book()
+        book = _create_test_book()
         self.config.include_contents_page = False
         output_path = MagicMock()
 
@@ -265,66 +283,68 @@ class TestPDFRenderer:
 
             mock_contents.assert_not_called()
 
-    def _create_test_book(self) -> Book:
-        """Создаёт тестовый объект Book."""
-        from maze_book_generator.domain.models import PagePrompt
 
-        theme = Theme(
-            book_title="Test Theme",
-            book_description="Test description",
-            marketplace_title="Marketplace Title",
-            marketplace_description="Marketplace description",
-            page_prompts=[
-                PagePrompt(task="Task 1", heroes=["hero1"]),
-                PagePrompt(task="Task 2", heroes=["hero2"]),
-            ],
-            image_keywords=[["key1", "key2"], ["key3", "key4"]],
-        )
+def _create_test_book() -> Book:
+    """Создаёт тестовый объект Book."""
+    book_config = BookConfig(language="en")
+    from maze_book_generator.domain.models import PagePrompt
 
-        maze1 = Maze(
-            grid=[[1 for _ in range(10)] for _ in range(8)],
-            width=10,
-            height=8,
-            start=(0, 0),
-            end=(9, 7),
-            difficulty=Difficulty.MEDIUM,
-            shape=MazeShape.RECTANGULAR,
-            solution_path=[(0, 0), (9, 7)],
-            walls=[[[True, True, True, True] for _ in range(10)] for _ in range(8)],
-        )
+    theme = Theme(
+        book_title="Test Theme",
+        book_description="Test description",
+        marketplace_title="Marketplace Title",
+        marketplace_description="Marketplace description",
+        page_prompts=[
+            PagePrompt(task="Task 1", heroes=["hero1"]),
+            PagePrompt(task="Task 2", heroes=["hero2"]),
+        ],
+        image_keywords=[["key1", "key2"], ["key3", "key4"]],
+    )
 
-        maze2 = Maze(
-            grid=[[1 for _ in range(10)] for _ in range(8)],
-            width=10,
-            height=8,
-            start=(0, 0),
-            end=(9, 7),
-            difficulty=Difficulty.MEDIUM,
-            shape=MazeShape.RECTANGULAR,
-            solution_path=[(0, 0), (9, 7)],
-            walls=[[[True, True, True, True] for _ in range(10)] for _ in range(8)],
-        )
+    maze1 = Maze(
+        grid=[[1 for _ in range(10)] for _ in range(8)],
+        width=10,
+        height=8,
+        start=(0, 0),
+        end=(9, 7),
+        difficulty=Difficulty.MEDIUM,
+        shape=MazeShape.RECTANGULAR,
+        solution_path=[(0, 0), (9, 7)],
+        walls=[[[True, True, True, True] for _ in range(10)] for _ in range(8)],
+    )
 
-        page1 = BookPage(
-            page_number=1,
-            maze=maze1,
-            title="Page 1",
-            prompt="Task 1",
-            is_solution=False,
-        )
+    maze2 = Maze(
+        grid=[[1 for _ in range(10)] for _ in range(8)],
+        width=10,
+        height=8,
+        start=(0, 0),
+        end=(9, 7),
+        difficulty=Difficulty.MEDIUM,
+        shape=MazeShape.RECTANGULAR,
+        solution_path=[(0, 0), (9, 7)],
+        walls=[[[True, True, True, True] for _ in range(10)] for _ in range(8)],
+    )
 
-        page2 = BookPage(
-            page_number=2,
-            maze=maze2,
-            title="Page 2",
-            prompt="Task 2",
-            is_solution=False,
-        )
+    page1 = BookPage(
+        page_number=1,
+        maze=maze1,
+        title="Page 1",
+        prompt="Task 1",
+        is_solution=False,
+    )
 
-        return Book(
-            id=1,
-            theme=theme,
-            pages=[page1, page2],
-            output_dir="test_output",
-            config=self.config,
-        )
+    page2 = BookPage(
+        page_number=2,
+        maze=maze2,
+        title="Page 2",
+        prompt="Task 2",
+        is_solution=False,
+    )
+
+    return Book(
+        id=1,
+        theme=theme,
+        pages=[page1, page2],
+        output_dir="test_output",
+        config=book_config,
+    )

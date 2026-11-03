@@ -49,6 +49,10 @@ class TestBookTexts:
         assert en_texts.format("outro_heading_personal", name="Alex") == "Great work, Alex!"
         assert ru_texts.format("outro_heading_personal", name="Алекс") == "Отличная работа, Алекс!"
 
+class TestBookTextsSections:
+    """Набор тестов."""
+
+
     def test_cover_texts_english(self) -> None:
         """Проверка текстов обложки для английского."""
         texts = BookTexts("en")
@@ -120,6 +124,10 @@ class TestBookTexts:
         assert texts.get("difficulty_medium") == "Средний"
         assert texts.get("difficulty_hard") == "Сложный"
         assert texts.format("difficulty_caption", value="Средний") == "Уровень: Средний"
+
+class TestBookTextsIntroOutro:
+    """Набор тестов."""
+
 
     def test_intro_texts_english(self) -> None:
         """Проверка текстов intro-страницы для английского."""

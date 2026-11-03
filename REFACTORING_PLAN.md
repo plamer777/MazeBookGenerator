@@ -221,6 +221,23 @@ tests/                        # pytest, зеркалит структуру src
   осознанно оставлены: print-прогресс в book_service (CLI-вывод),
   if-цепочки стратегий в book_factory, имя файла book_into.txt
 
+### Этап 9 — Закрытие baseline-долга (quality полностью зелёный)
+- Все наследованные findings исправлены рефакторингом, без расширения baseline:
+  - domain/maze: RUF031 (solver), PLR0917 (carving/grid → keyword-only
+    параметры), PLR0914 (masks, polar → выделение хелперов),
+    PLR1702 (extract_largest_component → хелпер BFS-компоненты),
+    PLR0904 (PolarTopologyService → radial_angle/validate_connections
+    вынесены на модульный уровень рядом с connect_cells)
+  - тесты R0904: 7 классов разделены на фокусные по зонам
+    (test_polar → 4, book_service → 3, pdf_renderer → 3,
+    localization → 3, ai_client → 3, maze_generator → 3,
+    preview_generator → 3); мёртвый setup_method в test_book_service
+    удалён, _create_test_book → модульная фабрика
+- Итог: quality-gate all = 0 findings (ruff, pylint, pyright, constants,
+  import-linter, semgrep, package-structure), baseline очищен,
+  195 тестов, coverage 82%, seed-детерминизм RECTANGULAR/CIRCULAR/CHAOTIC
+  подтверждён
+
 ## Правила приёмки (для оркестратора/воркеров)
 
 1. Каждый этап = отдельный коммит; pytest зелёный обязателен
