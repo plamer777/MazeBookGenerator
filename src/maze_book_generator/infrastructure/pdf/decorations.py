@@ -1,5 +1,7 @@
 """Декоративные элементы страниц: меандр, рамки, орнаменты, уголки."""
 
+from __future__ import annotations
+
 import math
 import random
 
@@ -20,6 +22,7 @@ def render_maze_band(ctx: RenderContext,
     y_bottom: float,
     band_h: float,
     cell: float,
+    *,
     accent: tuple[float, float, float],
 ) -> None:
     """
@@ -104,6 +107,7 @@ def _meander_side(pts: list[tuple[float, float]],
     end: tuple[float, float],
     normal: tuple[float, float],
     tooth: float,
+    *,
     depth: float = 4 * mm,
 ) -> None:
     """Добавляет зигзагообразные точки одной меандровой стороны к pts."""
@@ -304,7 +308,7 @@ def _corner_positions(ctx: RenderContext, frame_m: float, pad: float) -> list[tu
 
 
 
-def _scatter_ring(placer: "_EdgePlacer",
+def _scatter_ring(placer: _EdgePlacer,
     rng: random.Random,
     colors: list[tuple[float, float, float]],
     spec: DecoRingSpec,

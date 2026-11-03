@@ -25,7 +25,7 @@ def draw_polar_geometry(ctx: RenderContext,
     c.setStrokeColorRGB(0, 0, 0)
     c.setLineWidth(1.0)
     _draw_polar_walls(c, topology, _collect_connections(maze, topology), view, end_cell)
-    _draw_polar_markers(ctx, c, topology, view, end_cell, params.show_labels)
+    _draw_polar_markers(ctx, c, topology, view, end_cell, show_labels=params.show_labels)
 
     if params.show_solution and maze.solution_path:
         render_polar_solution_path(c, maze.solution_path, view, topology)
@@ -51,7 +51,7 @@ def _draw_polar_walls(c: canvas.Canvas,
         for sector in range(count):
             cell = (ring, sector)
             linked = connections[cell]
-            _draw_cell_arcs(c, topology, view, cell, linked, end_cell)
+            _draw_cell_arcs(c, topology, view, cell, linked, end_cell=end_cell)
             _draw_radial_wall(c, topology, view, cell, linked)
 
 
@@ -60,6 +60,7 @@ def _draw_cell_arcs(c: canvas.Canvas,
     view: PolarView,
     cell: tuple[int, int],
     linked: set[tuple[int, int]],
+    *,
     end_cell: tuple[int, int],
 ) -> None:
     """Рисует внутренние и наружные дуговые стены одной ячейки."""
@@ -114,6 +115,7 @@ def _draw_polar_markers(ctx: RenderContext,
     topology: PolarTopologyService,
     view: PolarView,
     end_cell: tuple[int, int],
+    *,
     show_labels: bool,
 ) -> None:
     """Рисует маркеры старта и финиша полярного лабиринта."""
@@ -214,7 +216,7 @@ class _SolutionCursor:
     def arc_to(self, c: canvas.Canvas, radius: float, arc_end: float, segments: int) -> None:
         """Дуга от текущего угла до arc_end на заданном радиусе."""
         draw_arc_from(c, (self._view.center_x, self._view.center_y),
-                      radius, self.angle, arc_end, segments)
+                      radius, self.angle, arc_end, segments=segments)
         self.angle = arc_end
         self.radius = radius
         self.x, self.y = self.to_xy(radius, arc_end)
@@ -282,6 +284,7 @@ def draw_arc(c: canvas.Canvas,
     radius: float,
     angle_start: float,
     angle_end: float,
+    *,
     segments: int = 16,
 ) -> None:
     """Рисует дугу от angle_start до angle_end (направление задаётся знаком разности)."""
@@ -304,6 +307,7 @@ def draw_arc_from(c: canvas.Canvas,
     radius: float,
     angle_start: float,
     angle_end: float,
+    *,
     segments: int = 16,
 ) -> None:
     """Рисует дугу от angle_start до angle_end без автоисправления направления."""

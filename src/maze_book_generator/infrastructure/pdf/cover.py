@@ -85,6 +85,7 @@ def fit_cover_title_layout(ctx: RenderContext,
     title: str,
     max_width: float,
     max_lines: int = 5,
+    *,
     max_title_block_height: float | None = None,
 ) -> tuple[int, list[str]]:
     """Подбирает размер шрифта и переносы строк для заголовка обложки."""
@@ -256,7 +257,7 @@ def _draw_cover_text_block(ctx: RenderContext,
 
     center_x = ctx.page_width / 2
     cursor = center_y + content_h / 2
-    cursor = _draw_cover_title(ctx, c, title_lines, title_size, (center_x, cursor), cover_accent)
+    cursor = _draw_cover_title(ctx, c, title_lines, title_size, (center_x, cursor), cover_accent=cover_accent)
     cursor = _draw_cover_subtitle(ctx, c, subtitle, center_x, cursor)
     _draw_cover_info(ctx, c, info_lines, center_x, cursor)
 
@@ -267,6 +268,7 @@ def _draw_cover_title(ctx: RenderContext,
     title_lines: list[str],
     title_size: int,
     pos: tuple[float, float],
+    *,
     cover_accent: tuple[float, float, float],
 ) -> float:
     """Рисует строки заголовка с тенью. Возвращает позицию курсора."""

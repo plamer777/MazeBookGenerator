@@ -1,5 +1,7 @@
 """Контекст рендеринга PDF: геометрия страницы, шрифты, тексты и конфигурация."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass
 
 from reportlab.lib.units import mm
@@ -29,7 +31,7 @@ class RenderContext:
         language: Language = "en",
         book_config: BookConfig | None = None,
         print_friendly: bool = False,
-    ) -> "RenderContext":
+    ) -> RenderContext:
         """Создаёт контекст с параметрами страницы из settings."""
         return cls(
             page_width=settings.PDF_PAGE_WIDTH * mm,

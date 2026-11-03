@@ -217,7 +217,7 @@ def _render_grid_fitted(ctx: RenderContext,
     start_x = area.x + (area.width - maze_w_px) / 2
     start_y = area.y + (area.height - maze_h_px) / 2
     fitted_ctx = dataclasses.replace(ctx, cell_size=fit_cell)
-    render_maze_at(fitted_ctx, c, maze, start_x, start_y, params)
+    render_maze_at(fitted_ctx, c, maze, start_x, start_y, params=params)
 
 
 
@@ -226,6 +226,7 @@ def render_maze_at(ctx: RenderContext,
     maze: Maze,
     start_x: float,
     start_y: float,
+    *,
     params: MazeDrawParams,
 ) -> None:
     """
@@ -241,11 +242,11 @@ def render_maze_at(ctx: RenderContext,
         start_y: Y левого нижнего угла
         params: Флаги отрисовки (решение, подписи)
     """
-    grid.draw_grid_body(c, maze, ctx.cell_size, start_x, start_y, _shape_mask(maze))
+    grid.draw_grid_body(c, maze, ctx.cell_size, start_x, start_y, mask=_shape_mask(maze))
     grid.render_start_end(ctx, c, maze, start_x, start_y, show_labels=params.show_labels)
 
     if params.show_solution and maze.solution_path:
-        grid.render_solution_path(ctx, c, maze, maze.solution_path, start_x, start_y)
+        grid.render_solution_path(ctx, c, maze, maze.solution_path, (start_x, start_y))
 
 
 

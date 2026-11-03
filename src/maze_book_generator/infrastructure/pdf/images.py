@@ -3,6 +3,7 @@
 import io
 import logging
 import math
+import random
 from pathlib import Path
 
 from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageOps
@@ -154,84 +155,106 @@ def render_image_collage(ctx: RenderContext,
         alpha: Прозрачность изображений (не изменяется)
         seed: Seed для детерминированной вариативности коллажа
     """
-    if not illustrations_dir.exists():
+    pool = _collage_pool(illustrations_dir, seed)
+    if not pool:
         return
+    rng = create_rng(seed)
+    margin = 12 * mm
+    for slot in _collage_slots(pool):
+        _draw_collage_item(ctx, c, rng, slot, margin=margin, alpha=alpha)
 
+
+
+def _collage_pool(illustrations_dir: Path, seed: int | None) -> list[Path]:
+    """Возвращает перемешанный пул изображений на 5 слотов коллажа."""
+    if not illustrations_dir.exists():
+        return []
     images = list(illustrations_dir.glob("*.png"))
     if not images:
-        return
-
+        return []
     rng = create_rng(seed)
-
-    # Перемешиваем и при необходимости повторяем, чтобы хватило на 5 слотов
     pool = images.copy()
     rng.shuffle(pool)
     while len(pool) < 5:
         pool.append(rng.choice(images))
+    return pool
 
-    pw, ph = ctx.page_width, ctx.page_height
-    margin = 12 * mm
 
-    # Слоты: (img_path, scale_range, cx_frac, cy_frac, angle_range)
-    # cx/cy — доля от размера страницы для центра изображения
-    slots = [
-        # --- центральное крупное ---
+
+def _collage_slots(pool: list[Path],
+) -> list[tuple[Path, tuple[float, float], float, float, tuple[float, float]]]:
+    """Слоты коллажа: (img_path, scale_range, cx_frac, cy_frac, angle_range)."""
+    return [
         (pool[0], (0.62, 0.70), 0.50, 0.50, (-8.0, 8.0)),
-        # --- углы: TL, TR, BL, BR ---
-        (pool[1], (0.20, 0.28), 0.0, 1.0, (-15.0, 15.0)),  # TL (пересчитывается ниже)
-        (pool[2], (0.20, 0.28), 1.0, 1.0, (-15.0, 15.0)),  # TR
-        (pool[3], (0.20, 0.28), 0.0, 0.0, (-15.0, 15.0)),  # BL
-        (pool[4], (0.20, 0.28), 1.0, 0.0, (-15.0, 15.0)),  # BR
+        (pool[1], (0.20, 0.28), 0.0, 1.0, (-15.0, 15.0)),
+        (pool[2], (0.20, 0.28), 1.0, 1.0, (-15.0, 15.0)),
+        (pool[3], (0.20, 0.28), 0.0, 0.0, (-15.0, 15.0)),
+        (pool[4], (0.20, 0.28), 1.0, 0.0, (-15.0, 15.0)),
     ]
 
-    for i, (img_path, scale_range, cx_frac, cy_frac, angle_range) in enumerate(slots):
-        try:
-            img = Image.open(img_path).convert("RGBA")
 
-            r, g, b, a = img.split()
-            a = a.point(lambda v: int(v * alpha))
-            img = Image.merge("RGBA", (r, g, b, a))
 
-            # Размер
-            scale = rng.uniform(*scale_range)
-            draw_w = pw * scale
-            draw_h = draw_w * (img.height / img.width)
+def _draw_collage_item(ctx: RenderContext,
+    c: canvas.Canvas,
+    rng: random.Random,
+    slot: tuple[Path, tuple[float, float], float, float, tuple[float, float]],
+    *,
+    margin: float,
+    alpha: float,
+) -> None:
+    """Рисует одно изображение коллажа: масштаб, поворот, позиция, alpha."""
+    img_path, scale_range, cx_frac, cy_frac, angle_range = slot
+    pw, ph = ctx.page_width, ctx.page_height
+    try:
+        img, rot_w, rot_h = _collage_transform(rng, _load_collage_image(img_path, alpha),
+                                             scale_range, angle_range, pw)
 
-            # Поворот
-            angle = rng.uniform(*angle_range)
-            img = img.rotate(angle, expand=True)
-            # После rotate размер расширяется — пересчитываем
-            rot_w = draw_w * abs(math.cos(math.radians(angle))) + draw_h * abs(math.sin(math.radians(angle)))
-            rot_h = draw_w * abs(math.sin(math.radians(angle))) + draw_h * abs(math.cos(math.radians(angle)))
+        jitter_x = rng.uniform(-margin * 0.5, margin * 0.5)
+        jitter_y = rng.uniform(-margin * 0.5, margin * 0.5)
+        cx = cx_frac * pw + jitter_x
+        cy = cy_frac * ph + jitter_y
+        if (cx_frac, cy_frac) != (0.5, 0.5):
+            # Угловые — прижимаем к краю с отступом
+            cx = margin + rot_w / 2 if cx_frac < 0.5 else pw - margin - rot_w / 2
+            cy = margin + rot_h / 2 if cy_frac < 0.5 else ph - margin - rot_h / 2
+            cx += jitter_x
+            cy += jitter_y
 
-            # Позиция центра слота с небольшим случайным смещением
-            jitter_x = rng.uniform(-margin * 0.5, margin * 0.5)
-            jitter_y = rng.uniform(-margin * 0.5, margin * 0.5)
-            cx = cx_frac * pw + jitter_x
-            cy = cy_frac * ph + jitter_y
+        buf = io.BytesIO()
+        img.save(buf, format="PNG")
+        buf.seek(0)
+        c.drawImage(
+            ImageReader(buf),
+            cx - rot_w / 2, cy - rot_h / 2,
+            width=rot_w, height=rot_h,
+            mask="auto",
+        )
+    except (OSError, ValueError) as exc:
+        logger.debug("Пропуск изображения коллажа %s: %s", img_path, exc)
 
-            # Для угловых — прижимаем к краю с отступом
-            if i > 0:
-                half_w = rot_w / 2
-                half_h = rot_h / 2
-                cx = margin + half_w if cx_frac < 0.5 else pw - margin - half_w
-                cy = margin + half_h if cy_frac < 0.5 else ph - margin - half_h
-                cx += jitter_x
-                cy += jitter_y
 
-            draw_x = cx - rot_w / 2
-            draw_y = cy - rot_h / 2
 
-            buf = io.BytesIO()
-            img.save(buf, format="PNG")
-            buf.seek(0)
+def _collage_transform(rng,
+    img: Image.Image,
+    scale_range: tuple[float, float],
+    angle_range: tuple[float, float],
+    page_width: float,
+) -> tuple[Image.Image, float, float]:
+    """Масштабирует и поворачивает изображение коллажа. Возвращает (img, w, h)."""
+    draw_w = page_width * rng.uniform(*scale_range)
+    draw_h = draw_w * (img.height / img.width)
 
-            c.drawImage(
-                ImageReader(buf),
-                draw_x, draw_y,
-                width=rot_w, height=rot_h,
-                mask="auto",
-            )
-        except (OSError, ValueError) as exc:
-            logger.debug("Пропуск изображения коллажа %s: %s", img_path, exc)
+    angle = rng.uniform(*angle_range)
+    img = img.rotate(angle, expand=True)
+    rot_w = draw_w * abs(math.cos(math.radians(angle))) + draw_h * abs(math.sin(math.radians(angle)))
+    rot_h = draw_w * abs(math.sin(math.radians(angle))) + draw_h * abs(math.cos(math.radians(angle)))
+    return img, rot_w, rot_h
 
+
+
+def _load_collage_image(img_path: Path, alpha: float) -> Image.Image:
+    """Открывает изображение коллажа и применяет alpha-канал."""
+    img = Image.open(img_path).convert("RGBA")
+    r, g, b, a = img.split()
+    a = a.point(lambda v: int(v * alpha))
+    return Image.merge("RGBA", (r, g, b, a))

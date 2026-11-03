@@ -15,6 +15,7 @@ def draw_grid_body(c: canvas.Canvas,
     cell_size: float,
     start_x: float,
     start_y: float,
+    *,
     mask: list[list[bool]] | None = None,
 ) -> None:
     """Рисует тело сеточного лабиринта: стены или контуры ячеек по маске."""
@@ -22,9 +23,9 @@ def draw_grid_body(c: canvas.Canvas,
     c.setLineWidth(1.0)
 
     if maze.walls:
-        _draw_wall_segments(c, maze, cell_size, start_x, start_y, mask)
+        _draw_wall_segments(c, maze, cell_size, start_x, start_y, mask=mask)
     else:
-        _draw_cell_outlines(c, maze, cell_size, start_x, start_y, mask)
+        _draw_cell_outlines(c, maze, cell_size, start_x, start_y, mask=mask)
 
 
 def _draw_wall_segments(c: canvas.Canvas,
@@ -32,6 +33,7 @@ def _draw_wall_segments(c: canvas.Canvas,
     cell_size: float,
     start_x: float,
     start_y: float,
+    *,
     mask: list[list[bool]] | None,
 ) -> None:
     """Рисует стены ячеек линиями по данным maze.walls [верх, право, низ, лево]."""
@@ -57,6 +59,7 @@ def _draw_cell_outlines(c: canvas.Canvas,
     cell_size: float,
     start_x: float,
     start_y: float,
+    *,
     mask: list[list[bool]] | None,
 ) -> None:
     """Fallback-отрисовка: контуры ячеек по значению grid, если walls не заданы."""
@@ -75,19 +78,12 @@ def _draw_cell_outlines(c: canvas.Canvas,
                 )
 
 
-def render_solution_path(ctx: RenderContext, c: canvas.Canvas, maze: Maze, solution_path: list[tuple[int, int]], start_x: float, start_y: float) -> None:
-    """
-    Рисует путь решения лабиринта.
-
-    Args:
-        c: Canvas для рисования
-        maze: Объект лабиринта
-        solution_path: Список ячеек пути решения
-        start_x: Начальная координата X лабиринта
-        start_y: Начальная координата Y лабиринта
-    """
+def render_solution_path(ctx: RenderContext, c: canvas.Canvas, maze: Maze,
+                         solution_path: list[tuple[int, int]], start: tuple[float, float]) -> None:
+    """Рисует путь решения лабиринта красной линией."""
     if not solution_path or len(solution_path) < 2:
         return
+    start_x, start_y = start
 
     c.setStrokeColorRGB(1, 0, 0)  # Красный цвет для пути
     c.setLineWidth(2.0)
@@ -110,6 +106,7 @@ def render_start_end(ctx: RenderContext,
     maze: Maze,
     start_x: float,
     start_y: float,
+    *,
     show_labels: bool = False,
 ) -> None:
     """
