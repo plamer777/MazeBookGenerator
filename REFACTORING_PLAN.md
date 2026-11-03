@@ -214,6 +214,12 @@ tests/                        # pytest, зеркалит структуру src
 - Reviewer только **собирает замечания** списком; исправления вносит
   отдельный воркер. Цикл «замечания → фикс → повторное ревью» до чистого
   заключения
+- Выполнено (4cf2d4e): ревью нашло blocker (сеть в ReplicateClient.__init__),
+  6 major (pydantic Config, craiyon-py/requests, шрифты Linux-only, I/O в
+  application, дубль страниц, test_container с сетью) и ~20 minor
+  (мёртвый код, литералы, docstrings, .gitignore) — все исправлены;
+  осознанно оставлены: print-прогресс в book_service (CLI-вывод),
+  if-цепочки стратегий в book_factory, имя файла book_into.txt
 
 ## Правила приёмки (для оркестратора/воркеров)
 
