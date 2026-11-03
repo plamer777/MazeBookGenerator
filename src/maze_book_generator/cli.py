@@ -10,11 +10,14 @@ import argparse
 import asyncio
 from dataclasses import replace
 
-from maze_book_generator.application.book_factory import BookSpec
+from maze_book_generator.application.book_factory import (
+    BookSpec,
+    build_default_theme,
+)
 from maze_book_generator.application.book_service import BookService
 from maze_book_generator.application.config_presets import PRESETS, personalized
 from maze_book_generator.container import container
-from maze_book_generator.domain.models import DifficultyMode
+from maze_book_generator.domain.models import BookConfig, DifficultyMode
 
 
 def _parse_size(value: str) -> tuple[int, int]:
@@ -53,6 +56,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="режим распределения сложности (по умолчанию KIDS_EASY)",
     )
     gen.add_argument("--seed", type=int, default=None, help="базовый seed для воспроизводимости")
+    gen.add_argument(
+        "--theme",
+        default=None,
+        metavar="TITLE",
+        help="название темы без OpenAI (офлайн-режим; без флага тема генерируется AI)",
+    )
     gen.add_argument("--child-name", default=None, help="имя ребёнка для персонализации")
     gen.add_argument("--child-age", default=None, help="возраст ребёнка (с --child-name)")
     gen.add_argument("--no-images", action="store_true", help="пропустить генерацию иллюстраций")
@@ -65,7 +74,7 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _book_config_from_args(args: argparse.Namespace) -> object:
+def _book_config_from_args(args: argparse.Namespace) -> BookConfig:
     """Собирает BookConfig из аргументов CLI (пресет + переопределения)."""
     config = (
         personalized(args.preset, args.child_name, args.child_age)
@@ -93,11 +102,17 @@ async def _generate(args: argparse.Namespace) -> int:
         f"пресет {args.preset}"
     )
 
+    theme = (
+        build_default_theme(args.theme, book_config.language, args.pages)
+        if args.theme
+        else None
+    )
     service = BookService()
     books = await service.generate_batch(
         spec,
         number_of_books=args.books,
         base_seed=args.seed,
+        theme=theme,
         with_illustrations=not args.no_images,
         with_previews=not args.no_previews,
     )
@@ -116,7 +131,14 @@ def main() -> None:
     """Точка входа CLI (console script mazebook)."""
     args = build_parser().parse_args()
     if args.command == "generate":
-        raise SystemExit(asyncio.run(_generate(args)))
+        try:
+            raise SystemExit(asyncio.run(_generate(args)))
+        except ValueError as exc:
+            msg = f"Ошибка генерации: {exc}"
+            raise SystemExit(msg) from exc
+        except KeyboardInterrupt:
+            msg = "Прервано пользователем"
+            raise SystemExit(msg) from None
 
 
 if __name__ == "__main__":

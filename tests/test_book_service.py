@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, patch
 
 from maze_book_generator.application.book_factory import (
     build_book_config,
+    build_default_theme,
     difficulty_label,
     page_difficulty,
     page_prompt,
@@ -48,6 +49,17 @@ class TestBookService:
         config = BookConfig(language="ru")
         result = resolve_language("en", config)
         assert result == "ru"
+
+    def test_build_default_theme_offline(self) -> None:
+        """Офлайн-тема: локализованные задания и keywords без OpenAI."""
+        theme = build_default_theme("Моя тема", "ru", pages_per_book=3)
+
+        assert theme.book_title == "Моя тема"
+        assert len(theme.page_prompts) == 3
+        assert len(theme.image_keywords) == 3
+        assert theme.marketplace_title == "Моя тема"
+        assert "1" in theme.page_prompts[0].task
+        assert "3" in theme.page_prompts[2].task
 
     def test_resolve_language_without_config(self) -> None:
         """Язык из параметра при отсутствии config."""

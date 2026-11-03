@@ -59,6 +59,9 @@ mazebook generate --books 3 --pages 20 --size 17x13 \
 # Воспроизводимая генерация и только PDF (без иллюстраций/превью)
 mazebook generate --seed 42 --no-images --no-previews
 
+# Офлайн-режим без OpenAI-ключа: локализованная тема-заглушка
+mazebook generate --theme "Приключение в лабиринте" --no-images
+
 # Персонализированная книга
 mazebook generate --child-name Emma --child-age 6
 
@@ -75,6 +78,7 @@ python main.py generate
 | `--preset` | ru_kids_easy | Пресет BookConfig |
 | `--difficulty` | KIDS_EASY | Стратегия сложности |
 | `--seed` | — | Базовый seed (воспроизводимость) |
+| `--theme` | — | Название темы без OpenAI (офлайн-режим) |
 | `--child-name` / `--child-age` | — | Персонализация обложки |
 | `--no-images` | — | Пропустить иллюстрации |
 | `--no-previews` | — | Пропустить превью |

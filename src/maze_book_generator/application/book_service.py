@@ -181,12 +181,16 @@ class BookService:
         book_id: int,
         spec: BookSpec,
         *,
+        theme: Theme | None = None,
         with_illustrations: bool = True,
         with_previews: bool = True,
     ) -> Book:
         """Генерирует полную книгу со всеми медиа-файлами и превью."""
         effective_language = resolve_language(spec.language, spec.book_config)
-        book = await self.generate_book_with_ai_theme(book_id=book_id, spec=spec)
+        if theme is None:
+            book = await self.generate_book_with_ai_theme(book_id=book_id, spec=spec)
+        else:
+            book = self.generate_book(book_id=book_id, theme=theme, spec=spec)
 
         if with_illustrations:
             self.generate_page_illustrations(book)
@@ -213,6 +217,7 @@ class BookService:
         number_of_books: int,
         base_seed: int | None = None,
         *,
+        theme: Theme | None = None,
         with_illustrations: bool = True,
         with_previews: bool = True,
     ) -> list[Book]:
@@ -226,6 +231,7 @@ class BookService:
             spec: Параметры генерации одной книги
             number_of_books: Количество книг
             base_seed: Опциональный seed. Если None — каждый запуск рандомен.
+            theme: Опциональная готовая тема; если None — генерируется через OpenAI.
 
         Returns:
             Список сгенерированных книг
@@ -267,6 +273,7 @@ class BookService:
             book = await self.generate_book_complete(
                 book_id=book_id,
                 spec=book_spec,
+                theme=theme,
                 with_illustrations=with_illustrations,
                 with_previews=with_previews,
             )

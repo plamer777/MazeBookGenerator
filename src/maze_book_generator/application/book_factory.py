@@ -13,6 +13,7 @@ from maze_book_generator.domain.models import (
     Difficulty,
     DifficultyMode,
     MazeShape,
+    PagePrompt,
     Theme,
 )
 from maze_book_generator.localization import BookTexts, Language
@@ -37,6 +38,33 @@ class BookSpec:
 def resolve_language(language: Language, config: BookConfig | None) -> Language:
     """Определяет итоговый язык: приоритет у BookConfig, параметр — fallback."""
     return config.language if config else language
+
+
+def build_default_theme(
+    title: str,
+    language: Language,
+    pages_per_book: int,
+) -> Theme:
+    """
+    Собирает офлайн-тему без обращения к OpenAI.
+
+    Задания и ключевые слова берутся из локализованных fallback-строк;
+    маркетплейс-поля совпадают с названием и описанием книги.
+    """
+    texts = BookTexts(language)
+    prompt_template = texts.get("fallback_maze_task_n")
+    keywords = texts.get("fallback_keywords").split(",")
+    return Theme(
+        book_title=title,
+        book_description=texts.get("fallback_book_description"),
+        page_prompts=[
+            PagePrompt(task=prompt_template.format(n=n), heroes=[])
+            for n in range(1, pages_per_book + 1)
+        ],
+        image_keywords=[keywords for _ in range(pages_per_book)],
+        marketplace_title=title,
+        marketplace_description=texts.get("fallback_book_description"),
+    )
 
 
 def difficulty_label(difficulty: Difficulty, texts: BookTexts) -> str:
