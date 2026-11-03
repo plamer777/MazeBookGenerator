@@ -5,7 +5,7 @@ from maze_book_generator.infrastructure.ai_client import AIClient
 from maze_book_generator.infrastructure.hf_client import HFClient
 from maze_book_generator.infrastructure.image_generator import ImageGenerator
 from maze_book_generator.infrastructure.mongodb_client import MongoDBClient
-from maze_book_generator.infrastructure.pdf_renderer import PDFRenderer
+from maze_book_generator.infrastructure.pdf import PDFRenderer
 from maze_book_generator.infrastructure.pollinations_client import PollinationsClient
 from maze_book_generator.infrastructure.preview_generator import PreviewGenerator
 from maze_book_generator.infrastructure.replicate_client import ReplicateClient

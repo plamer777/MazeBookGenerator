@@ -149,13 +149,29 @@ tests/                        # pytest, зеркалит структуру src
 - Верификация: pytest зелёный (генерация идентична по seed!), `quality-gate all` —
   C0302 для maze_generator снят
 
-### Этап 5 — PDF-декомпозиция
-- `RenderContext` dataclass (геометрия, шрифты, texts, config, print_friendly)
-- Разнести pdf_renderer по таблице; `_render_cover` (44 locals/102 stmts) →
-  `_draw_cover_background` / `_fit_title_layout` / `_draw_maze_preview` / `_draw_cover_labels`
-- `MazeDrawParams` dataclass для сигнатур 7–9 аргументов (PLR0913/0917)
-- Верификация: PDF побайтово/визуально сопоставим на фиксированном seed;
-  pytest зелёный; pylint C0302 снят, C901/PLR09xx → 0
+### Этап 5 — PDF-декомпозиция ✅
+- `infrastructure/pdf/` пакет: `context.py` (frozen `RenderContext`), `params.py`
+  (`Rect`, `MazeDrawParams`, `TextBlock`, `MarkerLabelSpec`, `BorderSideSpec`,
+  `DecoRingSpec`, `PolarView`), `fonts.py`, `renderer.py` (фасад `PDFRenderer`),
+  `cover/text/front_pages/decorations/maze_pages/images/outro` +
+  `drawing/{grid,polar,markers}`
+- `render_cover` (102 stmts) → `_draw_cover_background` / `_cover_info_lines` /
+  `_fit_cover_box` / `_draw_cover_text_block` / `_draw_cover_title` /
+  `_draw_cover_subtitle` / `_draw_cover_info`
+- Дедупликация: `draw_polar_geometry` + `_draw_polar_walls/markers` общие для
+  `render_polar_maze_at`; `draw_grid_body` + `_draw_wall_segments`/`_draw_cell_outlines`
+  общие для `render_maze_at`; `render_polar_solution_path` → `_SolutionCursor` +
+  `_step_along_ring`/`_step_across_rings`
+- `render_page_corner_deco` → `_EdgePlacer` + `_scatter_ring` (2 слоя);
+  `meander_side` → модульный `_meander_side`; frozen ctx — `dataclasses.replace`
+  вместо мутации `cell_size`
+- Мёртвые диспетчеры старого API (`render_maze`, `render_*_maze`,
+  `render_circular_maze`, `render_maze_with_mask`) удалены — разорван
+  цикл импортов grid↔polar; `except Exception` в images → `(OSError, ValueError)`
+  + `logger.debug`
+- Верификация: 194 pytest зелёные, coverage 86%, ruff по pdf-пакету 0 findings,
+  `quality-gate changed` без новых findings (IDE дважды откатывала decorations.py —
+  ловил по ruff/git diff, дозаписывал через shell)
 
 ### Этап 6 — Application + провода
 - book_service → оркестрация; сборка страниц → book_factory;

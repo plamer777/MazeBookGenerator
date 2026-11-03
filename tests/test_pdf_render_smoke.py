@@ -17,7 +17,7 @@ from maze_book_generator.domain.models import (
     PagePrompt,
     Theme,
 )
-from maze_book_generator.infrastructure.pdf_renderer import PDFRenderer
+from maze_book_generator.infrastructure.pdf import PDFRenderer
 
 ALL_SHAPES = list(MazeShape)
 

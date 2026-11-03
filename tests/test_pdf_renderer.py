@@ -1,9 +1,9 @@
-"""Unit-тесты для PDFRenderer."""
+"""Unit-тесты для PDFRenderer и функций pdf-пакета."""
 
 from unittest.mock import MagicMock, patch
 
 from maze_book_generator.domain.models import Book, BookConfig, BookPage, Difficulty, Maze, MazeShape, Theme
-from maze_book_generator.infrastructure.pdf_renderer import PDFRenderer
+from maze_book_generator.infrastructure.pdf import PDFRenderer, cover, text
 
 
 class TestPDFRenderer:
@@ -16,17 +16,18 @@ class TestPDFRenderer:
 
     def test_initialization(self) -> None:
         """Инициализация рендерера должна устанавливать корректные параметры."""
-        assert self.renderer.page_width is not None
-        assert self.renderer.page_height is not None
-        assert self.renderer.margin is not None
-        assert self.renderer.cell_size is not None
+        ctx = self.renderer.ctx
+        assert ctx.page_width is not None
+        assert ctx.page_height is not None
+        assert ctx.margin is not None
+        assert ctx.cell_size is not None
 
     def test_book_title_from_config(self) -> None:
         """Название книги должно браться из конфигурации, если задано."""
         book = self._create_test_book()
         self.config.title = "Custom Title"
 
-        title = self.renderer._book_title(book)
+        title = cover.book_title(self.renderer.ctx, book)
         assert title == "Custom Title"
 
     def test_book_title_from_theme(self) -> None:
@@ -34,14 +35,14 @@ class TestPDFRenderer:
         book = self._create_test_book()
         self.config.title = None
 
-        title = self.renderer._book_title(book)
+        title = cover.book_title(self.renderer.ctx, book)
         assert title == "Test Theme"
 
     def test_book_subtitle_from_config(self) -> None:
         """Подзаголовок должен браться из конфигурации, если задан."""
         self.config.subtitle = "Custom Subtitle"
 
-        subtitle = self.renderer._book_subtitle()
+        subtitle = cover.book_subtitle(self.renderer.ctx)
         assert subtitle == "Custom Subtitle"
 
     def test_book_maze_count_from_config(self) -> None:
@@ -49,7 +50,7 @@ class TestPDFRenderer:
         book = self._create_test_book()
         self.config.maze_count = 15
 
-        count = self.renderer._book_maze_count(book)
+        count = cover.book_maze_count(self.renderer.ctx, book)
         assert count == 15
 
     def test_book_maze_count_from_book(self) -> None:
@@ -57,14 +58,14 @@ class TestPDFRenderer:
         book = self._create_test_book()
         self.config.maze_count = None
 
-        count = self.renderer._book_maze_count(book)
+        count = cover.book_maze_count(self.renderer.ctx, book)
         assert count == 2  # 2 maze pages
 
     def test_book_age_label_from_config(self) -> None:
         """Возрастная метка должна браться из конфигурации."""
         self.config.age_range = "5-8 years"
 
-        label = self.renderer._book_age_label()
+        label = cover.book_age_label(self.renderer.ctx)
         assert label is not None
         assert "5-8" in label
 
@@ -73,7 +74,7 @@ class TestPDFRenderer:
         self.config.age_range = None
         self.config.target_age = "6-9 years"
 
-        label = self.renderer._book_age_label()
+        label = cover.book_age_label(self.renderer.ctx)
         assert label is not None
         assert "6-9" in label
 
@@ -82,7 +83,7 @@ class TestPDFRenderer:
         self.config.age_range = None
         self.config.target_age = None
 
-        label = self.renderer._book_age_label()
+        label = cover.book_age_label(self.renderer.ctx)
         assert label is None
 
     def test_cover_mazes_label_english(self) -> None:
@@ -90,7 +91,7 @@ class TestPDFRenderer:
         self.config.language = "en"
         renderer = PDFRenderer(language="en", book_config=self.config)
 
-        label = renderer._cover_mazes_label(5)
+        label = cover.cover_mazes_label(renderer.ctx, 5)
         assert label == "5 Mazes"
 
     def test_cover_mazes_label_russian(self) -> None:
@@ -98,20 +99,20 @@ class TestPDFRenderer:
         self.config.language = "ru"
         renderer = PDFRenderer(language="ru", book_config=self.config)
 
-        label = renderer._cover_mazes_label(5)
+        label = cover.cover_mazes_label(renderer.ctx, 5)
         assert label == "5 лабиринтов"
 
     def test_cover_palette_deterministic(self) -> None:
         """Палитра должна быть детерминированной для одного и того же seed."""
-        palette1 = self.renderer._cover_palette("Test")
-        palette2 = self.renderer._cover_palette("Test")
+        palette1 = cover.cover_palette("Test")
+        palette2 = cover.cover_palette("Test")
 
         assert palette1 == palette2
 
     def test_cover_palette_different_seeds(self) -> None:
         """Разные seed должны давать разные палитры."""
-        palette1 = self.renderer._cover_palette("Seed1")
-        palette2 = self.renderer._cover_palette("Seed2")
+        palette1 = cover.cover_palette("Seed1")
+        palette2 = cover.cover_palette("Seed2")
 
         # Палитры могут совпадать случайно, но с высокой вероятностью разные
         # Проверяем, что хотя бы один цвет отличается
@@ -122,7 +123,7 @@ class TestPDFRenderer:
         mock_canvas = MagicMock()
         mock_canvas.stringWidth.return_value = 50  # ширина меньше max_width
 
-        lines = self.renderer._wrap_text_to_width(mock_canvas, "Short text", "font", 12, 100)
+        lines = text.wrap_text_to_width(mock_canvas, "Short text", "font", 12, 100)
         assert len(lines) == 1
         assert lines[0] == "Short text"
 
@@ -141,7 +142,7 @@ class TestPDFRenderer:
 
         mock_canvas.stringWidth.side_effect = stringWidth_side_effect
 
-        lines = self.renderer._wrap_text_to_width(mock_canvas, "Hello world", "font", 12, 100)
+        lines = text.wrap_text_to_width(mock_canvas, "Hello world", "font", 12, 100)
         assert len(lines) == 2
         assert lines[0] == "Hello"
         assert lines[1] == "world"
@@ -156,7 +157,7 @@ class TestPDFRenderer:
 
         mock_canvas.stringWidth.side_effect = stringWidth_side_effect
 
-        chunks = self.renderer._split_long_word(mock_canvas, "VeryLongWord", "font", 12, 20)
+        chunks = text.split_long_word(mock_canvas, "VeryLongWord", "font", 12, 20)
         assert len(chunks) > 1
         # Проверяем, что общая длина соответствует исходному слову
         joined = "".join(chunks)
@@ -167,7 +168,7 @@ class TestPDFRenderer:
         mock_canvas = MagicMock()
         mock_canvas.stringWidth.return_value = 100  # влезает в max_width
 
-        font_size, lines = self.renderer._fit_cover_title_layout(mock_canvas, "Short Title", 200)
+        font_size, lines = cover.fit_cover_title_layout(self.renderer.ctx, mock_canvas, "Short Title", 200)
         assert len(lines) == 1
         assert lines[0] == "Short Title"
         assert font_size > 18
@@ -181,7 +182,9 @@ class TestPDFRenderer:
 
         mock_canvas.stringWidth.side_effect = stringWidth_side_effect
 
-        _font_size, lines = self.renderer._fit_cover_title_layout(mock_canvas, "Very Long Title Here", 100)
+        _font_size, lines = cover.fit_cover_title_layout(
+            self.renderer.ctx, mock_canvas, "Very Long Title Here", 100,
+        )
         assert len(lines) > 1
 
     def test_fit_cover_title_layout_reduces_font_size(self) -> None:
@@ -193,7 +196,9 @@ class TestPDFRenderer:
 
         mock_canvas.stringWidth.side_effect = stringWidth_side_effect
 
-        font_size, _lines = self.renderer._fit_cover_title_layout(mock_canvas, "Very Long Title", 100)
+        font_size, _lines = cover.fit_cover_title_layout(
+            self.renderer.ctx, mock_canvas, "Very Long Title", 100,
+        )
         assert font_size < 34  # начальный размер
 
     def test_render_book_calls_render_cover(self) -> None:
@@ -202,12 +207,12 @@ class TestPDFRenderer:
         output_path = MagicMock()
 
         with (
-            patch.object(self.renderer, "_render_cover") as mock_cover,
-            patch.object(self.renderer, "_render_intro_page"),
-            patch.object(self.renderer, "_render_maze_page"),
-            patch.object(self.renderer, "_render_solution_page"),
-            patch.object(self.renderer, "_render_outro_page"),
-            patch("maze_book_generator.infrastructure.pdf_renderer.canvas.Canvas") as mock_canvas_class,
+            patch("maze_book_generator.infrastructure.pdf.cover.render_cover") as mock_cover,
+            patch("maze_book_generator.infrastructure.pdf.front_pages.render_intro_page"),
+            patch("maze_book_generator.infrastructure.pdf.maze_pages.render_maze_page"),
+            patch("maze_book_generator.infrastructure.pdf.maze_pages.render_solution_page"),
+            patch("maze_book_generator.infrastructure.pdf.outro.render_outro_page"),
+            patch("maze_book_generator.infrastructure.pdf.renderer.canvas.Canvas") as mock_canvas_class,
         ):
             mock_canvas = MagicMock()
             mock_canvas_class.return_value = mock_canvas
@@ -223,13 +228,13 @@ class TestPDFRenderer:
         output_path = MagicMock()
 
         with (
-            patch.object(self.renderer, "_render_cover"),
-            patch.object(self.renderer, "_render_contents_page") as mock_contents,
-            patch.object(self.renderer, "_render_intro_page"),
-            patch.object(self.renderer, "_render_maze_page"),
-            patch.object(self.renderer, "_render_solution_page"),
-            patch.object(self.renderer, "_render_outro_page"),
-            patch("maze_book_generator.infrastructure.pdf_renderer.canvas.Canvas") as mock_canvas_class,
+            patch("maze_book_generator.infrastructure.pdf.cover.render_cover"),
+            patch("maze_book_generator.infrastructure.pdf.front_pages.render_contents_page") as mock_contents,
+            patch("maze_book_generator.infrastructure.pdf.front_pages.render_intro_page"),
+            patch("maze_book_generator.infrastructure.pdf.maze_pages.render_maze_page"),
+            patch("maze_book_generator.infrastructure.pdf.maze_pages.render_solution_page"),
+            patch("maze_book_generator.infrastructure.pdf.outro.render_outro_page"),
+            patch("maze_book_generator.infrastructure.pdf.renderer.canvas.Canvas") as mock_canvas_class,
         ):
             mock_canvas = MagicMock()
             mock_canvas_class.return_value = mock_canvas
@@ -245,13 +250,13 @@ class TestPDFRenderer:
         output_path = MagicMock()
 
         with (
-            patch.object(self.renderer, "_render_cover"),
-            patch.object(self.renderer, "_render_contents_page") as mock_contents,
-            patch.object(self.renderer, "_render_intro_page"),
-            patch.object(self.renderer, "_render_maze_page"),
-            patch.object(self.renderer, "_render_solution_page"),
-            patch.object(self.renderer, "_render_outro_page"),
-            patch("maze_book_generator.infrastructure.pdf_renderer.canvas.Canvas") as mock_canvas_class,
+            patch("maze_book_generator.infrastructure.pdf.cover.render_cover"),
+            patch("maze_book_generator.infrastructure.pdf.front_pages.render_contents_page") as mock_contents,
+            patch("maze_book_generator.infrastructure.pdf.front_pages.render_intro_page"),
+            patch("maze_book_generator.infrastructure.pdf.maze_pages.render_maze_page"),
+            patch("maze_book_generator.infrastructure.pdf.maze_pages.render_solution_page"),
+            patch("maze_book_generator.infrastructure.pdf.outro.render_outro_page"),
+            patch("maze_book_generator.infrastructure.pdf.renderer.canvas.Canvas") as mock_canvas_class,
         ):
             mock_canvas = MagicMock()
             mock_canvas_class.return_value = mock_canvas

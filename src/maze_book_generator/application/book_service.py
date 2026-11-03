@@ -15,7 +15,7 @@ from maze_book_generator.domain.models import (
     Theme,
 )
 from maze_book_generator.infrastructure.hf_client import HFClient
-from maze_book_generator.infrastructure.pdf_renderer import PDFRenderer
+from maze_book_generator.infrastructure.pdf import PDFRenderer
 from maze_book_generator.infrastructure.pollinations_client import PollinationsClient
 from maze_book_generator.infrastructure.replicate_client import ReplicateClient
 from maze_book_generator.localization import BookTexts, Language
