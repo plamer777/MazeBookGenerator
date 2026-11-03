@@ -13,16 +13,16 @@ from maze_book_generator.application.book_factory import (
     resolve_language,
 )
 from maze_book_generator.application.book_service import BookService
-from maze_book_generator.application.marketplace import (
-    next_free_book_id,
-    save_marketplace_info,
-)
 from maze_book_generator.domain.models import (
     BookConfig,
     Difficulty,
     DifficultyMode,
     MazeShape,
     Theme,
+)
+from maze_book_generator.infrastructure.storage.marketplace import (
+    next_free_book_id,
+    save_marketplace_info,
 )
 from maze_book_generator.localization import BookTexts
 from maze_book_generator.utils import create_rng

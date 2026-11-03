@@ -234,7 +234,7 @@ def _draw_collage_item(ctx: RenderContext,
 
 
 
-def _collage_transform(rng,
+def _collage_transform(rng: random.Random,
     img: Image.Image,
     scale_range: tuple[float, float],
     angle_range: tuple[float, float],

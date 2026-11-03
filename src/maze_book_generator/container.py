@@ -4,24 +4,18 @@ from __future__ import annotations
 
 import logging
 from importlib.util import find_spec
-from typing import TYPE_CHECKING
 
 from maze_book_generator.domain.maze import MazeGenerator
 from maze_book_generator.infrastructure.ai_client import AIClient
 from maze_book_generator.infrastructure.images.hf import HFClient
-from maze_book_generator.infrastructure.images.placeholder import ImageGenerator
 from maze_book_generator.infrastructure.images.pollinations import PollinationsClient
 from maze_book_generator.infrastructure.images.replicate import ReplicateClient
-from maze_book_generator.infrastructure.pdf import PDFRenderer
 from maze_book_generator.infrastructure.preview_generator import PreviewGenerator
 from maze_book_generator.infrastructure.storage.theme_repository import (
     JsonThemeRepository,
     ThemeRepository,
 )
 from maze_book_generator.settings import USED_THEMES_FILENAME, settings
-
-if TYPE_CHECKING:
-    from maze_book_generator.infrastructure.storage.mongodb import MongoDBClient
 
 logger = logging.getLogger(__name__)
 
@@ -32,11 +26,8 @@ class Container:
     def __init__(self) -> None:
         """Инициализация контейнера с компонентами."""
         self._maze_generator: MazeGenerator | None = None
-        self._pdf_renderer: PDFRenderer | None = None
         self._ai_client: AIClient | None = None
-        self._mongodb_client: MongoDBClient | None = None
         self._theme_repository: ThemeRepository | None = None
-        self._image_generator: ImageGenerator | None = None
         self._preview_generator: PreviewGenerator | None = None
         self._hf_client: HFClient | None = None
         self._pollinations_client: PollinationsClient | None = None
@@ -48,13 +39,6 @@ class Container:
         if self._maze_generator is None:
             self._maze_generator = MazeGenerator()
         return self._maze_generator
-
-    @property
-    def pdf_renderer(self) -> PDFRenderer:
-        """Получает экземпляр PDF рендерера."""
-        if self._pdf_renderer is None:
-            self._pdf_renderer = PDFRenderer()
-        return self._pdf_renderer
 
     @property
     def ai_client(self) -> AIClient:
@@ -89,24 +73,6 @@ class Container:
                 "используется JSON-хранилище тем"
             )
         return JsonThemeRepository(settings.OUTPUT_DIR / USED_THEMES_FILENAME)
-
-    @property
-    def mongodb_client(self) -> MongoDBClient:
-        """Получает экземпляр MongoDB клиента."""
-        if self._mongodb_client is None:
-            from maze_book_generator.infrastructure.storage.mongodb import (
-                MongoDBClient,
-            )
-
-            self._mongodb_client = MongoDBClient()
-        return self._mongodb_client
-
-    @property
-    def image_generator(self) -> ImageGenerator:
-        """Получает экземпляр генератора изображений."""
-        if self._image_generator is None:
-            self._image_generator = ImageGenerator()
-        return self._image_generator
 
     @property
     def preview_generator(self) -> PreviewGenerator:

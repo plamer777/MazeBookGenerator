@@ -49,9 +49,6 @@ def build_rectangular(
     # Grid для обратной совместимости
     grid = [[1 for _ in range(grid_width)] for _ in range(grid_height)]
 
-    if not solver.is_valid_maze(grid):
-        return build_rectangular(rng, width, height, difficulty)
-
     solution = solver.solve_with_walls(walls, start, end, width, height)
 
     return Maze(

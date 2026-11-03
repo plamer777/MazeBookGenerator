@@ -20,7 +20,8 @@ from maze_book_generator.domain.models import Difficulty, Maze, MazeShape
 class PolarTopologyService:
     """Отвечает за топологию полярного лабиринта с динамическим разбиением (subdivision)."""
 
-    def __init__(self, cells_per_ring: Sequence[int]):
+    def __init__(self, cells_per_ring: Sequence[int]) -> None:
+        """Инициализация сервиса топологии по количеству ячеек в каждом кольце."""
         if not cells_per_ring:
             msg = "Список колец не может быть пустым"
             raise ValueError(msg)

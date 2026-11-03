@@ -34,9 +34,17 @@ pip install -e .
 pip install -e ".[mongodb]"   # хранение тем в MongoDB вместо JSON-файла
 ```
 
+### Системные зависимости
+
+- **Шрифты DejaVu** — обязательны для PDF (кириллица). Linux:
+  `sudo apt install fonts-dejavu`; macOS: `brew install --cask font-dejavu`
+- **poppler** — только для превью (`--no-previews` отключает). Linux:
+  `sudo apt install poppler-utils`; macOS: `brew install poppler`
+
 Скопируйте `.env.example` в `.env` и заполните API-ключи. Все ключи
-опциональны — без них темы и иллюстрации берутся из локальных
-fallback-данных.
+опциональны: без иллюстрационных токенов цепочка провайдеров
+(Replicate → Pollinations → HF) деградирует до локального placeholder,
+а тему без `OPEN_AI_KEY` можно задать флагом `--theme` (офлайн-режим).
 
 | Переменная | Назначение |
 |---|---|

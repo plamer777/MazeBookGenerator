@@ -1,14 +1,15 @@
 from pathlib import Path
 
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     """Конфигурация приложения MazeBookGenerator."""
 
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+
     # Пути
     OUTPUT_DIR: Path = Path("output")
-    TEMP_DIR: Path = Path("temp")
 
     # PDF настройки
     PDF_PAGE_WIDTH: float = 297.0  # A4 landscape в мм
@@ -30,10 +31,6 @@ class Settings(BaseSettings):
     OPEN_AI_KEY: str = ""
     HF_TOKEN: str = ""
     REPLICATE_API_TOKEN: str = ""
-
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
 
 
 settings = Settings()
@@ -164,8 +161,6 @@ OPEN_AI_THEME_PROMPT_RU: str = (
     "}}"
 )
 
-HF_IMAGE_MODEL: str = "black-forest-labs/FLUX.1-schnell"
-
 # Список моделей в порядке приоритета — при ошибке 402/429 клиент переходит к следующей
 HF_IMAGE_MODEL_FALLBACKS: list[str] = [
     "black-forest-labs/FLUX.1-schnell",
@@ -233,8 +228,38 @@ POLLINATIONS_REQUEST_TIMEOUT: float = 60.0
 REPLICATE_DOWNLOAD_TIMEOUT: float = 60.0
 
 # --- Шрифты PDF ---
-FONT_DEJAVU_REGULAR: str = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-FONT_DEJAVU_BOLD: str = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+# Кандидатные пути DejaVu для Linux/macOS/Windows; берётся первый существующий
+FONT_DEJAVU_REGULAR_CANDIDATES: list[str] = [
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    "/usr/share/fonts/dejavu/DejaVuSans.ttf",
+    "/Library/Fonts/DejaVuSans.ttf",
+    "/System/Library/Fonts/Supplemental/DejaVuSans.ttf",
+    "C:/Windows/Fonts/DejaVuSans.ttf",
+]
+FONT_DEJAVU_BOLD_CANDIDATES: list[str] = [
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+    "/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf",
+    "/Library/Fonts/DejaVuSans-Bold.ttf",
+    "/System/Library/Fonts/Supplemental/DejaVuSans-Bold.ttf",
+    "C:/Windows/Fonts/DejaVuSans-Bold.ttf",
+]
+
+# --- Страницы лабиринта/ответа: рамка, плашка, шрифты ---
+MAZE_PAGE_FRAME_M: float = 8.0        # отступ заокруглённой рамки, мм
+MAZE_PAGE_HEADER_H: float = 22.0      # высота цветной плашки заголовка, мм
+MAZE_PAGE_DECO_MARGIN: float = 20.0   # внутренний отступ декоративной зоны, мм
+MAZE_PAGE_HEADER_FONT: int = 18
+MAZE_PAGE_PROMPT_FONT: int = 11
+MAZE_PAGE_DIFFICULTY_FONT: int = 10
+MAZE_PAGE_NUM_FONT: int = 9
+MAZE_PAGE_PROMPT_GAP: float = 8.0     # подсказка под плашкой, мм
+MAZE_PAGE_MAZE_TOP_GAP: float = 11.0  # верх лабиринта под подсказкой, мм
+
+# --- Тема: попытки генерации и бюджет токенов ---
+AI_THEME_ATTEMPTS: int = 3
+AI_THEME_RETRY_DELAY: float = 1.0
+AI_THEME_MAX_TOKENS_BASE: int = 500
+AI_THEME_MAX_TOKENS_PER_PAGE: int = 60
 
 # --- Preview-генератор: геометрия и цвета канваса ---
 PREVIEW_CANVAS_WIDTH: int = 1200

@@ -20,10 +20,7 @@ class TestContainer:
         container = Container()
 
         assert container.maze_generator is container.maze_generator
-        assert container.pdf_renderer is container.pdf_renderer
         assert container.ai_client is container.ai_client
-        assert container.mongodb_client is container.mongodb_client
-        assert container.image_generator is container.image_generator
         assert container.preview_generator is container.preview_generator
         assert container.hf_client is container.hf_client
         assert container.pollinations_client is container.pollinations_client

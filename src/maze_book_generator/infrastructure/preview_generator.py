@@ -15,8 +15,8 @@ from pdf2image.exceptions import (
 )
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
+from maze_book_generator.infrastructure.fonts import find_dejavu_bold
 from maze_book_generator.settings import (
-    FONT_DEJAVU_BOLD,
     PREVIEW_CANVAS_HEIGHT,
     PREVIEW_CANVAS_WIDTH,
     PREVIEW_PAGE_THUMB_HEIGHT,
@@ -534,15 +534,15 @@ class PreviewGenerator:
 
 def _fit_badge_font(draw: ImageDraw.ImageDraw, text: str, max_w: int, start_size: int) -> ImageFont.FreeTypeFont:
     """Подбирает максимальный размер шрифта чтобы text влезал в max_w."""
-    try:
-        for size in range(start_size, 9, -1):
-            font = ImageFont.truetype(FONT_DEJAVU_BOLD, size)
-            bb = draw.textbbox((0, 0), text, font=font)
-            if bb[2] - bb[0] <= max_w:
-                return font
-        return ImageFont.truetype(FONT_DEJAVU_BOLD, 10)
-    except OSError:
+    bold_path = find_dejavu_bold()
+    if bold_path is None:
         return ImageFont.load_default()
+    for size in range(start_size, 9, -1):
+        font = ImageFont.truetype(bold_path, size)
+        bb = draw.textbbox((0, 0), text, font=font)
+        if bb[2] - bb[0] <= max_w:
+            return font
+    return ImageFont.truetype(bold_path, 10)
 
 
 def _draw_badge_text(

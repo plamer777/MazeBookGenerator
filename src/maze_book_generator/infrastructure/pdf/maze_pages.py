@@ -10,153 +10,152 @@ from maze_book_generator.infrastructure.pdf import cover, decorations, images
 from maze_book_generator.infrastructure.pdf.context import RenderContext
 from maze_book_generator.infrastructure.pdf.drawing import grid, polar
 from maze_book_generator.infrastructure.pdf.params import MazeDrawParams, PolarView, Rect
+from maze_book_generator.settings import (
+    MAZE_PAGE_DECO_MARGIN,
+    MAZE_PAGE_DIFFICULTY_FONT,
+    MAZE_PAGE_FRAME_M,
+    MAZE_PAGE_HEADER_FONT,
+    MAZE_PAGE_HEADER_H,
+    MAZE_PAGE_MAZE_TOP_GAP,
+    MAZE_PAGE_NUM_FONT,
+    MAZE_PAGE_PROMPT_FONT,
+    MAZE_PAGE_PROMPT_GAP,
+)
 
 
 def render_maze_page(ctx: RenderContext, c: canvas.Canvas, page: BookPage, book_title: str = "") -> None:
     """
     Рендерит страницу с лабиринтом в детском стиле.
 
-    Структура:
-    - Светлый цветной фон
-    - Заокруглённая рамка в цвете палитры
-    - Декоративные символы в углах
-    - Цветная плашка-заголовок сверху
-    - Лабиринт максимального размера с динамическим cell_size
-
-    Args:
-        c: Canvas для рисования
-        page: Объект страницы
+    Структура: цветной фон, заокруглённая рамка, декор углов,
+    плашка-заголовок, подсказка и лабиринт максимального размера.
     """
-    _, _, accent = cover.cover_palette(book_title or page.title)
+    accent = cover.cover_palette(book_title or page.title)[2]
+    header_y = _draw_page_scaffold(ctx, c, accent, page.page_number)
 
-    # --- Фон ---
+    maze_title = ctx.texts.get("maze_title").replace("{n}", str(page.page_number))
+    _draw_header_title(ctx, c, maze_title, header_y)
+
+    prompt_y = _draw_prompt_hint(ctx, c, accent, page, header_y)
+    maze_area = _maze_area(ctx, prompt_y - MAZE_PAGE_MAZE_TOP_GAP * mm)
+    _render_page_maze(ctx, c, page, accent, maze_area, show_solution=False)
+
+
+def render_solution_page(ctx: RenderContext, c: canvas.Canvas, page: BookPage, book_title: str = "") -> None:
+    """Рендерит страницу с ответом в том же детском стиле."""
+    accent = cover.cover_palette(book_title or page.title)[2]
+    header_y = _draw_page_scaffold(ctx, c, accent, page.page_number)
+
+    maze_title = ctx.texts.get("maze_title").replace("{n}", str(page.page_number))
+    sol_title = f"{maze_title} — {ctx.texts.get('answer_page_suffix')}"
+    _draw_header_title(ctx, c, sol_title, header_y)
+
+    maze_area = _maze_area(ctx, header_y - 5 * mm)
+    _render_page_maze(ctx, c, page, accent, maze_area, show_solution=True)
+
+
+def _draw_page_scaffold(
+    ctx: RenderContext,
+    c: canvas.Canvas,
+    accent: tuple[float, float, float],
+    page_number: int,
+) -> float:
+    """Фон + рамка + уголки + плашка заголовка; возвращает header_y."""
     bg = (1.0, 1.0, 1.0) if ctx.print_friendly else (0.97, 0.97, 1.0)
     c.setFillColorRGB(*bg)
     c.rect(0, 0, ctx.page_width, ctx.page_height, fill=1, stroke=0)
 
-    # --- Заокруглённая рамка ---
-    frame_m = 8 * mm
     c.setStrokeColorRGB(*accent)
     c.setLineWidth(2.5)
-    c.roundRect(frame_m, frame_m,
-                ctx.page_width - 2 * frame_m,
-                ctx.page_height - 2 * frame_m,
+    c.roundRect(MAZE_PAGE_FRAME_M * mm, MAZE_PAGE_FRAME_M * mm,
+                ctx.page_width - 2 * MAZE_PAGE_FRAME_M * mm,
+                ctx.page_height - 2 * MAZE_PAGE_FRAME_M * mm,
                 radius=6 * mm, fill=0, stroke=1)
 
-    # --- Декоративные символы в углах ---
     if not ctx.print_friendly:
-        decorations.render_page_corner_deco(ctx, c, accent, page.page_number)
+        decorations.render_page_corner_deco(ctx, c, accent, page_number)
 
-    # --- Плашка заголовка ---
-    header_h = 22 * mm
-    header_y = ctx.page_height - frame_m - header_h
+    header_y = ctx.page_height - MAZE_PAGE_FRAME_M * mm - MAZE_PAGE_HEADER_H * mm
     c.setFillColorRGB(*accent)
-    c.roundRect(frame_m, header_y,
-                ctx.page_width - 2 * frame_m, header_h,
+    c.roundRect(MAZE_PAGE_FRAME_M * mm, header_y,
+                ctx.page_width - 2 * MAZE_PAGE_FRAME_M * mm, MAZE_PAGE_HEADER_H * mm,
                 radius=4 * mm, fill=1, stroke=0)
+    return header_y
 
+
+def _draw_header_title(
+    ctx: RenderContext, c: canvas.Canvas, title: str, header_y: float
+) -> None:
+    """Белый заголовок по центру цветной плашки."""
     c.setFillColorRGB(1, 1, 1)
-    c.setFont(ctx.font_bold, 18)
-    maze_title = ctx.texts.get("maze_title").replace("{n}", str(page.page_number))
-    tw = c.stringWidth(maze_title, ctx.font_bold, 18)
-    c.drawString((ctx.page_width - tw) / 2, header_y + 7 * mm, maze_title)
+    c.setFont(ctx.font_bold, MAZE_PAGE_HEADER_FONT)
+    tw = c.stringWidth(title, ctx.font_bold, MAZE_PAGE_HEADER_FONT)
+    c.drawString((ctx.page_width - tw) / 2, header_y + 7 * mm, title)
 
-    # Подсказка под плашкой
-    prompt_y = header_y - 8 * mm
+
+def _draw_prompt_hint(
+    ctx: RenderContext,
+    c: canvas.Canvas,
+    accent: tuple[float, float, float],
+    page: BookPage,
+    header_y: float,
+) -> float:
+    """Подсказка задания и подпись сложности под плашкой; возвращает prompt_y."""
+    prompt_y = header_y - MAZE_PAGE_PROMPT_GAP * mm
     if ctx.print_friendly:
         c.setFillColorRGB(0.12, 0.12, 0.12)
     else:
         c.setFillColorRGB(*accent)
-    c.setFont(ctx.font, 11)
-    pw = c.stringWidth(page.prompt, ctx.font, 11)
+    c.setFont(ctx.font, MAZE_PAGE_PROMPT_FONT)
+    pw = c.stringWidth(page.prompt, ctx.font, MAZE_PAGE_PROMPT_FONT)
     c.drawString((ctx.page_width - pw) / 2, prompt_y, page.prompt)
 
     if page.difficulty_label:
         difficulty_caption = ctx.texts.format("difficulty_caption", value=page.difficulty_label)
-        c.setFont(ctx.font_bold, 10)
-        dw = c.stringWidth(difficulty_caption, ctx.font_bold, 10)
+        c.setFont(ctx.font_bold, MAZE_PAGE_DIFFICULTY_FONT)
+        dw = c.stringWidth(difficulty_caption, ctx.font_bold, MAZE_PAGE_DIFFICULTY_FONT)
         c.drawString((ctx.page_width - dw) / 2, prompt_y - 5 * mm, difficulty_caption)
+    return prompt_y
 
-    # --- Лабиринт максимального размера ---
-    # Верхняя граница строго под подсказкой (с зазором 5mm)
-    deco_margin = 20 * mm
-    maze_top = prompt_y - 11 * mm
-    # --- Водяной знак-иллюстрация под лабиринтом ---
-    maze_area = Rect(
-        frame_m + deco_margin,
-        frame_m + deco_margin,
-        ctx.page_width - 2 * (frame_m + deco_margin),
-        maze_top - frame_m - deco_margin,
+
+def _maze_area(ctx: RenderContext, maze_top: float) -> Rect:
+    """Прямоугольник области лабиринта внутри декоративного поля."""
+    return Rect(
+        MAZE_PAGE_FRAME_M * mm + MAZE_PAGE_DECO_MARGIN * mm,
+        MAZE_PAGE_FRAME_M * mm + MAZE_PAGE_DECO_MARGIN * mm,
+        ctx.page_width - 2 * (MAZE_PAGE_FRAME_M * mm + MAZE_PAGE_DECO_MARGIN * mm),
+        maze_top - MAZE_PAGE_FRAME_M * mm - MAZE_PAGE_DECO_MARGIN * mm,
     )
+
+
+def _render_page_maze(
+    ctx: RenderContext,
+    c: canvas.Canvas,
+    page: BookPage,
+    accent: tuple[float, float, float],
+    maze_area: Rect,
+    *,
+    show_solution: bool,
+) -> None:
+    """Водяной знак + лабиринт по области + номер страницы."""
     if page.image_path and not ctx.print_friendly:
         images.render_watermark_image(c, page.image_path, maze_area)
 
-    render_maze_fitted(ctx, c, page.maze, maze_area,
-        MazeDrawParams(show_labels=ctx.config.show_start_finish_labels))
-
-    # --- Номер страницы ---
-    c.setFillColorRGB(*accent)
-    c.setFont(ctx.font, 9)
-    c.drawRightString(ctx.page_width - frame_m - 4 * mm, frame_m + 3 * mm, f"#{page.page_number}")
-
-
-
-def render_solution_page(ctx: RenderContext, c: canvas.Canvas, page: BookPage, book_title: str = "") -> None:
-    """
-    Рендерит страницу с ответом в том же детском стиле.
-
-    Args:
-        c: Canvas для рисования
-        page: Объект страницы
-    """
-    _, _, accent = cover.cover_palette(book_title or page.title)
-
-    bg = (1.0, 1.0, 1.0) if ctx.print_friendly else (0.97, 0.97, 1.0)
-    c.setFillColorRGB(*bg)
-    c.rect(0, 0, ctx.page_width, ctx.page_height, fill=1, stroke=0)
-
-    frame_m = 8 * mm
-    c.setStrokeColorRGB(*accent)
-    c.setLineWidth(2.5)
-    c.roundRect(frame_m, frame_m,
-                ctx.page_width - 2 * frame_m,
-                ctx.page_height - 2 * frame_m,
-                radius=6 * mm, fill=0, stroke=1)
-
-    if not ctx.print_friendly:
-        decorations.render_page_corner_deco(ctx, c, accent, page.page_number)
-
-    header_h = 22 * mm
-    header_y = ctx.page_height - frame_m - header_h
-    c.setFillColorRGB(*accent)
-    c.roundRect(frame_m, header_y,
-                ctx.page_width - 2 * frame_m, header_h,
-                radius=4 * mm, fill=1, stroke=0)
-
-    sol_title = f"{ctx.texts.get('maze_title').replace('{n}', str(page.page_number))} — {ctx.texts.get('answer_page_suffix')}"
-    c.setFillColorRGB(1, 1, 1)
-    c.setFont(ctx.font_bold, 18)
-    tw = c.stringWidth(sol_title, ctx.font_bold, 18)
-    c.drawString((ctx.page_width - tw) / 2, header_y + 7 * mm, sol_title)
-
-    deco_margin = 20 * mm
-    maze_top = header_y - 5 * mm
-    maze_area = Rect(
-        frame_m + deco_margin,
-        frame_m + deco_margin,
-        ctx.page_width - 2 * (frame_m + deco_margin),
-        maze_top - frame_m - deco_margin,
+    render_maze_fitted(
+        ctx, c, page.maze, maze_area,
+        MazeDrawParams(
+            show_solution=show_solution,
+            show_labels=ctx.config.show_start_finish_labels,
+        ),
     )
 
-    if page.image_path and not ctx.print_friendly:
-        images.render_watermark_image(c, page.image_path, maze_area)
-
-    render_maze_fitted(ctx, c, page.maze, maze_area,
-        MazeDrawParams(show_solution=True, show_labels=ctx.config.show_start_finish_labels))
-
     c.setFillColorRGB(*accent)
-    c.setFont(ctx.font, 9)
-    c.drawRightString(ctx.page_width - frame_m - 4 * mm, frame_m + 3 * mm, f"#{page.page_number}")
+    c.setFont(ctx.font, MAZE_PAGE_NUM_FONT)
+    c.drawRightString(
+        ctx.page_width - MAZE_PAGE_FRAME_M * mm - 4 * mm,
+        MAZE_PAGE_FRAME_M * mm + 3 * mm,
+        f"#{page.page_number}",
+    )
 
 
 

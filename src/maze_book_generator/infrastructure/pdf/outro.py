@@ -9,7 +9,7 @@ from maze_book_generator.domain.models import Book
 from maze_book_generator.infrastructure.pdf import cover, images, text
 from maze_book_generator.infrastructure.pdf.context import RenderContext
 from maze_book_generator.infrastructure.pdf.params import Rect, TextBlock
-from maze_book_generator.settings import WATERMARK_ALPHA
+from maze_book_generator.settings import IMAGE_STORAGE_SUBDIR, WATERMARK_ALPHA
 
 
 def render_outro_page(ctx: RenderContext, c: canvas.Canvas, book: Book) -> None:
@@ -27,7 +27,7 @@ def render_outro_page(ctx: RenderContext, c: canvas.Canvas, book: Book) -> None:
     c.rect(0, 0, ctx.page_width, ctx.page_height, fill=1, stroke=0)
 
     if not ctx.print_friendly:
-        illustrations_dir = Path(book.output_dir) / "illustrations"
+        illustrations_dir = Path(book.output_dir) / IMAGE_STORAGE_SUBDIR
         collage_seed = book.id * 1009 + sum(ord(ch) for ch in book.theme.book_title)
         images.render_image_collage(
             ctx, c, illustrations_dir,

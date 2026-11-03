@@ -26,17 +26,24 @@ class ReplicateClient:
     """Генерирует иллюстрации через Replicate API (text-to-image)."""
 
     def __init__(self) -> None:
-        """Инициализация клиента с токеном из settings и списком резолвнутых моделей."""
+        """Инициализация клиента с токеном из settings (без сетевых вызовов)."""
         self._logger = logging.getLogger(__name__)
         self._client = replicate.Client(api_token=settings.REPLICATE_API_TOKEN)
-        self._model_versions = self._resolve_model_versions(REPLICATE_IMAGE_MODELS)
+        self._model_versions: list[str] | None = None
+
+    def _resolved_models(self) -> list[str]:
+        """Лениво резолвит версии моделей при первой генерации (сеть только здесь)."""
+        if self._model_versions is None:
+            self._model_versions = self._resolve_model_versions(REPLICATE_IMAGE_MODELS)
+        return self._model_versions
 
     def _resolve_model_versions(self, model_names: list[str]) -> list[str]:
         """
         Резолвит актуальные версии для списка моделей.
 
         Возвращает список ref вида 'owner/model:version'. Если для модели
-        не удалось получить latest_version, она пропускается.
+        не удалось получить latest_version, она пропускается; пустой список
+        означает недоступность API — пайплайн уйдёт на fallback-провайдеры.
         """
         resolved: list[str] = []
         for model_name in model_names:
@@ -50,8 +57,7 @@ class ReplicateClient:
             except (replicate.exceptions.ReplicateError, httpx.HTTPError) as exc:
                 self._logger.warning("Failed to resolve latest version for %s: %s", model_name, exc)
         if not resolved:
-            msg = "Failed to resolve any Replicate model version"
-            raise ValueError(msg)
+            self._logger.warning("Failed to resolve any Replicate model version")
         return resolved
 
     def _try_generate(self, model_version: str, prompt: str) -> bytes | None:
@@ -118,7 +124,7 @@ class ReplicateClient:
         prompt = self._build_prompt(keywords)
         output_path = output_path.with_suffix(".png")
 
-        for model_version in self._model_versions:
+        for model_version in self._resolved_models():
             image_bytes = self._try_generate(model_version, prompt)
             if image_bytes is not None:
                 output_path.parent.mkdir(parents=True, exist_ok=True)

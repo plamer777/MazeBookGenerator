@@ -6,7 +6,7 @@ from maze_book_generator.infrastructure.pdf.context import RenderContext
 from maze_book_generator.infrastructure.pdf.params import TextBlock
 
 
-def wrap_text_to_width(c: canvas.Canvas, text: str, font_name: str, font_size: int, max_width: float) -> list[str]:
+def wrap_text_to_width(c: canvas.Canvas, text: str, font_name: str, font_size: float, max_width: float) -> list[str]:
     """Переносит строку на несколько строк так, чтобы каждая помещалась по ширине."""
     words = [part for part in text.split() if part]
     if not words:
@@ -34,7 +34,7 @@ def wrap_text_to_width(c: canvas.Canvas, text: str, font_name: str, font_size: i
 
 
 
-def split_long_word(c: canvas.Canvas, word: str, font_name: str, font_size: int, max_width: float) -> list[str]:
+def split_long_word(c: canvas.Canvas, word: str, font_name: str, font_size: float, max_width: float) -> list[str]:
     """Разбивает слишком длинное слово на части, чтобы не выйти за пределы рамки."""
     chunks: list[str] = []
     current = ""

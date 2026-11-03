@@ -65,16 +65,3 @@ class PolarView:
     center_x: float
     center_y: float
     max_radius: float
-
-
-@dataclass(frozen=True)
-class BorderSideSpec:
-    """Спецификация одной стороны рваной рамки лабиринта."""
-
-    start: tuple[float, float]
-    end: tuple[float, float]
-    horizontal: bool
-    direction: int
-    indent_direction: int
-    min_indent: float
-    max_indent: float

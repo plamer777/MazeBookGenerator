@@ -128,11 +128,11 @@ def page_shape(
     """Подбирает форму лабиринта, соответствующую когнитивной нагрузке."""
     mode_str = mode.name if hasattr(mode, "name") else str(mode)
 
-    if mode_str in ("KIDS_EASY", "KIDS_SIMPLE"):
+    if mode_str == "KIDS_EASY":
         # Для малышей убираем запутывающие сетки (круглые, треугольные, хаотичные).
         return rng.choice([MazeShape.RECTANGULAR, MazeShape.SQUARE, MazeShape.DIAMOND])
 
-    if mode_str in ("CHALLENGE_HARD", "MEGA_HARD"):
+    if mode_str == "CHALLENGE_HARD":
         # Для экспертов сразу выкатываем сложные альтернативные топологии
         complex_shapes = [
             MazeShape.TRIANGULAR,

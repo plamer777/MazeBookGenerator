@@ -1,6 +1,6 @@
 """Готовые пресеты BookConfig для типовых сценариев генерации книги с лабиринтами.
 
-Использование в main.py:
+Использование в CLI (`mazebook generate --preset ...`):
     from maze_book_generator.application.config_presets import PRESETS
     book_config = PRESETS["en_kids_basic"]
 """

@@ -4,6 +4,10 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
+from maze_book_generator.infrastructure.fonts import (
+    find_dejavu_bold,
+    find_dejavu_regular,
+)
 from maze_book_generator.utils import create_rng
 
 
@@ -43,14 +47,19 @@ class ImageGenerator:
         self._draw_decorations(draw, self.cover_width, self.cover_height)
 
         # Добавляем текст
-        try:
-            # Пытаемся использовать системный шрифт
-            font_large = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 60)
-            font_small = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 30)
-        except OSError:
-            # Fallback на стандартный шрифт
-            font_large = ImageFont.load_default()
-            font_small = ImageFont.load_default()
+        # DejaVu по кандидатным путям; иначе — стандартный шрифт PIL
+        bold_path = find_dejavu_bold()
+        regular_path = find_dejavu_regular()
+        font_large = (
+            ImageFont.truetype(bold_path, 60)
+            if bold_path
+            else ImageFont.load_default()
+        )
+        font_small = (
+            ImageFont.truetype(regular_path, 30)
+            if regular_path
+            else ImageFont.load_default()
+        )
 
         # Центрируем текст
         text_bbox = draw.textbbox((0, 0), title, font=font_large)
@@ -126,15 +135,6 @@ class ImageGenerator:
                 outline="white",
                 width=2,
             )
-
-    def _draw_pattern(self, draw: ImageDraw.Draw, width: int, height: int) -> None:
-        """Рисует простой узор для иллюстрации."""
-        # Рисуем сетку
-        step = 30
-        for x in range(20, width - 20, step):
-            draw.line([(x, 20), (x, height - 20)], fill="#DEB887", width=1)
-        for y in range(20, height - 20, step):
-            draw.line([(20, y), (width - 20, y)], fill="#DEB887", width=1)
 
     def _draw_mini_maze(self, draw: ImageDraw.Draw, width: int, height: int) -> None:
         """Рисует мини-лабиринт как иллюстрацию с более реалистичной структурой."""

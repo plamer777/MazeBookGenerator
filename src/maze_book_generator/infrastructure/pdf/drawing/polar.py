@@ -257,28 +257,6 @@ def _step_across_rings(c: canvas.Canvas,
     cursor.angle = trans_angle
 
 
-def angle_in_range(angle: float, start: float, end: float) -> bool:
-    """Проверяет, лежит ли угол строго внутри диапазона [start, end].
-
-    Учитывает wrap-around через 2π.
-
-    Args:
-        angle: Проверяемый угол (радианы)
-        start: Начало диапазона
-        end: Конец диапазона
-
-    Returns:
-        True если angle ∈ (start, end)
-    """
-    two_pi = 2 * math.pi
-    a = angle % two_pi
-    s = start % two_pi
-    e = end % two_pi
-    if s < e:
-        return s < a < e
-    return a > s or a < e
-
-
 def draw_arc(c: canvas.Canvas,
     center: tuple[float, float],
     radius: float,

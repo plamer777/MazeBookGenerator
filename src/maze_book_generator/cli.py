@@ -102,21 +102,27 @@ async def _generate(args: argparse.Namespace) -> int:
         f"пресет {args.preset}"
     )
 
+    if args.child_age and not args.child_name:
+        msg = "--child-age требует --child-name"
+        raise ValueError(msg)
+
     theme = (
         build_default_theme(args.theme, book_config.language, args.pages)
         if args.theme
         else None
     )
     service = BookService()
-    books = await service.generate_batch(
-        spec,
-        number_of_books=args.books,
-        base_seed=args.seed,
-        theme=theme,
-        with_illustrations=not args.no_images,
-        with_previews=not args.no_previews,
-    )
-    container.theme_repository.close()
+    try:
+        books = await service.generate_batch(
+            spec,
+            number_of_books=args.books,
+            base_seed=args.seed,
+            theme=theme,
+            with_illustrations=not args.no_images,
+            with_previews=not args.no_previews,
+        )
+    finally:
+        container.theme_repository.close()
 
     if not books:
         return 1

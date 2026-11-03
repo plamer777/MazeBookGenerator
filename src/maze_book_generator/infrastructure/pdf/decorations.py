@@ -9,7 +9,7 @@ from reportlab.lib.units import mm
 from reportlab.pdfgen import canvas
 
 from maze_book_generator.infrastructure.pdf.context import RenderContext
-from maze_book_generator.infrastructure.pdf.params import BorderSideSpec, DecoRingSpec, Rect
+from maze_book_generator.infrastructure.pdf.params import DecoRingSpec, Rect
 from maze_book_generator.utils import create_rng
 
 _symbols_big = ["★", "✿", "♥", "♦", "☀", "❤", "✦", "◆"]
@@ -160,80 +160,6 @@ def render_corner_ornaments(ctx: RenderContext,
                 break
             c.rect(cx0 - r * sx / 2, cy0 - r * sy / 2, r * sx, r * sy, fill=0, stroke=1)
 
-
-
-def render_maze_border(ctx: RenderContext, c: canvas.Canvas) -> None:
-    """
-    Рисует рамку с рандомными изломами в стиле лабиринта (для страниц с лабиринтами).
-
-    Args:
-        c: Canvas для рисования
-    """
-    border_margin = 20 * mm
-    min_indent = 10 * mm
-    max_indent = 20 * mm
-
-    c.setStrokeColorRGB(0, 0, 0)
-    c.setLineWidth(2.0)
-
-    top = ctx.page_height - border_margin
-    right = ctx.page_width - border_margin
-    points = []
-    points.extend(generate_border_side(BorderSideSpec(
-        start=(border_margin, top), end=(right, top),
-        horizontal=True, direction=1, indent_direction=-1,
-        min_indent=min_indent, max_indent=max_indent,
-    )))
-    points.extend(generate_border_side(BorderSideSpec(
-        start=(right, top), end=(right, border_margin),
-        horizontal=False, direction=-1, indent_direction=-1,
-        min_indent=min_indent, max_indent=max_indent,
-    )))
-    points.extend(generate_border_side(BorderSideSpec(
-        start=(right, border_margin), end=(border_margin, border_margin),
-        horizontal=True, direction=-1, indent_direction=1,
-        min_indent=min_indent, max_indent=max_indent,
-    )))
-    points.extend(generate_border_side(BorderSideSpec(
-        start=(border_margin, border_margin), end=(border_margin, top),
-        horizontal=False, direction=1, indent_direction=1,
-        min_indent=min_indent, max_indent=max_indent,
-    )))
-    points.append(points[0])
-
-    path = c.beginPath()
-    path.moveTo(points[0][0], points[0][1])
-    for x, y in points[1:]:
-        path.lineTo(x, y)
-    c.drawPath(path, stroke=1, fill=0)
-
-
-
-def generate_border_side(spec: BorderSideSpec) -> list[tuple[float, float]]:
-    """
-    Генерирует точки для одной стороны рамки с изломами.
-
-    Args:
-        spec: Спецификация стороны — координаты, направление, диапазон излома
-
-    Returns:
-        Список точек (x, y)
-    """
-    points = [spec.start]
-    rng = create_rng()
-    current, limit = (spec.start[0], spec.end[0]) if spec.horizontal else (spec.start[1], spec.end[1])
-
-    while (spec.direction == 1 and current < limit) or (spec.direction == -1 and current > limit):
-        step = rng.randint(10, 30) * mm
-        current = min(current + step * spec.direction, limit) if spec.direction == 1 else max(current + step * spec.direction, limit)
-
-        indent = rng.randint(0, 1) * rng.randint(int(spec.min_indent / mm), int(spec.max_indent / mm)) * mm
-        if spec.horizontal:
-            points.append((current, spec.start[1] + indent * spec.indent_direction))
-        else:
-            points.append((spec.start[0] + indent * spec.indent_direction, current))
-
-    return points
 
 
 

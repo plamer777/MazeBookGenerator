@@ -44,8 +44,8 @@ class IllustrationPipeline:
         Returns:
             Список путей (None для страниц, где не сработал ни один провайдер)
         """
+        # Провайдеры сами создают родительские папки при записи файлов
         illustrations_dir = book_dir / IMAGE_STORAGE_SUBDIR
-        illustrations_dir.mkdir(parents=True, exist_ok=True)
         output_paths = [
             illustrations_dir / f"page_{i + 1}.png"
             for i in range(len(image_keywords))

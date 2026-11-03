@@ -1,37 +1,29 @@
+# Python
 .venv
-.idea
-.env
 __pycache__/
+*.egg-info/
 .pytest_cache/
-/_migration_source/
-/.vscode/
-/.agents/
-/.codex/
+.coverage
+
+# IDE / агентные инструменты
+.idea
+.vscode/
+.agents/
+.codex/
+.gemini/
+.junie/
 AGENTS.md
-/GEMINI.md
-configmaps
-/shared/build/lib/**
-/shared/shared.egg-info/**
-/services/parser/highlighted_docs/**
-/services/parser/tests/data/**
-local-data
-local-run-logs/
-outputs
-artifacts/
-services/*/scratch/
-services/*/tests_pytest*_run.txt
-services/*/tests_service_*.log
-services/*/tests_service_*.txt
-services/*/*_tests.log
-tests_service_*.log
-/graphify-out/
-/ai-helpers/
-/.gemini/
-/.junie/
-output
+GEMINI.md
+
+# Секреты
+.env
+
+# Результаты генерации и временные файлы
+output/
+temp/
+
 # quality-gate runtime state (baselines коммитим, отчёты/кэш — нет)
 /.quality-gate/reports/
 /.quality-gate/cache/
 /.quality-gate/tmp/
 /.quality-gate/observations/
-.coverage

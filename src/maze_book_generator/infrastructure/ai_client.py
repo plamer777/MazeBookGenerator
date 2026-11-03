@@ -13,6 +13,10 @@ from openai import APIError, AsyncOpenAI
 from maze_book_generator.domain.models import PagePrompt, Theme
 from maze_book_generator.localization import BookTexts, Language
 from maze_book_generator.settings import (
+    AI_THEME_ATTEMPTS,
+    AI_THEME_MAX_TOKENS_BASE,
+    AI_THEME_MAX_TOKENS_PER_PAGE,
+    AI_THEME_RETRY_DELAY,
     OPEN_AI_THEME_MODEL,
     OPEN_AI_THEME_PROMPT,
     OPEN_AI_THEME_PROMPT_RU,
@@ -93,10 +97,10 @@ class AIClient:
             ),
         )
 
-        for _ in range(3):
+        for _ in range(AI_THEME_ATTEMPTS):
             try:
                 # Увеличенный бюджет токенов для структурированного маркетплейс-описания.
-                max_tokens = 500 + pages_count * 60
+                max_tokens = AI_THEME_MAX_TOKENS_BASE + pages_count * AI_THEME_MAX_TOKENS_PER_PAGE
                 response = await self._client.chat.completions.create(
                     model=OPEN_AI_THEME_MODEL,
                     temperature=OPEN_AI_THEME_TEMPERATURE,
@@ -112,7 +116,7 @@ class AIClient:
                 if parsed is not None:
                     return parsed
 
-                await asyncio.sleep(1)
+                await asyncio.sleep(AI_THEME_RETRY_DELAY)
 
             except APIError as exc:
                 logger.warning("Failed to generate theme: %s", exc)

@@ -1,7 +1,8 @@
 """Сервис генерации книг с лабиринтами — оркестрация сценариев.
 
 Сборка страниц и стратегии сложности — в book_factory,
-маркетплейс-артефакты — в marketplace, иллюстрации — в illustration_pipeline.
+маркетплейс-артефакты и директории — в infrastructure/storage,
+иллюстрации — в illustration_pipeline.
 """
 
 import logging
@@ -18,10 +19,6 @@ from maze_book_generator.application.illustration_pipeline import (
     IllustrationPipeline,
     assign_illustration_paths,
 )
-from maze_book_generator.application.marketplace import (
-    next_free_book_id,
-    save_marketplace_info,
-)
 from maze_book_generator.container import container
 from maze_book_generator.domain.maze import MazeGenerator
 from maze_book_generator.domain.models import (
@@ -32,6 +29,11 @@ from maze_book_generator.domain.models import (
 )
 from maze_book_generator.infrastructure.ai_client import ThemeHints
 from maze_book_generator.infrastructure.pdf import PDFRenderer
+from maze_book_generator.infrastructure.storage.marketplace import (
+    next_free_book_id,
+    save_marketplace_info,
+)
+from maze_book_generator.infrastructure.storage.output_dirs import book_output_dir
 from maze_book_generator.localization import BookTexts, Language
 from maze_book_generator.settings import (
     BATCH_SIZE_VARIATION,
@@ -119,15 +121,14 @@ class BookService:
 
         pages = build_pages(self._maze_generator, theme, spec, self._rng, texts)
 
-        output_dir = str(settings.OUTPUT_DIR / f"book_{book_id}")
-        Path(output_dir).mkdir(parents=True, exist_ok=True)
-        save_marketplace_info(Path(output_dir), theme, effective_language)
+        output_dir = book_output_dir(book_id)
+        save_marketplace_info(output_dir, theme, effective_language)
 
         return Book(
             id=book_id,
             theme=theme,
             pages=pages,
-            output_dir=output_dir,
+            output_dir=str(output_dir),
             config=effective_config,
         )
 

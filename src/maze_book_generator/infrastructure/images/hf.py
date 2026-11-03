@@ -6,7 +6,7 @@ import logging
 from pathlib import Path
 from time import sleep
 
-import requests
+import httpx
 
 from maze_book_generator.infrastructure.images.providers import (
     generate_batch_with_rate_limit,
@@ -64,7 +64,7 @@ class HFClient:
             url = HF_API_BASE_URL + model
             for attempt in range(2):
                 try:
-                    resp = requests.post(
+                    resp = httpx.post(
                         url,
                         headers=self._headers,
                         json={"inputs": prompt},
@@ -81,7 +81,7 @@ class HFClient:
 
                     output_path.parent.mkdir(parents=True, exist_ok=True)
                     output_path.write_bytes(resp.content)
-                except (requests.RequestException, OSError) as exc:
+                except (httpx.HTTPError, OSError) as exc:
                     _logger.warning(
                         "HF image generation failed [%s, attempt %d]: %s",
                         model, attempt + 1, exc,
