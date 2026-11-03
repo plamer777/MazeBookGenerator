@@ -1,14 +1,29 @@
 """Контейнер зависимостей для MazeBookGenerator."""
 
+from __future__ import annotations
+
+import logging
+from importlib.util import find_spec
+from typing import TYPE_CHECKING
+
 from maze_book_generator.domain.maze import MazeGenerator
 from maze_book_generator.infrastructure.ai_client import AIClient
-from maze_book_generator.infrastructure.hf_client import HFClient
-from maze_book_generator.infrastructure.image_generator import ImageGenerator
-from maze_book_generator.infrastructure.mongodb_client import MongoDBClient
+from maze_book_generator.infrastructure.images.hf import HFClient
+from maze_book_generator.infrastructure.images.placeholder import ImageGenerator
+from maze_book_generator.infrastructure.images.pollinations import PollinationsClient
+from maze_book_generator.infrastructure.images.replicate import ReplicateClient
 from maze_book_generator.infrastructure.pdf import PDFRenderer
-from maze_book_generator.infrastructure.pollinations_client import PollinationsClient
 from maze_book_generator.infrastructure.preview_generator import PreviewGenerator
-from maze_book_generator.infrastructure.replicate_client import ReplicateClient
+from maze_book_generator.infrastructure.storage.theme_repository import (
+    JsonThemeRepository,
+    ThemeRepository,
+)
+from maze_book_generator.settings import USED_THEMES_FILENAME, settings
+
+if TYPE_CHECKING:
+    from maze_book_generator.infrastructure.storage.mongodb import MongoDBClient
+
+logger = logging.getLogger(__name__)
 
 
 class Container:
@@ -20,6 +35,7 @@ class Container:
         self._pdf_renderer: PDFRenderer | None = None
         self._ai_client: AIClient | None = None
         self._mongodb_client: MongoDBClient | None = None
+        self._theme_repository: ThemeRepository | None = None
         self._image_generator: ImageGenerator | None = None
         self._preview_generator: PreviewGenerator | None = None
         self._hf_client: HFClient | None = None
@@ -48,9 +64,40 @@ class Container:
         return self._ai_client
 
     @property
+    def theme_repository(self) -> ThemeRepository:
+        """
+        Получает репозиторий использованных тем.
+
+        По умолчанию — JSON-файл в OUTPUT_DIR. При MONGODB_ENABLED=true
+        и установленном pymongo — MongoDB-хранилище.
+        """
+        if self._theme_repository is None:
+            self._theme_repository = self._create_theme_repository()
+        return self._theme_repository
+
+    def _create_theme_repository(self) -> ThemeRepository:
+        """Выбирает бэкенд репозитория по настройкам и доступности pymongo."""
+        if settings.MONGODB_ENABLED:
+            if find_spec("pymongo") is not None:
+                from maze_book_generator.infrastructure.storage.theme_repository import (
+                    MongoThemeRepository,
+                )
+
+                return MongoThemeRepository()
+            logger.warning(
+                "MONGODB_ENABLED=true, но pymongo не установлен — "
+                "используется JSON-хранилище тем"
+            )
+        return JsonThemeRepository(settings.OUTPUT_DIR / USED_THEMES_FILENAME)
+
+    @property
     def mongodb_client(self) -> MongoDBClient:
         """Получает экземпляр MongoDB клиента."""
         if self._mongodb_client is None:
+            from maze_book_generator.infrastructure.storage.mongodb import (
+                MongoDBClient,
+            )
+
             self._mongodb_client = MongoDBClient()
         return self._mongodb_client
 
@@ -91,4 +138,3 @@ class Container:
 
 
 container = Container()
-

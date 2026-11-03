@@ -8,12 +8,14 @@ from time import sleep
 
 import requests
 
+from maze_book_generator.infrastructure.images.providers import (
+    generate_batch_with_rate_limit,
+)
 from maze_book_generator.settings import (
     HF_API_BASE_URL,
     HF_IMAGE_MODEL_FALLBACKS,
     HF_REQUEST_TIMEOUT,
     IMAGE_GENERATOR_PROMPT_TEMPLATE,
-    IMAGE_STORAGE_SUBDIR,
     settings,
 )
 
@@ -78,38 +80,36 @@ class HFClient:
 
                     output_path.parent.mkdir(parents=True, exist_ok=True)
                     output_path.write_bytes(resp.content)
-                    return output_path
-
-                except Exception as exc:
+                except (requests.RequestException, OSError) as exc:
                     _logger.warning(
                         "HF image generation failed [%s, attempt %d]: %s",
                         model, attempt + 1, exc,
                     )
                     if attempt == 0:
                         sleep(2)
+                else:
+                    return output_path
         return None
 
     def generate_book_illustrations(
         self,
         image_keywords: list[list[str]],
-        book_dir: Path,
+        output_paths: list[Path],
     ) -> list[Path | None]:
         """
-        Генерирует иллюстрации для всех страниц книги.
+        Генерирует иллюстрации для страниц книги в заданные файлы.
 
         Args:
             image_keywords: Список ключевых слов по страницам
-            book_dir: Директория книги (illustrations/page_N.png)
+            output_paths: Целевые файлы иллюстраций (по одному на страницу)
 
         Returns:
             Список путей к файлам (None если генерация страницы не удалась)
         """
-        illustrations_dir = book_dir / IMAGE_STORAGE_SUBDIR
-        results: list[Path | None] = []
-
-        for idx, keywords in enumerate(image_keywords):
-            output_path = illustrations_dir / f"page_{idx + 1}.png"
-            path = self.generate_illustration(keywords, output_path)
-            results.append(path)
-
-        return results
+        return generate_batch_with_rate_limit(
+            self.generate_illustration,
+            image_keywords,
+            output_paths,
+            rate_limit_delay=0,
+            logger=_logger,
+        )

@@ -9,9 +9,11 @@ from pathlib import Path
 import httpx
 import replicate
 
+from maze_book_generator.infrastructure.images.providers import (
+    generate_batch_with_rate_limit,
+)
 from maze_book_generator.settings import (
     IMAGE_GENERATOR_PROMPT_TEMPLATE,
-    IMAGE_STORAGE_SUBDIR,
     REPLICATE_DOWNLOAD_TIMEOUT,
     REPLICATE_IMAGE_MODELS,
     REPLICATE_IMAGE_PARAMS,
@@ -45,10 +47,11 @@ class ReplicateClient:
                     self._logger.info("Resolved %s to version %s", model_name, model.latest_version.id)
                 else:
                     self._logger.warning("No latest_version for %s", model_name)
-            except Exception as exc:
+            except (replicate.exceptions.ReplicateError, httpx.HTTPError) as exc:
                 self._logger.warning("Failed to resolve latest version for %s: %s", model_name, exc)
         if not resolved:
-            raise ValueError("Failed to resolve any Replicate model version")
+            msg = "Failed to resolve any Replicate model version"
+            raise ValueError(msg)
         return resolved
 
     def _try_generate(self, model_version: str, prompt: str) -> bytes | None:
@@ -68,7 +71,6 @@ class ReplicateClient:
                 url = str(result)
                 response = httpx.get(url, timeout=REPLICATE_DOWNLOAD_TIMEOUT, follow_redirects=True)
                 response.raise_for_status()
-                return response.content
             except replicate.exceptions.ReplicateError as exc:
                 status = exc.status if hasattr(exc, "status") else 0
                 if status == 429 and attempt == 0:
@@ -79,9 +81,11 @@ class ReplicateClient:
                     continue
                 self._logger.warning("Replicate generation failed for %s: %s", model_version, exc)
                 return None
-            except Exception as exc:
+            except httpx.HTTPError as exc:
                 self._logger.warning("Replicate generation failed for %s: %s", model_version, exc)
                 return None
+            else:
+                return response.content
         return None
 
     def _build_prompt(self, keywords: list[str]) -> str:
@@ -127,28 +131,22 @@ class ReplicateClient:
     def generate_book_illustrations(
         self,
         image_keywords: list[list[str]],
-        book_dir: Path,
+        output_paths: list[Path],
     ) -> list[Path | None]:
         """
-        Генерирует иллюстрации для всех страниц книги.
+        Генерирует иллюстрации для страниц книги в заданные файлы.
 
         Args:
             image_keywords: Список ключевых слов по страницам
-            book_dir: Директория книги (illustrations/page_N.png)
+            output_paths: Целевые файлы иллюстраций (по одному на страницу)
 
         Returns:
             Список путей к файлам (None если генерация страницы не удалась)
         """
-        illustrations_dir = book_dir / IMAGE_STORAGE_SUBDIR
-        results: list[Path | None] = []
-
-        for idx, keywords in enumerate(image_keywords):
-            output_path = illustrations_dir / f"page_{idx + 1}.png"
-            self._logger.info("Generating illustration %d/%d...", idx + 1, len(image_keywords))
-            path = self.generate_illustration(keywords, output_path)
-            results.append(path)
-            # Соблюдаем rate limit Replicate (~6 запросов/мин)
-            if idx < len(image_keywords) - 1:
-                time.sleep(REPLICATE_RATE_LIMIT_DELAY)
-
-        return results
+        return generate_batch_with_rate_limit(
+            self.generate_illustration,
+            image_keywords,
+            output_paths,
+            rate_limit_delay=REPLICATE_RATE_LIMIT_DELAY,
+            logger=self._logger,
+        )

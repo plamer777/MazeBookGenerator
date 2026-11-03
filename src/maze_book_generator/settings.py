@@ -20,7 +20,8 @@ class Settings(BaseSettings):
     DEFAULT_MAZE_HEIGHT: int = 15
     DEFAULT_CELL_SIZE: float = 8.0  # мм (уменьшено для лучшего размещения)
 
-    # MongoDB
+    # MongoDB (опционально; по умолчанию темы хранятся в JSON-файле)
+    MONGODB_ENABLED: bool = False
     MONGODB_URI: str = "mongodb://localhost:27017/"
     MONGODB_DB_NAME: str = "maze_book_generator"
     MONGODB_COLLECTION_THEMES: str = "used_themes"
@@ -184,6 +185,8 @@ IMAGE_GENERATOR_PROMPT_TEMPLATE: str = (
     "clean bold outlines, happy playful mood, kawaii, coloring book style, no shading"
 )
 IMAGE_STORAGE_SUBDIR: str = "illustrations"
+# Файл JSON-хранилища использованных тем (внутри OUTPUT_DIR)
+USED_THEMES_FILENAME: str = "used_themes.json"
 WATERMARK_ALPHA: float = 0.1
 WATERMARK_BG_DIFF_THRESHOLD: int = 18
 WATERMARK_BG_DIFF_GAIN: float = 2.8
@@ -218,6 +221,7 @@ POLLINATIONS_PARAMS: dict = {
     "nologo": "true",
 }
 POLLINATIONS_RATE_LIMIT_DELAY: float = 1.0
+HF_RATE_LIMIT_DELAY: float = 0.0  # HF без межзапросной паузы
 
 # --- Базовые URL внешних API ---
 HF_API_BASE_URL: str = "https://router.huggingface.co/hf-inference/models/"

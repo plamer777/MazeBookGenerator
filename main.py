@@ -2,6 +2,7 @@
 
 import asyncio
 
+from maze_book_generator.application.book_factory import BookSpec
 from maze_book_generator.application.book_service import BookService
 from maze_book_generator.application.config_presets import PRESETS
 from maze_book_generator.container import container
@@ -33,20 +34,20 @@ async def main() -> None:
     )
 
     # Генерируем batch книг
-    books = await service.generate_batch(
-        number_of_books=number_of_books,
+    spec = BookSpec(
         pages_per_book=mazes_per_book,
         maze_size=maze_size,
         difficulty_mode=difficulty_mode,
         book_config=book_config,
     )
+    books = await service.generate_batch(spec, number_of_books=number_of_books)
 
     print(f"\nГенерация завершена! Создано {len(books)} книг:")
     for book in books:
         print(f"  - Book {book.id}: {book.theme.book_title}")
 
-    # Закрываем соединение с MongoDB
-    container.mongodb_client.close()
+    # Закрываем хранилище тем (для JSON — no-op)
+    container.theme_repository.close()
 
 
 if __name__ == "__main__":

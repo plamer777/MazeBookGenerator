@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
+from dataclasses import dataclass
 from typing import Any
 
-from openai import AsyncOpenAI
+from openai import APIError, AsyncOpenAI
 
 from maze_book_generator.domain.models import PagePrompt, Theme
 from maze_book_generator.localization import BookTexts, Language
@@ -19,6 +21,18 @@ from maze_book_generator.settings import (
     OPEN_AI_THEME_TEMPERATURE,
     settings,
 )
+
+logger = logging.getLogger(__name__)
+
+
+@dataclass(frozen=True)
+class ThemeHints:
+    """Опциональные подсказки для генерации темы книги."""
+
+    book_title_hint: str | None = None
+    theme_hint: str | None = None
+    age_range: str | None = None
+    print_friendly: bool = False
 
 
 class AIClient:
@@ -35,10 +49,7 @@ class AIClient:
         pages_count: int,
         used_titles: list[str] | None = None,
         language: Language = "en",
-        book_title_hint: str | None = None,
-        theme_hint: str | None = None,
-        age_range: str | None = None,
-        print_friendly: bool = False,
+        hints: ThemeHints | None = None,
     ) -> Theme:
         """
         Генерирует тему книги через OpenAI.
@@ -52,7 +63,10 @@ class AIClient:
             Объект Theme с заголовком, заданиями и ключевыми словами
         """
         if self._client is None:
-            raise ValueError("OpenAI client is not initialized")
+            msg = "OpenAI client is not initialized"
+            raise ValueError(msg)
+
+        hints = hints or ThemeHints()
 
         titles_block = (
             "\n".join(f"- {t}" for t in used_titles)
@@ -67,14 +81,14 @@ class AIClient:
             pages_count=pages_count,
             used_titles=titles_block,
             language_name=language_name,
-            book_title_hint=self._safe_prompt_value(book_title_hint or "auto"),
-            theme_hint=self._safe_prompt_value(theme_hint or "auto"),
-            age_range=self._safe_prompt_value(age_range or ("4-7 years" if language == "en" else "4-7 лет")),
+            book_title_hint=self._safe_prompt_value(hints.book_title_hint or "auto"),
+            theme_hint=self._safe_prompt_value(hints.theme_hint or "auto"),
+            age_range=self._safe_prompt_value(hints.age_range or ("4-7 years" if language == "en" else "4-7 лет")),
             answers_included=("yes" if language == "en" else "да"),
             print_friendly=(
-                "yes" if language == "en" and print_friendly else
+                "yes" if language == "en" and hints.print_friendly else
                 "no" if language == "en" else
-                "да" if print_friendly else
+                "да" if hints.print_friendly else
                 "нет"
             ),
         )
@@ -100,10 +114,11 @@ class AIClient:
 
                 await asyncio.sleep(1)
 
-            except Exception as e:
-                print(f'Failed to generate theme: {e}')
+            except APIError as exc:
+                logger.warning("Failed to generate theme: %s", exc)
 
-        raise ValueError("Failed to generate theme after 3 attempts")
+        msg = "Failed to generate theme after 3 attempts"
+        raise ValueError(msg)
 
     @staticmethod
     def _safe_prompt_value(value: str) -> str:
@@ -133,6 +148,8 @@ class AIClient:
         try:
             payload: dict[str, Any] = json.loads(cleaned[start:end])
         except json.JSONDecodeError:
+            return None
+        if not isinstance(payload, dict):
             return None
 
         t = BookTexts(language)

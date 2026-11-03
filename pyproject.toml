@@ -13,13 +13,16 @@ dependencies = [
     "pydantic-settings>=2.14.1",
     "reportlab>=4.2.0",
     "Pillow>=10.4.0",
-    "pymongo>=4.10.1",
     "httpx>=0.27.0",
     "pdf2image>=1.17.0",
     "openai>=2.43.0",
     "craiyon-py>=1.2.0",
     "replicate>=1.0.7",
 ]
+
+[project.optional-dependencies]
+# Хранение использованных тем в MongoDB (по умолчанию — JSON-файл)
+mongodb = ["pymongo>=4.10.1"]
 
 [dependency-groups]
 dev = [

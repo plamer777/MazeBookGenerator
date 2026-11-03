@@ -1,9 +1,18 @@
 """Генератор preview изображений в книжном стиле."""
 
+import logging
 import math
+from dataclasses import dataclass
 from pathlib import Path
 
 from pdf2image import convert_from_path
+from pdf2image.exceptions import (
+    PDFInfoNotInstalledError,
+    PDFPageCountError,
+    PDFPopplerTimeoutError,
+    PDFSyntaxError,
+    PopplerNotInstalledError,
+)
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 from maze_book_generator.settings import (
@@ -16,6 +25,26 @@ from maze_book_generator.settings import (
     PREVIEW_TABLE_COLOR,
 )
 from maze_book_generator.utils import format_count_with_plural_ru
+
+logger = logging.getLogger(__name__)
+
+_pdf_errors = (
+    PDFInfoNotInstalledError,
+    PDFPageCountError,
+    PDFPopplerTimeoutError,
+    PDFSyntaxError,
+    PopplerNotInstalledError,
+    OSError,
+)
+
+
+@dataclass(frozen=True)
+class BadgeStyle:
+    """Оформление маркетингового стикера (радиус и цвета)."""
+
+    radius: int = 110
+    color: tuple[int, int, int] = (255, 140, 0)
+    text_color: tuple[int, int, int] = (25, 20, 10)
 
 
 class PreviewGenerator:
@@ -121,8 +150,8 @@ class PreviewGenerator:
                 images = convert_from_path(str(pdf_path), dpi=150, first_page=1, last_page=1)
                 if images:
                     return images[0].convert("RGB")
-            except Exception:
-                pass
+            except _pdf_errors as exc:
+                logger.debug("Не удалось прочитать cover из PDF: %s", exc)
         return None
 
     def _load_pages_from_pdf(self, output_dir: Path, count: int = 4) -> list[Image.Image]:
@@ -141,9 +170,11 @@ class PreviewGenerator:
             for i in range(count):
                 idx = available[min(i * max(1, len(available) // count), len(available) - 1)]
                 result.append(images[idx].convert("RGB"))
-            return result
-        except Exception:
+        except _pdf_errors as exc:
+            logger.debug("Не удалось прочитать страницы из PDF: %s", exc)
             return [self._make_placeholder(i + 1) for i in range(count)]
+        else:
+            return result
 
     def _load_solution_page(self, output_dir: Path) -> Image.Image | None:
         """
@@ -162,8 +193,8 @@ class PreviewGenerator:
                 return images[4].convert("RGB")
             if len(images) > 1:
                 return images[1].convert("RGB")
-        except Exception:
-            pass
+        except _pdf_errors as exc:
+            logger.debug("Не удалось прочитать страницу ответа из PDF: %s", exc)
         return None
 
     # ------------------------------------------------------------------
@@ -195,29 +226,52 @@ class PreviewGenerator:
             ( 15,  int(PREVIEW_CANVAS_WIDTH * 0.22),  int(PREVIEW_CANVAS_HEIGHT * 0.12)),  # Нижняя правая
         ]
 
+        self._paste_page_fan(canvas, pages, layout, (cx, cy), (page_w, page_h))
+        self._paste_center_cover(canvas, cover, (cx, cy))
+
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        canvas.save(output_path, "PNG", quality=95)
+
+    def _paste_page_fan(
+        self,
+        canvas: Image.Image,
+        pages: list[Image.Image],
+        layout: list[tuple[float, int, int]],
+        center: tuple[int, int],
+        page_size: tuple[int, int],
+    ) -> None:
+        """Раскладывает страницы веером вокруг center (angle, dx, dy)."""
+        cx, cy = center
+        page_w, page_h = page_size
         for i, (angle, dx, dy) in enumerate(layout):
             src = pages[i] if i < len(pages) else self._make_placeholder(i + 1)
             pimg = self._fit_image(src, page_w, page_h)
             pw, ph = pimg.size
-            px = cx + dx - pw // 2
-            py = cy + dy - ph // 2
             # Смещение тени небольшое, создающее эффект плотно лежащего листа
-            self._paste_with_shadow(canvas, pimg, px, py, angle=angle, shadow_offset=12)
+            self._paste_with_shadow(
+                canvas, pimg, cx + dx - pw // 2, cy + dy - ph // 2,
+                angle=angle, shadow_offset=12,
+            )
 
-        # Центральная обложка (крупнее остальных)
+    def _paste_center_cover(
+        self,
+        canvas: Image.Image,
+        cover: Image.Image | None,
+        center: tuple[int, int],
+    ) -> None:
+        """Размещает центральную обложку крупнее остальных страниц."""
+        cx, cy = center
         cover_h = int(PREVIEW_CANVAS_HEIGHT * 0.56)
         cover_w = int(cover_h * 210 / 297) if (cover and cover.height > cover.width) else int(cover_h * 297 / 210)
         cover_src = cover if cover is not None else self._make_placeholder(0)
         cover_img = self._fit_image(cover_src, cover_w, cover_h)
-        cw, ch = cover_img.size
-        cover_x = cx - cw // 2
-        cover_y = cy - ch // 2
 
         # Обложка приподнята повыше, поэтому у неё тень глубже (offset=20)
-        self._paste_with_shadow(canvas, cover_img, cover_x, cover_y, angle=2, shadow_offset=20)
-
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        canvas.save(output_path, "PNG", quality=95)
+        self._paste_with_shadow(
+            canvas, cover_img,
+            cx - cover_img.width // 2, cy - cover_img.height // 2,
+            angle=2, shadow_offset=20,
+        )
 
     def _generate_collage(
         self,
@@ -277,7 +331,7 @@ class PreviewGenerator:
         self._draw_marketing_badge(
             canvas, line1, line2,
             x=PREVIEW_CANVAS_WIDTH - 210, y=175,
-            color=(220, 55, 40), text_color=(255, 255, 255),
+            style=BadgeStyle(color=(220, 55, 40), text_color=(255, 255, 255)),
         )
 
         output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -312,8 +366,8 @@ class PreviewGenerator:
             line1, line2 = ("50+", "MAZES") if language == "en" else ("50+", "ЛАБИРИНТОВ")
         self._draw_marketing_badge(
             canvas, line1, line2,
-            x=860, y=400, radius=170,
-            color=(255, 140, 0), text_color=(25, 20, 10),
+            x=860, y=400,
+            style=BadgeStyle(radius=170, color=(255, 140, 0), text_color=(25, 20, 10)),
         )
 
         output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -358,6 +412,7 @@ class PreviewGenerator:
         img: Image.Image,
         x: int,
         y: int,
+        *,
         angle: float = 0,
         shadow_offset: int = 12,
     ) -> None:
@@ -415,9 +470,8 @@ class PreviewGenerator:
         text2: str,
         x: int,
         y: int,
-        radius: int = 110,
-        color: tuple[int, int, int] = (255, 140, 0),
-        text_color: tuple[int, int, int] = (25, 20, 10),
+        *,
+        style: BadgeStyle = BadgeStyle(),
     ) -> None:
         """Рисует объёмный круглый стикер с кантиком, тенью и правильно центрированным текстом."""
         badge_canvas = Image.new("RGBA", (canvas.width, canvas.height), (0, 0, 0, 0))
@@ -425,7 +479,7 @@ class PreviewGenerator:
 
         # Тень стикера
         b_draw.ellipse(
-            [(x - radius + 6, y - radius + 10), (x + radius + 6, y + radius + 10)],
+            [(x - style.radius + 6, y - style.radius + 10), (x + style.radius + 6, y + style.radius + 10)],
             fill=(40, 38, 35, 50),
         )
         badge_canvas = badge_canvas.filter(ImageFilter.GaussianBlur(radius=8))
@@ -434,43 +488,14 @@ class PreviewGenerator:
         draw = ImageDraw.Draw(canvas)
 
         # Основной круг
-        draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill=color)
+        draw.ellipse([(x - style.radius, y - style.radius), (x + style.radius, y + style.radius)], fill=style.color)
         # Белый кант
         draw.ellipse(
-            [(x - radius + 7, y - radius + 7), (x + radius - 7, y + radius - 7)],
+            [(x - style.radius + 7, y - style.radius + 7), (x + style.radius - 7, y + style.radius - 7)],
             outline=(255, 255, 255), width=3,
         )
 
-        # Доступная ширина внутри канта (диаметр внутренней окружности минус отступы)
-        inner_w = (radius - 16) * 2
-        gap = max(4, radius // 16)
-
-        def _fit_font(text: str, max_w: int, start_size: int, min_size: int = 10) -> ImageFont.FreeTypeFont:
-            """Подбирает максимальный размер шрифта чтобы text влезал в max_w."""
-            try:
-                for size in range(start_size, min_size - 1, -1):
-                    f = ImageFont.truetype(FONT_DEJAVU_BOLD, size)
-                    bb = draw.textbbox((0, 0), text, font=f)
-                    if bb[2] - bb[0] <= max_w:
-                        return f
-                return ImageFont.truetype(FONT_DEJAVU_BOLD, min_size)
-            except OSError:
-                return ImageFont.load_default()
-
-        font1 = _fit_font(text1, inner_w, start_size=max(14, radius // 3))
-        font2 = _fit_font(text2, inner_w, start_size=max(10, radius // 5))
-
-        bbox1 = draw.textbbox((0, 0), text1, font=font1)
-        tw1, th1 = bbox1[2] - bbox1[0], bbox1[3] - bbox1[1]
-        bbox2 = draw.textbbox((0, 0), text2, font=font2)
-        tw2, th2 = bbox2[2] - bbox2[0], bbox2[3] - bbox2[1]
-
-        total_h = th1 + gap + th2
-        y1 = y - total_h // 2
-        y2 = y1 + th1 + gap
-
-        draw.text((x - tw1 // 2, y1), text1, font=font1, fill=text_color)
-        draw.text((x - tw2 // 2, y2), text2, font=font2, fill=text_color)
+        _draw_badge_text(draw, text1, text2, x, y, style=style)
 
     def _fit_to_cell(self, img: Image.Image, cell_w: int, cell_h: int) -> Image.Image:
         """Вписывает изображение внутрь ячейки коллажа."""
@@ -482,7 +507,8 @@ class PreviewGenerator:
         cell.paste(fitted, (ox, oy))
         return cell
 
-    def _fit_image(self, img: Image.Image, target_w: int, target_h: int) -> Image.Image:
+    @staticmethod
+    def _fit_image(img: Image.Image, target_w: int, target_h: int) -> Image.Image:
         """Масштабирует изображение с сохранением пропорций."""
         src_w, src_h = img.size
         scale = min(target_w / src_w, target_h / src_h)
@@ -504,3 +530,46 @@ class PreviewGenerator:
         label = f"Page {page_num}" if page_num > 0 else "Cover Template"
         draw.text((w // 2 - 35, h // 2 - 6), label, fill=(130, 135, 150))
         return img
+
+
+def _fit_badge_font(draw: ImageDraw.ImageDraw, text: str, max_w: int, start_size: int) -> ImageFont.FreeTypeFont:
+    """Подбирает максимальный размер шрифта чтобы text влезал в max_w."""
+    try:
+        for size in range(start_size, 9, -1):
+            font = ImageFont.truetype(FONT_DEJAVU_BOLD, size)
+            bb = draw.textbbox((0, 0), text, font=font)
+            if bb[2] - bb[0] <= max_w:
+                return font
+        return ImageFont.truetype(FONT_DEJAVU_BOLD, 10)
+    except OSError:
+        return ImageFont.load_default()
+
+
+def _draw_badge_text(
+    draw: ImageDraw.ImageDraw,
+    text1: str,
+    text2: str,
+    x: int,
+    y: int,
+    *,
+    style: BadgeStyle,
+) -> None:
+    """Центрирует и рисует две строки текста внутри стикера."""
+    # Доступная ширина внутри канта (диаметр внутренней окружности минус отступы)
+    inner_w = (style.radius - 16) * 2
+    gap = max(4, style.radius // 16)
+
+    font1 = _fit_badge_font(draw, text1, inner_w, start_size=max(14, style.radius // 3))
+    font2 = _fit_badge_font(draw, text2, inner_w, start_size=max(10, style.radius // 5))
+
+    bbox1 = draw.textbbox((0, 0), text1, font=font1)
+    tw1, th1 = bbox1[2] - bbox1[0], bbox1[3] - bbox1[1]
+    bbox2 = draw.textbbox((0, 0), text2, font=font2)
+    tw2, th2 = bbox2[2] - bbox2[0], bbox2[3] - bbox2[1]
+
+    total_h = th1 + gap + th2
+    y1 = y - total_h // 2
+    y2 = y1 + th1 + gap
+
+    draw.text((x - tw1 // 2, y1), text1, font=font1, fill=style.text_color)
+    draw.text((x - tw2 // 2, y2), text2, font=font2, fill=style.text_color)

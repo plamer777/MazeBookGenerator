@@ -3,6 +3,8 @@
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+from pdf2image.exceptions import PDFPageCountError
+
 from maze_book_generator.infrastructure.preview_generator import PreviewGenerator
 
 
@@ -60,7 +62,7 @@ class TestPreviewGenerator:
     def test_load_cover_conversion_error(self, tmp_path: Path) -> None:
         """Обработка ошибки при конвертации PDF."""
         with patch("maze_book_generator.infrastructure.preview_generator.convert_from_path") as mock_convert:
-            mock_convert.side_effect = Exception("Conversion error")
+            mock_convert.side_effect = PDFPageCountError("Conversion error")
 
             (tmp_path / "book.pdf").touch()
 
@@ -92,7 +94,7 @@ class TestPreviewGenerator:
     def test_load_pages_conversion_error(self, tmp_path: Path) -> None:
         """Обработка ошибки при конвертации страниц."""
         with patch("maze_book_generator.infrastructure.preview_generator.convert_from_path") as mock_convert:
-            mock_convert.side_effect = Exception("Conversion error")
+            mock_convert.side_effect = PDFPageCountError("Conversion error")
 
             (tmp_path / "book.pdf").touch()
 

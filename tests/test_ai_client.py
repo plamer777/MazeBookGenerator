@@ -3,9 +3,16 @@
 import json
 from unittest.mock import AsyncMock, MagicMock, patch
 
+import httpx
 import pytest
+from openai import APIError
 
 from maze_book_generator.infrastructure.ai_client import AIClient
+
+
+def _api_error(msg: str) -> APIError:
+    """Создаёт APIError для имитации сбоя OpenAI в тестах."""
+    return APIError(msg, request=httpx.Request("POST", "https://api.test"), body=None)
 
 
 class TestAIClient:
@@ -236,7 +243,7 @@ class TestAIClient:
 
             mock_openai = AsyncMock()
             mock_openai.chat.completions.create = AsyncMock(
-                side_effect=[Exception("Error 1"), Exception("Error 2"), mock_response]
+                side_effect=[_api_error("Error 1"), _api_error("Error 2"), mock_response]
             )
             client._client = mock_openai
 
@@ -253,7 +260,7 @@ class TestAIClient:
 
             mock_openai = AsyncMock()
             mock_openai.chat.completions.create = AsyncMock(
-                side_effect=Exception("Always fails")
+                side_effect=_api_error("Always fails")
             )
             client._client = mock_openai
 
