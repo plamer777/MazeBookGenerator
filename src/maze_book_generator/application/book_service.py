@@ -180,16 +180,21 @@ class BookService:
         self,
         book_id: int,
         spec: BookSpec,
+        *,
+        with_illustrations: bool = True,
+        with_previews: bool = True,
     ) -> Book:
         """Генерирует полную книгу со всеми медиа-файлами и превью."""
         effective_language = resolve_language(spec.language, spec.book_config)
         book = await self.generate_book_with_ai_theme(book_id=book_id, spec=spec)
 
-        self.generate_page_illustrations(book)
+        if with_illustrations:
+            self.generate_page_illustrations(book)
         self.render_book_to_pdf(
             book, language=effective_language, book_config=spec.book_config
         )
-        self.generate_previews(book, language=effective_language)
+        if with_previews:
+            self.generate_previews(book, language=effective_language)
 
         return book
 
@@ -207,6 +212,9 @@ class BookService:
         spec: BookSpec,
         number_of_books: int,
         base_seed: int | None = None,
+        *,
+        with_illustrations: bool = True,
+        with_previews: bool = True,
     ) -> list[Book]:
         """
         Генерирует пачку книг в batch режиме с гарантированной уникальностью структур.
@@ -256,7 +264,12 @@ class BookService:
                 maze_size=size_variations[(local_idx - 1) % len(size_variations)],
                 base_difficulty=difficulties[(local_idx - 1) % len(difficulties)],
             )
-            book = await self.generate_book_complete(book_id=book_id, spec=book_spec)
+            book = await self.generate_book_complete(
+                book_id=book_id,
+                spec=book_spec,
+                with_illustrations=with_illustrations,
+                with_previews=with_previews,
+            )
             books.append(book)
             print(
                 f"Книга {local_idx} завершена: {book.theme.book_title} "
