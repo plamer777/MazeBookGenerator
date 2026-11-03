@@ -1,0 +1,5042 @@
+{
+  "version": 1,
+  "generated_at": "2026-11-03T07:04:35.836107+00:00",
+  "commit": "98b6f65be884b957cf8b484e60d38c21bb78ba4e",
+  "config_hash": "2da9ef43aa2e8db0150e145787c224bd9b2881454860ace8ce1ceb6c2b06647b",
+  "scopes": {
+    "constants/maze-book-generator": {
+      "tool": "constants",
+      "service": "maze-book-generator",
+      "policy_hash": "c0a0495fd7a8645924201a06faed0c9dcb1abb4de4e17e227d21ba7977318582",
+      "findings": {
+        "1fe52d08b4b609d647797203": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "1fe52d08b4b609d647797203",
+            "tool": "constants",
+            "service": "maze-book-generator",
+            "rule_id": "CFG001",
+            "severity": "error",
+            "confidence": "HIGH",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 29,
+            "column": 5,
+            "symbol": "TABLE_COLOR",
+            "message": "TABLE_COLOR: class constant outside approved settings; choose an allowed location and wire the runtime consumer.",
+            "blocking": true,
+            "category": "class constant",
+            "allowed_locations": [
+              "src/settings.py"
+            ]
+          }
+        },
+        "3c56719266ecb4a497892f88": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "3c56719266ecb4a497892f88",
+            "tool": "constants",
+            "service": "maze-book-generator",
+            "rule_id": "CFG001",
+            "severity": "error",
+            "confidence": "HIGH",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 28,
+            "column": 1,
+            "symbol": "_DEJAVU_REGULAR",
+            "message": "_DEJAVU_REGULAR: module constant outside approved settings; choose an allowed location and wire the runtime consumer.",
+            "blocking": true,
+            "category": "module constant",
+            "allowed_locations": [
+              "src/settings.py"
+            ]
+          }
+        },
+        "a8531be8a0a8940f4d1faa1b": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "a8531be8a0a8940f4d1faa1b",
+            "tool": "constants",
+            "service": "maze-book-generator",
+            "rule_id": "CFG001",
+            "severity": "error",
+            "confidence": "HIGH",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 447,
+            "column": 9,
+            "symbol": "_FONT_PATH",
+            "message": "_FONT_PATH: local constant outside approved settings; choose an allowed location and wire the runtime consumer.",
+            "blocking": true,
+            "category": "local constant",
+            "allowed_locations": [
+              "src/settings.py"
+            ]
+          }
+        },
+        "ac89afcee356d72bb072ab37": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "ac89afcee356d72bb072ab37",
+            "tool": "constants",
+            "service": "maze-book-generator",
+            "rule_id": "CFG001",
+            "severity": "error",
+            "confidence": "HIGH",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 34,
+            "column": 5,
+            "symbol": "PAGE_THUMB_W",
+            "message": "PAGE_THUMB_W: class constant outside approved settings; choose an allowed location and wire the runtime consumer.",
+            "blocking": true,
+            "category": "class constant",
+            "allowed_locations": [
+              "src/settings.py"
+            ]
+          }
+        },
+        "be36036990bdbdf86000b7be": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "be36036990bdbdf86000b7be",
+            "tool": "constants",
+            "service": "maze-book-generator",
+            "rule_id": "CFG001",
+            "severity": "error",
+            "confidence": "HIGH",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 29,
+            "column": 1,
+            "symbol": "_DEJAVU_BOLD",
+            "message": "_DEJAVU_BOLD: module constant outside approved settings; choose an allowed location and wire the runtime consumer.",
+            "blocking": true,
+            "category": "module constant",
+            "allowed_locations": [
+              "src/settings.py"
+            ]
+          }
+        },
+        "c11032d6fb6667fd9e671971": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "c11032d6fb6667fd9e671971",
+            "tool": "constants",
+            "service": "maze-book-generator",
+            "rule_id": "CFG001",
+            "severity": "error",
+            "confidence": "HIGH",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 25,
+            "column": 5,
+            "symbol": "CANVAS_W",
+            "message": "CANVAS_W: class constant outside approved settings; choose an allowed location and wire the runtime consumer.",
+            "blocking": true,
+            "category": "class constant",
+            "allowed_locations": [
+              "src/settings.py"
+            ]
+          }
+        },
+        "df88b75742d22ecc4eb0b5d9": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "df88b75742d22ecc4eb0b5d9",
+            "tool": "constants",
+            "service": "maze-book-generator",
+            "rule_id": "CFG001",
+            "severity": "error",
+            "confidence": "HIGH",
+            "path": "src/infrastructure/hf_client.py",
+            "line": 19,
+            "column": 1,
+            "symbol": "_HF_API_BASE",
+            "message": "_HF_API_BASE: module constant outside approved settings; choose an allowed location and wire the runtime consumer.",
+            "blocking": true,
+            "category": "module constant",
+            "allowed_locations": [
+              "src/settings.py"
+            ]
+          }
+        },
+        "ea820c48a5ec5a6c41073801": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "ea820c48a5ec5a6c41073801",
+            "tool": "constants",
+            "service": "maze-book-generator",
+            "rule_id": "CFG001",
+            "severity": "error",
+            "confidence": "HIGH",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 26,
+            "column": 5,
+            "symbol": "CANVAS_H",
+            "message": "CANVAS_H: class constant outside approved settings; choose an allowed location and wire the runtime consumer.",
+            "blocking": true,
+            "category": "class constant",
+            "allowed_locations": [
+              "src/settings.py"
+            ]
+          }
+        },
+        "f2c61d1931bcd4d5d7299e38": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "f2c61d1931bcd4d5d7299e38",
+            "tool": "constants",
+            "service": "maze-book-generator",
+            "rule_id": "CFG001",
+            "severity": "error",
+            "confidence": "HIGH",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 31,
+            "column": 5,
+            "symbol": "PLANK_LINE_COLOR",
+            "message": "PLANK_LINE_COLOR: class constant outside approved settings; choose an allowed location and wire the runtime consumer.",
+            "blocking": true,
+            "category": "class constant",
+            "allowed_locations": [
+              "src/settings.py"
+            ]
+          }
+        },
+        "f2e778846f69aed4cfa61be9": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "f2e778846f69aed4cfa61be9",
+            "tool": "constants",
+            "service": "maze-book-generator",
+            "rule_id": "CFG001",
+            "severity": "error",
+            "confidence": "HIGH",
+            "path": "src/localization.py",
+            "line": 24,
+            "column": 1,
+            "symbol": "_TEXTS",
+            "message": "_TEXTS: module constant outside approved settings; choose an allowed location and wire the runtime consumer.",
+            "blocking": true,
+            "category": "module constant",
+            "allowed_locations": [
+              "src/settings.py"
+            ]
+          }
+        },
+        "fe932f3125a676f7f2e4b8f7": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "fe932f3125a676f7f2e4b8f7",
+            "tool": "constants",
+            "service": "maze-book-generator",
+            "rule_id": "CFG001",
+            "severity": "error",
+            "confidence": "HIGH",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 35,
+            "column": 5,
+            "symbol": "PAGE_THUMB_H",
+            "message": "PAGE_THUMB_H: class constant outside approved settings; choose an allowed location and wire the runtime consumer.",
+            "blocking": true,
+            "category": "class constant",
+            "allowed_locations": [
+              "src/settings.py"
+            ]
+          }
+        }
+      }
+    },
+    "ruff/maze-book-generator": {
+      "tool": "ruff",
+      "service": "maze-book-generator",
+      "findings": {
+        "0113d14febdf06382f0c198f": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "0113d14febdf06382f0c198f",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0915",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 209,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many statements (102 > 50)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "01195d7a02be2ecb7afa03bd": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "01195d7a02be2ecb7afa03bd",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF003",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1553,
+            "column": 35,
+            "symbol": null,
+            "message": "Comment contains ambiguous `у` (CYRILLIC SMALL LETTER U). Did you mean `y` (LATIN SMALL LETTER Y)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "0597826cb0fd660d45f57078": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "0597826cb0fd660d45f57078",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0904",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_polar_topology_service.py",
+            "line": 9,
+            "column": 1,
+            "symbol": null,
+            "message": "Too many public methods (33 > 12)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "06d8284cb551abc1789bfa3d": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "06d8284cb551abc1789bfa3d",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0913",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1285,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many arguments in function definition (8 > 6)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "0793355d925d5359651e4b65": {
+          "count": 6,
+          "finding": {
+            "fingerprint": "0793355d925d5359651e4b65",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "UP045",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 501,
+            "column": 85,
+            "symbol": null,
+            "message": "Use `X | None` for type annotations",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "094853b21292b206c8b84cc1": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "094853b21292b206c8b84cc1",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "B905",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1980,
+            "column": 29,
+            "symbol": null,
+            "message": "`zip()` without an explicit `strict=` parameter",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "09cc8b95cf929bf4efc3fcb7": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "09cc8b95cf929bf4efc3fcb7",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF003",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/localization.py",
+            "line": 108,
+            "column": 20,
+            "symbol": null,
+            "message": "Comment contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "09db39fe639750c6ca51be18": {
+          "count": 19,
+          "finding": {
+            "fingerprint": "09db39fe639750c6ca51be18",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "S311",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/maze_generator.py",
+            "line": 1259,
+            "column": 29,
+            "symbol": null,
+            "message": "Standard pseudo-random generators are not suitable for cryptographic purposes",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "0a2e7a8ca8bbe87982b150b8": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "0a2e7a8ca8bbe87982b150b8",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0904",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_preview_generator.py",
+            "line": 9,
+            "column": 1,
+            "symbol": null,
+            "message": "Too many public methods (14 > 12)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "0b49bb81cd10bf2ce723aeaf": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "0b49bb81cd10bf2ce723aeaf",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF003",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 404,
+            "column": 61,
+            "symbol": null,
+            "message": "Comment contains ambiguous `е` (CYRILLIC SMALL LETTER IE). Did you mean `e` (LATIN SMALL LETTER E)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "0bf3f272babdada2827b1acd": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "0bf3f272babdada2827b1acd",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF003",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_maze_generator.py",
+            "line": 193,
+            "column": 11,
+            "symbol": null,
+            "message": "Comment contains ambiguous `В` (CYRILLIC CAPITAL LETTER VE). Did you mean `B` (LATIN CAPITAL LETTER B)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "0c226a6a9914b254ebbe6ea3": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "0c226a6a9914b254ebbe6ea3",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "I001",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/container.py",
+            "line": 3,
+            "column": 1,
+            "symbol": null,
+            "message": "Import block is un-sorted or un-formatted",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "0d08cb361858729b6fa8f340": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "0d08cb361858729b6fa8f340",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "UP035",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/models.py",
+            "line": 5,
+            "column": 1,
+            "symbol": null,
+            "message": "`typing.Dict` is deprecated, use `dict` instead",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "0d7c80f720ceb823b1fc2bd4": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "0d7c80f720ceb823b1fc2bd4",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "E701",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/polar_topology_service.py",
+            "line": 84,
+            "column": 21,
+            "symbol": null,
+            "message": "Multiple statements on one line (colon)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "0e0b48bf1bd0dc948acc54c1": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "0e0b48bf1bd0dc948acc54c1",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "F401",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/hf_client.py",
+            "line": 5,
+            "column": 8,
+            "symbol": null,
+            "message": "`asyncio` imported but unused",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "0e22a289a19c12fcabdac1b5": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "0e22a289a19c12fcabdac1b5",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "UP006",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/maze_generator.py",
+            "line": 538,
+            "column": 18,
+            "symbol": null,
+            "message": "Use `set` instead of `Set` for type annotation",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "116ab38b522a02fda43d80ba": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "116ab38b522a02fda43d80ba",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "F401",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_ai_client.py",
+            "line": 9,
+            "column": 31,
+            "symbol": null,
+            "message": "`src.domain.models.PagePrompt` imported but unused",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "11a298882980b2bfd9a53ade": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "11a298882980b2bfd9a53ade",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF003",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 219,
+            "column": 46,
+            "symbol": null,
+            "message": "Comment contains ambiguous `у` (CYRILLIC SMALL LETTER U). Did you mean `y` (LATIN SMALL LETTER Y)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "130bd3b680bb08cf65655131": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "130bd3b680bb08cf65655131",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "SIM116",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_pdf_renderer.py",
+            "line": 134,
+            "column": 13,
+            "symbol": null,
+            "message": "Use a dictionary instead of consecutive `if` statements",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "133ea6f3a372260e280c2bec": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "133ea6f3a372260e280c2bec",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "I001",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_utils.py",
+            "line": 4,
+            "column": 1,
+            "symbol": null,
+            "message": "Import block is un-sorted or un-formatted",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "13627828597b9992237dea06": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "13627828597b9992237dea06",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0911",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/maze_generator.py",
+            "line": 59,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many return statements (8 > 6)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "1381d7988302ec0d859027a6": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "1381d7988302ec0d859027a6",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0915",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1934,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many statements (58 > 50)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "142c57123513323e3e11e687": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "142c57123513323e3e11e687",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "S108",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_book_service.py",
+            "line": 309,
+            "column": 27,
+            "symbol": null,
+            "message": "Probable insecure usage of temporary file or directory: \"/tmp/test_marketplace_fallback\"",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "151c8c90c66d87f6ecee63d4": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "151c8c90c66d87f6ecee63d4",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF059",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1981,
+            "column": 20,
+            "symbol": null,
+            "message": "Unpacked variable `sector1` is never used",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "15e447cbb8e9cb4fed4164bd": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "15e447cbb8e9cb4fed4164bd",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0914",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/maze_generator.py",
+            "line": 420,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many local variables (18 > 15)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "163ff537755379dca4b8b28d": {
+          "count": 3,
+          "finding": {
+            "fingerprint": "163ff537755379dca4b8b28d",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "SIM117",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_pdf_renderer.py",
+            "line": 243,
+            "column": 9,
+            "symbol": null,
+            "message": "Use a single `with` statement with multiple contexts instead of nested `with` statements",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "16729b401d8fc7db84d49e9b": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "16729b401d8fc7db84d49e9b",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "I001",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/maze_generator.py",
+            "line": 3,
+            "column": 1,
+            "symbol": null,
+            "message": "Import block is un-sorted or un-formatted",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "16d52a72e45bf8e77478c8b8": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "16d52a72e45bf8e77478c8b8",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "B007",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1564,
+            "column": 13,
+            "symbol": null,
+            "message": "Loop control variable `i` not used within loop body",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "1725755a5059835f2c327537": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "1725755a5059835f2c327537",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/maze_generator.py",
+            "line": 41,
+            "column": 53,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `–` (EN DASH). Did you mean `-` (HYPHEN-MINUS)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "19739f00d532e5bb9c867c7f": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "19739f00d532e5bb9c867c7f",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0915",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1399,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many statements (54 > 50)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "1a770a4132ae78fe0de6fb9e": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "1a770a4132ae78fe0de6fb9e",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0913",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/maze_generator.py",
+            "line": 1001,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many arguments in function definition (7 > 6)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "1a7ce6fa6a3f9e8e43ac73dc": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "1a7ce6fa6a3f9e8e43ac73dc",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0913",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/application/book_service.py",
+            "line": 306,
+            "column": 15,
+            "symbol": null,
+            "message": "Too many arguments in function definition (8 > 6)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "1ab73cee6e8200bbe7484b80": {
+          "count": 8,
+          "finding": {
+            "fingerprint": "1ab73cee6e8200bbe7484b80",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PT011",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_polar_topology_service.py",
+            "line": 326,
+            "column": 28,
+            "symbol": null,
+            "message": "`pytest.raises(ValueError)` is too broad, set the `match` parameter or use a more specific exception",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "1ad088f92999342b95209ae4": {
+          "count": 3,
+          "finding": {
+            "fingerprint": "1ad088f92999342b95209ae4",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "BLE001",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 168,
+            "column": 16,
+            "symbol": null,
+            "message": "Do not catch blind exception: `Exception`",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "1cba21458f2fd7839b12801e": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "1cba21458f2fd7839b12801e",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "DTZ003",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/mongodb_client.py",
+            "line": 61,
+            "column": 34,
+            "symbol": null,
+            "message": "`datetime.datetime.utcnow()` used",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "1dae6278de469ad540264477": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "1dae6278de469ad540264477",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_maze_generator.py",
+            "line": 14,
+            "column": 37,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "1e7d90e9a3c58ac72bad8001": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "1e7d90e9a3c58ac72bad8001",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "F401",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_ai_client.py",
+            "line": 5,
+            "column": 8,
+            "symbol": null,
+            "message": "`asyncio` imported but unused",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "1f58c12d92f769bcc9ab65d4": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "1f58c12d92f769bcc9ab65d4",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "F401",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/image_generator.py",
+            "line": 7,
+            "column": 26,
+            "symbol": null,
+            "message": "`src.settings.settings` imported but unused",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "200a24ca8f8201a0ff8c3aa7": {
+          "count": 5,
+          "finding": {
+            "fingerprint": "200a24ca8f8201a0ff8c3aa7",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0917",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 2197,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many positional arguments (7 > 5)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "2034e86d248817272ed1e3f8": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "2034e86d248817272ed1e3f8",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF003",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 404,
+            "column": 62,
+            "symbol": null,
+            "message": "Comment contains ambiguous `г` (CYRILLIC SMALL LETTER GHE). Did you mean `r` (LATIN SMALL LETTER R)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "203816990639185bdcb20eb1": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "203816990639185bdcb20eb1",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "S108",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_preview_generator.py",
+            "line": 86,
+            "column": 31,
+            "symbol": null,
+            "message": "Probable insecure usage of temporary file or directory: \"/tmp/test_pages\"",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "212e18756337bc945004213d": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "212e18756337bc945004213d",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF069",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1168,
+            "column": 45,
+            "symbol": null,
+            "message": "Unreliable floating point equality comparison `cx_frac == 0.0`",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "230d8b17c00a14bcb130f65b": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "230d8b17c00a14bcb130f65b",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "UP035",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/application/book_service.py",
+            "line": 6,
+            "column": 1,
+            "symbol": null,
+            "message": "`typing.Tuple` is deprecated, use `tuple` instead",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "24156aab23d0c762aa3de859": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "24156aab23d0c762aa3de859",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 22,
+            "column": 50,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `о` (CYRILLIC SMALL LETTER O). Did you mean `o` (LATIN SMALL LETTER O)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "2479bda44c067bd261b1b4d5": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "2479bda44c067bd261b1b4d5",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1504,
+            "column": 44,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `у` (CYRILLIC SMALL LETTER U). Did you mean `y` (LATIN SMALL LETTER Y)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "256d08856f5a58cba84c54bd": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "256d08856f5a58cba84c54bd",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RET503",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/replicate_client.py",
+            "line": 53,
+            "column": 5,
+            "symbol": null,
+            "message": "Missing explicit `return` at the end of function able to return non-`None` value",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "2579176b2d5999f10767c112": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "2579176b2d5999f10767c112",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "TRY003",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/replicate_client.py",
+            "line": 50,
+            "column": 19,
+            "symbol": null,
+            "message": "Avoid specifying long messages outside the exception class",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "289adc0898b3ba33f857bb7a": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "289adc0898b3ba33f857bb7a",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "F841",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_preview_generator.py",
+            "line": 157,
+            "column": 98,
+            "symbol": null,
+            "message": "Local variable `mock_answer` is assigned to but never used",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "29ff926f30371630723dae38": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "29ff926f30371630723dae38",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "C901",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1934,
+            "column": 9,
+            "symbol": null,
+            "message": "`_render_polar_solution_path` is too complex (13 > 10)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "2a00922998b5b97fb1b582c0": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "2a00922998b5b97fb1b582c0",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "C901",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1495,
+            "column": 9,
+            "symbol": null,
+            "message": "`_render_page_corner_deco` is too complex (12 > 10)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "2b40237f4c68aad3ad4d282c": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "2b40237f4c68aad3ad4d282c",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/hf_client.py",
+            "line": 27,
+            "column": 34,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "2ca31f0126ab265516a83a4b": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "2ca31f0126ab265516a83a4b",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0914",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1934,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many local variables (25 > 15)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "2dd7d9aaac3fc2fe7712f92e": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "2dd7d9aaac3fc2fe7712f92e",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/maze_generator.py",
+            "line": 640,
+            "column": 75,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `о` (CYRILLIC SMALL LETTER O). Did you mean `o` (LATIN SMALL LETTER O)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "2de077eabaf386dbb591ece0": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "2de077eabaf386dbb591ece0",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "SIM108",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/application/book_service.py",
+            "line": 352,
+            "column": 13,
+            "symbol": null,
+            "message": "Use ternary operator `current_seed = base_seed + book_id * 1337 if base_seed is not None else random.randint(1, 999999999)` instead of `if`-`else`-block",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "2e174bf7a1b974cac1c31f14": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "2e174bf7a1b974cac1c31f14",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0914",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1495,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many local variables (19 > 15)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "2e5fa5cc455296f4cd2c1913": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "2e5fa5cc455296f4cd2c1913",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0912",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 209,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many branches (17 > 12)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "301aafcffe4958504e21f475": {
+          "count": 5,
+          "finding": {
+            "fingerprint": "301aafcffe4958504e21f475",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_book_service.py",
+            "line": 243,
+            "column": 25,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "3064f47f60dc7ffdbab732b6": {
+          "count": 4,
+          "finding": {
+            "fingerprint": "3064f47f60dc7ffdbab732b6",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF003",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 404,
+            "column": 63,
+            "symbol": null,
+            "message": "Comment contains ambiguous `о` (CYRILLIC SMALL LETTER O). Did you mean `o` (LATIN SMALL LETTER O)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "320ac09ab330a10bc4c2b857": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "320ac09ab330a10bc4c2b857",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0917",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/application/book_service.py",
+            "line": 269,
+            "column": 15,
+            "symbol": null,
+            "message": "Too many positional arguments (7 > 5)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "3263604bd30c8fc62751b5cc": {
+          "count": 7,
+          "finding": {
+            "fingerprint": "3263604bd30c8fc62751b5cc",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_ai_client.py",
+            "line": 267,
+            "column": 20,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "33d205d8963f0fb1e272b3cc": {
+          "count": 4,
+          "finding": {
+            "fingerprint": "33d205d8963f0fb1e272b3cc",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF003",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 389,
+            "column": 83,
+            "symbol": null,
+            "message": "Comment contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "35f36215d79bf4629c92b688": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "35f36215d79bf4629c92b688",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF003",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 95,
+            "column": 21,
+            "symbol": null,
+            "message": "Comment contains ambiguous `×` (MULTIPLICATION SIGN). Did you mean `x` (LATIN SMALL LETTER X)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "3648b6ec40e61d288dd35e05": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "3648b6ec40e61d288dd35e05",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF069",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1169,
+            "column": 45,
+            "symbol": null,
+            "message": "Unreliable floating point equality comparison `cy_frac == 0.0`",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "378849e451999b3566ee34aa": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "378849e451999b3566ee34aa",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/container.py",
+            "line": 18,
+            "column": 37,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "38d464487afb45176bb37f3e": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "38d464487afb45176bb37f3e",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RET505",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/application/book_service.py",
+            "line": 520,
+            "column": 13,
+            "symbol": null,
+            "message": "Unnecessary `elif` after `return` statement",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "3a58bc80805fab0ff6f3ceae": {
+          "count": 3,
+          "finding": {
+            "fingerprint": "3a58bc80805fab0ff6f3ceae",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_pdf_render_smoke.py",
+            "line": 127,
+            "column": 16,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "3f7696c22b92f02cfde354e3": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "3f7696c22b92f02cfde354e3",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "I001",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/application/book_service.py",
+            "line": 3,
+            "column": 1,
+            "symbol": null,
+            "message": "Import block is un-sorted or un-formatted",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "40e1ab06749f7db6a7ecbde8": {
+          "count": 3,
+          "finding": {
+            "fingerprint": "40e1ab06749f7db6a7ecbde8",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF003",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_polar_topology_service.py",
+            "line": 301,
+            "column": 16,
+            "symbol": null,
+            "message": "Comment contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "41cecdb6aa19dd1f2b52e0e5": {
+          "count": 8,
+          "finding": {
+            "fingerprint": "41cecdb6aa19dd1f2b52e0e5",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "S311",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/application/book_service.py",
+            "line": 523,
+            "column": 24,
+            "symbol": null,
+            "message": "Standard pseudo-random generators are not suitable for cryptographic purposes",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "435ffa1c63baad5f2915283f": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "435ffa1c63baad5f2915283f",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0917",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/ai_client.py",
+            "line": 33,
+            "column": 15,
+            "symbol": null,
+            "message": "Too many positional arguments (7 > 5)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "439bbbdde2c7900e4197d5fd": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "439bbbdde2c7900e4197d5fd",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "TRY300",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pollinations_client.py",
+            "line": 82,
+            "column": 17,
+            "symbol": null,
+            "message": "Consider moving this statement to an `else` block",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "44404362e177f9a9ab32eeae": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "44404362e177f9a9ab32eeae",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "S108",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_preview_generator.py",
+            "line": 109,
+            "column": 31,
+            "symbol": null,
+            "message": "Probable insecure usage of temporary file or directory: \"/tmp/test_pages_error\"",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "44fb2390b4ea59b0795f8128": {
+          "count": 3,
+          "finding": {
+            "fingerprint": "44fb2390b4ea59b0795f8128",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "ARG001",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_pdf_renderer.py",
+            "line": 179,
+            "column": 49,
+            "symbol": null,
+            "message": "Unused function argument: `size`",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "481ae2678df665473d89d51c": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "481ae2678df665473d89d51c",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "S108",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_preview_generator.py",
+            "line": 70,
+            "column": 31,
+            "symbol": null,
+            "message": "Probable insecure usage of temporary file or directory: \"/tmp/test_error\"",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "486af09433746235a06747f1": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "486af09433746235a06747f1",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "SIM102",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/maze_generator.py",
+            "line": 1213,
+            "column": 13,
+            "symbol": null,
+            "message": "Use a single `if` statement instead of nested `if` statements",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "4bbda41a18ad9f190b9f7ed0": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "4bbda41a18ad9f190b9f7ed0",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "S108",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_preview_generator.py",
+            "line": 47,
+            "column": 31,
+            "symbol": null,
+            "message": "Probable insecure usage of temporary file or directory: \"/tmp/test\"",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "4ea24c1f25dbc8b855e4d816": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "4ea24c1f25dbc8b855e4d816",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "C901",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1712,
+            "column": 9,
+            "symbol": null,
+            "message": "`_render_maze_with_mask` is too complex (14 > 10)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "4f96adfc8a294e9dc88984cd": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "4f96adfc8a294e9dc88984cd",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "S110",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 168,
+            "column": 9,
+            "symbol": null,
+            "message": "`try`-`except`-`pass` detected, consider logging the exception",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "50ad307b4b53cf9f243768fd": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "50ad307b4b53cf9f243768fd",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PERF401",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/ai_client.py",
+            "line": 144,
+            "column": 17,
+            "symbol": null,
+            "message": "Use a list comprehension to create a transformed list",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "5137481980e9a341b5fa8ed9": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "5137481980e9a341b5fa8ed9",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF027",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/ai_client.py",
+            "line": 151,
+            "column": 60,
+            "symbol": null,
+            "message": "Possible f-string without an `f` prefix",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "54e35e04d5b8c18acaee8127": {
+          "count": 3,
+          "finding": {
+            "fingerprint": "54e35e04d5b8c18acaee8127",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1099,
+            "column": 58,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `–` (EN DASH). Did you mean `-` (HYPHEN-MINUS)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "555949ce0c7545a34b8366d9": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "555949ce0c7545a34b8366d9",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RET503",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/hf_client.py",
+            "line": 42,
+            "column": 5,
+            "symbol": null,
+            "message": "Missing explicit `return` at the end of function able to return non-`None` value",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "559019df11cb252c380c9df8": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "559019df11cb252c380c9df8",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "UP006",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/maze_generator.py",
+            "line": 1291,
+            "column": 18,
+            "symbol": null,
+            "message": "Use `dict` instead of `Dict` for type annotation",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "5612ea51277b164a86654e16": {
+          "count": 3,
+          "finding": {
+            "fingerprint": "5612ea51277b164a86654e16",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF003",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/image_generator.py",
+            "line": 146,
+            "column": 25,
+            "symbol": null,
+            "message": "Comment contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "56541ad830470fcf9af020f0": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "56541ad830470fcf9af020f0",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PERF401",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 238,
+            "column": 13,
+            "symbol": null,
+            "message": "Use `list.extend` to create a transformed list",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "567bc23ec5c33a11fffdd68b": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "567bc23ec5c33a11fffdd68b",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/replicate_client.py",
+            "line": 26,
+            "column": 34,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "57cfacd65e167bd583fb051a": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "57cfacd65e167bd583fb051a",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0917",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/maze_generator.py",
+            "line": 1001,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many positional arguments (7 > 5)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "597956fa22e8151a0ada234a": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "597956fa22e8151a0ada234a",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "ARG002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1091,
+            "column": 9,
+            "symbol": null,
+            "message": "Unused method argument: `count`",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "59e5b289b62e9e551fdd89af": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "59e5b289b62e9e551fdd89af",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0914",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1839,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many local variables (27 > 15)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "5c0d4e8f85f37bf8891d657a": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "5c0d4e8f85f37bf8891d657a",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "UP035",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/polar_topology_service.py",
+            "line": 7,
+            "column": 1,
+            "symbol": null,
+            "message": "Import from `collections.abc` instead: `Iterator`, `Sequence`",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "5dc60e5920dae2ba600c2d1a": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "5dc60e5920dae2ba600c2d1a",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR1702",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1872,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many nested blocks (5 > 4)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "608f654e205dc5db81ac1d28": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "608f654e205dc5db81ac1d28",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PT011",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_ai_client.py",
+            "line": 263,
+            "column": 32,
+            "symbol": null,
+            "message": "`pytest.raises(ValueError)` is too broad, set the `match` parameter or use a more specific exception",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "618ac7c011de6fb2e04f2b99": {
+          "count": 3,
+          "finding": {
+            "fingerprint": "618ac7c011de6fb2e04f2b99",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_preview_generator.py",
+            "line": 118,
+            "column": 30,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "62085b72c0d82e945eeb0018": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "62085b72c0d82e945eeb0018",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RET505",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_pdf_renderer.py",
+            "line": 136,
+            "column": 13,
+            "symbol": null,
+            "message": "Unnecessary `elif` after `return` statement",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "621a61c671afeb8c388264df": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "621a61c671afeb8c388264df",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "F401",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_ai_client.py",
+            "line": 11,
+            "column": 30,
+            "symbol": null,
+            "message": "`src.localization.Language` imported but unused",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "629b4106733c88fee14769cf": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "629b4106733c88fee14769cf",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/polar_topology_service.py",
+            "line": 14,
+            "column": 50,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "63ab4af067aef96bdf51d0f0": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "63ab4af067aef96bdf51d0f0",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF069",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/maze_generator.py",
+            "line": 1124,
+            "column": 12,
+            "symbol": null,
+            "message": "Unreliable floating point equality comparison `loop_rate == 0.0`",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "63f0e41ab914f22bc26bfb49": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "63f0e41ab914f22bc26bfb49",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "UP006",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/polar_topology_service.py",
+            "line": 10,
+            "column": 26,
+            "symbol": null,
+            "message": "Use `set` instead of `Set` for type annotation",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "645a2b5137e1c5c9a636ec1b": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "645a2b5137e1c5c9a636ec1b",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0913",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 414,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many arguments in function definition (8 > 6)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "6482982db069a8f05d930999": {
+          "count": 5,
+          "finding": {
+            "fingerprint": "6482982db069a8f05d930999",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF003",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/application/book_service.py",
+            "line": 481,
+            "column": 38,
+            "symbol": null,
+            "message": "Comment contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "655f5f3469314cef9f97ea6f": {
+          "count": 6,
+          "finding": {
+            "fingerprint": "655f5f3469314cef9f97ea6f",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "S311",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1514,
+            "column": 15,
+            "symbol": null,
+            "message": "Standard pseudo-random generators are not suitable for cryptographic purposes",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "65a7861f67860c3e64ae0602": {
+          "count": 10,
+          "finding": {
+            "fingerprint": "65a7861f67860c3e64ae0602",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/application/book_service.py",
+            "line": 406,
+            "column": 49,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "670ba52d6241928f83989fae": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "670ba52d6241928f83989fae",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF003",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_pdf_renderer.py",
+            "line": 116,
+            "column": 48,
+            "symbol": null,
+            "message": "Comment contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "6b4e48f05d363add84123dd3": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "6b4e48f05d363add84123dd3",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "F841",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_preview_generator.py",
+            "line": 183,
+            "column": 87,
+            "symbol": null,
+            "message": "Local variable `mock_spread` is assigned to but never used",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "6b68b56db18ddecc5397ee79": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "6b68b56db18ddecc5397ee79",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1300,
+            "column": 28,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `о` (CYRILLIC SMALL LETTER O). Did you mean `o` (LATIN SMALL LETTER O)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "6bb2fa68c9a79e6d9b183473": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "6bb2fa68c9a79e6d9b183473",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0917",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 358,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many positional arguments (6 > 5)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "6bfb20e572f76ed084b152bc": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "6bfb20e572f76ed084b152bc",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "C901",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 209,
+            "column": 9,
+            "symbol": null,
+            "message": "`_render_cover` is too complex (15 > 10)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "6c6755f33a79e425ad4ca82e": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "6c6755f33a79e425ad4ca82e",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "BLE001",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/ai_client.py",
+            "line": 103,
+            "column": 20,
+            "symbol": null,
+            "message": "Do not catch blind exception: `Exception`",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "6fea1e6b3198b08c14229c76": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "6fea1e6b3198b08c14229c76",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0904",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_maze_generator.py",
+            "line": 10,
+            "column": 1,
+            "symbol": null,
+            "message": "Too many public methods (19 > 12)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "72a920d56356135b9d58bc1b": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "72a920d56356135b9d58bc1b",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/localization.py",
+            "line": 20,
+            "column": 45,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "730d48c2d62cef8ab1b8fb39": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "730d48c2d62cef8ab1b8fb39",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "UP035",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/maze_generator.py",
+            "line": 6,
+            "column": 1,
+            "symbol": null,
+            "message": "`typing.Dict` is deprecated, use `dict` instead",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "7310cc4135cd5f2266abf1c9": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "7310cc4135cd5f2266abf1c9",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/image_generator.py",
+            "line": 137,
+            "column": 49,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "738d13a7868ad884d08e6f62": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "738d13a7868ad884d08e6f62",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "UP042",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/models.py",
+            "line": 39,
+            "column": 7,
+            "symbol": null,
+            "message": "Class MazeShape inherits from both `str` and `enum.Enum`",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "74712c2fa0e7dae9016e857a": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "74712c2fa0e7dae9016e857a",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0913",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 767,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many arguments in function definition (9 > 6)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "751a06aa43d564cfa2d911af": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "751a06aa43d564cfa2d911af",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "UP006",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/polar_topology_service.py",
+            "line": 10,
+            "column": 15,
+            "symbol": null,
+            "message": "Use `dict` instead of `Dict` for type annotation",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "751cd5e404b4494a89484edb": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "751cd5e404b4494a89484edb",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "TRY300",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/mongodb_client.py",
+            "line": 45,
+            "column": 13,
+            "symbol": null,
+            "message": "Consider moving this statement to an `else` block",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "7569390f3035b4f80589e85b": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "7569390f3035b4f80589e85b",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "I001",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pollinations_client.py",
+            "line": 3,
+            "column": 1,
+            "symbol": null,
+            "message": "Import block is un-sorted or un-formatted",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "78fa41b945ba511120ffed21": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "78fa41b945ba511120ffed21",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF052",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 447,
+            "column": 9,
+            "symbol": null,
+            "message": "Local dummy variable `_FONT_PATH` is accessed",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "791ded8ae7c8d5f28a5a2c4e": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "791ded8ae7c8d5f28a5a2c4e",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "I001",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/models.py",
+            "line": 3,
+            "column": 1,
+            "symbol": null,
+            "message": "Import block is un-sorted or un-formatted",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "79e7014b5ffa40116d8295b6": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "79e7014b5ffa40116d8295b6",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "BLE001",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pollinations_client.py",
+            "line": 84,
+            "column": 20,
+            "symbol": null,
+            "message": "Do not catch blind exception: `Exception`",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "7a2ba421906b57163c88da7a": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "7a2ba421906b57163c88da7a",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "S311",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/image_generator.py",
+            "line": 174,
+            "column": 18,
+            "symbol": null,
+            "message": "Standard pseudo-random generators are not suitable for cryptographic purposes",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "7aa73b611a08d3f9d9bd50f1": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "7aa73b611a08d3f9d9bd50f1",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "BLE001",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1186,
+            "column": 20,
+            "symbol": null,
+            "message": "Do not catch blind exception: `Exception`",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "7bac6562db02549e4972832e": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "7bac6562db02549e4972832e",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "C901",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1839,
+            "column": 9,
+            "symbol": null,
+            "message": "`_render_polar_maze` is too complex (13 > 10)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "7c0e3f240175e9ee44fbb48e": {
+          "count": 3,
+          "finding": {
+            "fingerprint": "7c0e3f240175e9ee44fbb48e",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF003",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/maze_generator.py",
+            "line": 1243,
+            "column": 35,
+            "symbol": null,
+            "message": "Comment contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "7d857b33d0e0ea17f3bc5a9b": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "7d857b33d0e0ea17f3bc5a9b",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pollinations_client.py",
+            "line": 42,
+            "column": 53,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "7dd3c3d1677bcaeee96ff99c": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "7dd3c3d1677bcaeee96ff99c",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "B905",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/application/book_service.py",
+            "line": 258,
+            "column": 27,
+            "symbol": null,
+            "message": "`zip()` without an explicit `strict=` parameter",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "800b64afdcb32bc9b189fcea": {
+          "count": 5,
+          "finding": {
+            "fingerprint": "800b64afdcb32bc9b189fcea",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0917",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 2220,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many positional arguments (6 > 5)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "80b8f745f539b8433ce2149f": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "80b8f745f539b8433ce2149f",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1300,
+            "column": 27,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `г` (CYRILLIC SMALL LETTER GHE). Did you mean `r` (LATIN SMALL LETTER R)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "80db533ac6fb41fd041f5baa": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "80db533ac6fb41fd041f5baa",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "S108",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_pdf_renderer.py",
+            "line": 317,
+            "column": 24,
+            "symbol": null,
+            "message": "Probable insecure usage of temporary file or directory: \"/tmp/test\"",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "8198451e33aec4ab24e6089a": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "8198451e33aec4ab24e6089a",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "S108",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_preview_generator.py",
+            "line": 166,
+            "column": 59,
+            "symbol": null,
+            "message": "Probable insecure usage of temporary file or directory: \"/tmp/test_no_cover\"",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "81f4630fab2c647a5d14fac6": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "81f4630fab2c647a5d14fac6",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "SIM110",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/maze_generator.py",
+            "line": 996,
+            "column": 9,
+            "symbol": null,
+            "message": "Use `return any(1 in row for row in grid)` instead of `for` loop",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "823aa720e502c132248e4dc9": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "823aa720e502c132248e4dc9",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "UP006",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/models.py",
+            "line": 65,
+            "column": 46,
+            "symbol": null,
+            "message": "Use `set` instead of `Set` for type annotation",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "841cd51ed6ea3fbfa222f15c": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "841cd51ed6ea3fbfa222f15c",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF059",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_pdf_renderer.py",
+            "line": 196,
+            "column": 20,
+            "symbol": null,
+            "message": "Unpacked variable `lines` is never used",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "84767e734f0e8ac07a4d0019": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "84767e734f0e8ac07a4d0019",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1105,
+            "column": 20,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `Н` (CYRILLIC CAPITAL LETTER EN). Did you mean `H` (LATIN CAPITAL LETTER H)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "84eca88314791bc088fd1ac9": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "84eca88314791bc088fd1ac9",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0915",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1839,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many statements (52 > 50)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "86cf0a1ef6a9b1a627141027": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "86cf0a1ef6a9b1a627141027",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0914",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 209,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many local variables (44 > 15)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "870a412fb4308fa17eccdf8e": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "870a412fb4308fa17eccdf8e",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0914",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 176,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many local variables (20 > 15)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "89b34d6b9f894d6e49a1b07a": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "89b34d6b9f894d6e49a1b07a",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0914",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1399,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many local variables (28 > 15)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "8b2640aac6d176a16d12907f": {
+          "count": 5,
+          "finding": {
+            "fingerprint": "8b2640aac6d176a16d12907f",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0913",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 2197,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many arguments in function definition (7 > 6)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "8e3707eaffd9eff1d30b5726": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "8e3707eaffd9eff1d30b5726",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "S108",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_preview_generator.py",
+            "line": 97,
+            "column": 27,
+            "symbol": null,
+            "message": "Probable insecure usage of temporary file or directory: \"/tmp/test_no_pages\"",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "8e622138ae9d8d9b96f20faa": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "8e622138ae9d8d9b96f20faa",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "UP035",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/polar_topology_service.py",
+            "line": 7,
+            "column": 1,
+            "symbol": null,
+            "message": "`typing.Set` is deprecated, use `set` instead",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "8f7bf98ca2bf4d9e75f00e86": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "8f7bf98ca2bf4d9e75f00e86",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF003",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 343,
+            "column": 44,
+            "symbol": null,
+            "message": "Comment contains ambiguous `а` (CYRILLIC SMALL LETTER A). Did you mean `a` (LATIN SMALL LETTER A)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "8fd04dcc0990fd539dd718d3": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "8fd04dcc0990fd539dd718d3",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF003",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 389,
+            "column": 54,
+            "symbol": null,
+            "message": "Comment contains ambiguous `р` (CYRILLIC SMALL LETTER ER). Did you mean `p` (LATIN SMALL LETTER P)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "908a23cc2f454f941df38235": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "908a23cc2f454f941df38235",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "UP035",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/models.py",
+            "line": 5,
+            "column": 1,
+            "symbol": null,
+            "message": "`typing.Tuple` is deprecated, use `tuple` instead",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "910bc9595da815f2b908afd8": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "910bc9595da815f2b908afd8",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "I001",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/application/config_presets.py",
+            "line": 8,
+            "column": 1,
+            "symbol": null,
+            "message": "Import block is un-sorted or un-formatted",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "92ff08a7d9f6ad5d38349077": {
+          "count": 3,
+          "finding": {
+            "fingerprint": "92ff08a7d9f6ad5d38349077",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "SIM117",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_preview_generator.py",
+            "line": 179,
+            "column": 9,
+            "symbol": null,
+            "message": "Use a single `with` statement with multiple contexts instead of nested `with` statements",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "94ec72711b358c4db0be0e9d": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "94ec72711b358c4db0be0e9d",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "BLE001",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/hf_client.py",
+            "line": 83,
+            "column": 24,
+            "symbol": null,
+            "message": "Do not catch blind exception: `Exception`",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "989a73d54542a73c6bc4efc8": {
+          "count": 6,
+          "finding": {
+            "fingerprint": "989a73d54542a73c6bc4efc8",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "S108",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_book_service.py",
+            "line": 251,
+            "column": 19,
+            "symbol": null,
+            "message": "Probable insecure usage of temporary file or directory: \"/tmp/test_existing_unique\"",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "9cb7e2b16aa28412642c7127": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "9cb7e2b16aa28412642c7127",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/application/book_service.py",
+            "line": 279,
+            "column": 37,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `о` (CYRILLIC SMALL LETTER O). Did you mean `o` (LATIN SMALL LETTER O)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "9dbd58f4eeeeee7b4574962f": {
+          "count": 4,
+          "finding": {
+            "fingerprint": "9dbd58f4eeeeee7b4574962f",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "ARG001",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_pdf_renderer.py",
+            "line": 191,
+            "column": 43,
+            "symbol": null,
+            "message": "Unused function argument: `font`",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "9dfc47ed9134b6d6e627cb60": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "9dfc47ed9134b6d6e627cb60",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF003",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1741,
+            "column": 37,
+            "symbol": null,
+            "message": "Comment contains ambiguous `о` (CYRILLIC SMALL LETTER O). Did you mean `o` (LATIN SMALL LETTER O)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "9ebd51a801b15bcb6127bb30": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "9ebd51a801b15bcb6127bb30",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF003",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 352,
+            "column": 15,
+            "symbol": null,
+            "message": "Comment contains ambiguous `К` (CYRILLIC CAPITAL LETTER KA). Did you mean `K` (LATIN CAPITAL LETTER K)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "a6cb328ca95acc044d0b2593": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "a6cb328ca95acc044d0b2593",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0917",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/application/book_service.py",
+            "line": 306,
+            "column": 15,
+            "symbol": null,
+            "message": "Too many positional arguments (8 > 5)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "a707fd3332caeab0bf31f880": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "a707fd3332caeab0bf31f880",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0913",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/ai_client.py",
+            "line": 33,
+            "column": 15,
+            "symbol": null,
+            "message": "Too many arguments in function definition (7 > 6)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "a7d36a39de3d08826acefbde": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "a7d36a39de3d08826acefbde",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "UP006",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/models.py",
+            "line": 65,
+            "column": 24,
+            "symbol": null,
+            "message": "Use `dict` instead of `Dict` for type annotation",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "a863c72c68e29a2fe2a4bc62": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "a863c72c68e29a2fe2a4bc62",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF059",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_pdf_renderer.py",
+            "line": 184,
+            "column": 9,
+            "symbol": null,
+            "message": "Unpacked variable `font_size` is never used",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "aa2cedddfe7cf8e42d902e63": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "aa2cedddfe7cf8e42d902e63",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "S108",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_book_service.py",
+            "line": 237,
+            "column": 18,
+            "symbol": null,
+            "message": "Probable insecure usage of temporary file or directory: \"/tmp/test_empty\"",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "aa80bbf1538b4f4a22a84e07": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "aa80bbf1538b4f4a22a84e07",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0904",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_pdf_renderer.py",
+            "line": 9,
+            "column": 1,
+            "symbol": null,
+            "message": "Too many public methods (23 > 12)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "aace1fdbaad62cf483c4c72e": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "aace1fdbaad62cf483c4c72e",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR1702",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/maze_generator.py",
+            "line": 930,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many nested blocks (5 > 4)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "ab2d05ad4b98e988a70b0c42": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "ab2d05ad4b98e988a70b0c42",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "ARG002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/image_generator.py",
+            "line": 75,
+            "column": 37,
+            "symbol": null,
+            "message": "Unused method argument: `prompt`",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "abf5196694969b39f249902e": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "abf5196694969b39f249902e",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR1702",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_pdf_renderer.py",
+            "line": 243,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many nested blocks (7 > 4)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "ac0ede8173e89468118c3f09": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "ac0ede8173e89468118c3f09",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0904",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/polar_topology_service.py",
+            "line": 13,
+            "column": 1,
+            "symbol": null,
+            "message": "Too many public methods (14 > 12)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "ad4c5c2b98d596669b4997b8": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "ad4c5c2b98d596669b4997b8",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0913",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/application/book_service.py",
+            "line": 269,
+            "column": 15,
+            "symbol": null,
+            "message": "Too many arguments in function definition (7 > 6)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "aed64484756f5806a7a86e21": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "aed64484756f5806a7a86e21",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0914",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/maze_generator.py",
+            "line": 1099,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many local variables (17 > 15)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "aee13091574f210a453eb6e9": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "aee13091574f210a453eb6e9",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "B905",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 247,
+            "column": 30,
+            "symbol": null,
+            "message": "`zip()` without an explicit `strict=` parameter",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "b08ffcc60337411178a3f84f": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "b08ffcc60337411178a3f84f",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "S108",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_preview_generator.py",
+            "line": 194,
+            "column": 59,
+            "symbol": null,
+            "message": "Probable insecure usage of temporary file or directory: \"/tmp/test_no_solution\"",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "b2e40352c26cddc7827e143a": {
+          "count": 4,
+          "finding": {
+            "fingerprint": "b2e40352c26cddc7827e143a",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "UP006",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/application/book_service.py",
+            "line": 310,
+            "column": 20,
+            "symbol": null,
+            "message": "Use `tuple` instead of `Tuple` for type annotation",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "b3cea4944bfe6d304884dada": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "b3cea4944bfe6d304884dada",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "UP035",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/maze_generator.py",
+            "line": 6,
+            "column": 1,
+            "symbol": null,
+            "message": "`typing.Set` is deprecated, use `set` instead",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "b4d22f9baab0ad0a600e455a": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "b4d22f9baab0ad0a600e455a",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0917",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 414,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many positional arguments (8 > 5)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "b567be77fec071c682aa455b": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "b567be77fec071c682aa455b",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "TRY300",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/replicate_client.py",
+            "line": 70,
+            "column": 17,
+            "symbol": null,
+            "message": "Consider moving this statement to an `else` block",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "b58d9c00d8ba254c2e536192": {
+          "count": 3,
+          "finding": {
+            "fingerprint": "b58d9c00d8ba254c2e536192",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF031",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/maze_generator.py",
+            "line": 1180,
+            "column": 29,
+            "symbol": null,
+            "message": "Avoid parentheses for tuples in subscripts",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "b65a6f36b8362b218faa0be7": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "b65a6f36b8362b218faa0be7",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF069",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_polar_topology_service.py",
+            "line": 201,
+            "column": 16,
+            "symbol": null,
+            "message": "Unreliable floating point equality comparison `start == 0.0`",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "b67f67a81f551e0652bd4754": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "b67f67a81f551e0652bd4754",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0912",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1839,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many branches (14 > 12)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "b73c5ec9839927c651b235d9": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "b73c5ec9839927c651b235d9",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "ARG002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 258,
+            "column": 9,
+            "symbol": null,
+            "message": "Unused method argument: `maze_count`",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "b7ee0f2fdd16c9335f15043b": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "b7ee0f2fdd16c9335f15043b",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "BLE001",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/replicate_client.py",
+            "line": 81,
+            "column": 20,
+            "symbol": null,
+            "message": "Do not catch blind exception: `Exception`",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "b8493d9625b8bff8da0bd9cc": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "b8493d9625b8bff8da0bd9cc",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "I001",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 3,
+            "column": 1,
+            "symbol": null,
+            "message": "Import block is un-sorted or un-formatted",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "ba4969a92f5a426ce9884ec0": {
+          "count": 4,
+          "finding": {
+            "fingerprint": "ba4969a92f5a426ce9884ec0",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/application/config_presets.py",
+            "line": 136,
+            "column": 31,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "bb441e1dbde59b2baaebc992": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "bb441e1dbde59b2baaebc992",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "SIM105",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/mongodb_client.py",
+            "line": 57,
+            "column": 9,
+            "symbol": null,
+            "message": "Use `contextlib.suppress(ConnectionFailure, PyMongoError)` instead of `try`-`except`-`pass`",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "bd0167717bad809d611fa21d": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "bd0167717bad809d611fa21d",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "I001",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_ai_client.py",
+            "line": 3,
+            "column": 1,
+            "symbol": null,
+            "message": "Import block is un-sorted or un-formatted",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "bd53417ce31b4ee1ea4116d0": {
+          "count": 3,
+          "finding": {
+            "fingerprint": "bd53417ce31b4ee1ea4116d0",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR1702",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_preview_generator.py",
+            "line": 179,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many nested blocks (8 > 4)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "bea645ad889a4c69f3ff246d": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "bea645ad889a4c69f3ff246d",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0917",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 767,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many positional arguments (9 > 5)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "c00295f86538712c29386375": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "c00295f86538712c29386375",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "TRY300",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/hf_client.py",
+            "line": 81,
+            "column": 21,
+            "symbol": null,
+            "message": "Consider moving this statement to an `else` block",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "c056457d7ed35019e9947318": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "c056457d7ed35019e9947318",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "UP035",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/models.py",
+            "line": 5,
+            "column": 1,
+            "symbol": null,
+            "message": "`typing.Set` is deprecated, use `set` instead",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "c09aecd9a4bf916be82e59a2": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "c09aecd9a4bf916be82e59a2",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "F841",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_preview_generator.py",
+            "line": 182,
+            "column": 77,
+            "symbol": null,
+            "message": "Local variable `mock_save_thumb` is assigned to but never used",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "c162b5bcf5a958122236de90": {
+          "count": 4,
+          "finding": {
+            "fingerprint": "c162b5bcf5a958122236de90",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_utils.py",
+            "line": 67,
+            "column": 27,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "c2b2779dddd76ead14a5c058": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "c2b2779dddd76ead14a5c058",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "S108",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_book_service.py",
+            "line": 289,
+            "column": 27,
+            "symbol": null,
+            "message": "Probable insecure usage of temporary file or directory: \"/tmp/test_marketplace_ru\"",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "c3430abbada6f7ec23b6c3ab": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "c3430abbada6f7ec23b6c3ab",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0914",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 414,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many local variables (17 > 15)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "c3fbbb02e9cc523f2626a201": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "c3fbbb02e9cc523f2626a201",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "F401",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_ai_client.py",
+            "line": 9,
+            "column": 43,
+            "symbol": null,
+            "message": "`src.domain.models.Theme` imported but unused",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "c59aa7b58640894408116355": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "c59aa7b58640894408116355",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/utils.py",
+            "line": 1,
+            "column": 25,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "c702b5419b5dc5f3ba2da95f": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "c702b5419b5dc5f3ba2da95f",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "TRY003",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/ai_client.py",
+            "line": 106,
+            "column": 15,
+            "symbol": null,
+            "message": "Avoid specifying long messages outside the exception class",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "c704d0bb379e31cbbe398577": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "c704d0bb379e31cbbe398577",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "UP035",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/polar_topology_service.py",
+            "line": 7,
+            "column": 1,
+            "symbol": null,
+            "message": "`typing.Dict` is deprecated, use `dict` instead",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "c7b76b46ee2a14ad5eba865d": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "c7b76b46ee2a14ad5eba865d",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_pdf_renderer.py",
+            "line": 13,
+            "column": 36,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "c9797001e3d6c4fec2bc2594": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "c9797001e3d6c4fec2bc2594",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0915",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1495,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many statements (57 > 50)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "c994e7926b3e4c015f20ad22": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "c994e7926b3e4c015f20ad22",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "UP024",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/image_generator.py",
+            "line": 48,
+            "column": 26,
+            "symbol": null,
+            "message": "Replace aliased errors with `OSError`",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "c99dfc3db784d1e035064499": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "c99dfc3db784d1e035064499",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0904",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_book_service.py",
+            "line": 11,
+            "column": 1,
+            "symbol": null,
+            "message": "Too many public methods (26 > 12)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "ca8048c97c15c134c544ac00": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "ca8048c97c15c134c544ac00",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "I001",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/settings.py",
+            "line": 1,
+            "column": 1,
+            "symbol": null,
+            "message": "Import block is un-sorted or un-formatted",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "cc6300800feffc58a700c0e0": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "cc6300800feffc58a700c0e0",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/application/book_service.py",
+            "line": 438,
+            "column": 48,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `у` (CYRILLIC SMALL LETTER U). Did you mean `y` (LATIN SMALL LETTER Y)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "cd3af1c20126d5867ffe7520": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "cd3af1c20126d5867ffe7520",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "ARG002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/maze_generator.py",
+            "line": 1286,
+            "column": 9,
+            "symbol": null,
+            "message": "Unused method argument: `topology`",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "ce559c085a316618c35f05d0": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "ce559c085a316618c35f05d0",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF007",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1980,
+            "column": 29,
+            "symbol": null,
+            "message": "Prefer `itertools.pairwise()` over `zip()` when iterating over successive pairs",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "cfb046d55cd97f33118e570d": {
+          "count": 3,
+          "finding": {
+            "fingerprint": "cfb046d55cd97f33118e570d",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "UP006",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/models.py",
+            "line": 61,
+            "column": 25,
+            "symbol": null,
+            "message": "Use `tuple` instead of `Tuple` for type annotation",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "d0536f53d6504b4673a8566f": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "d0536f53d6504b4673a8566f",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1300,
+            "column": 26,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `е` (CYRILLIC SMALL LETTER IE). Did you mean `e` (LATIN SMALL LETTER E)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "d073ccb08d468dc3bcbee7ef": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "d073ccb08d468dc3bcbee7ef",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "TRY300",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 147,
+            "column": 13,
+            "symbol": null,
+            "message": "Consider moving this statement to an `else` block",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "d0b018fe2cb9342ba80798dd": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "d0b018fe2cb9342ba80798dd",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_preview_smoke.py",
+            "line": 23,
+            "column": 57,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "d29fc8dcf05c734c39cb6b80": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "d29fc8dcf05c734c39cb6b80",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0914",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 2094,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many local variables (18 > 15)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "d4d5c92f4b90e3a9cf8db954": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "d4d5c92f4b90e3a9cf8db954",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "S101",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/maze_generator.py",
+            "line": 1299,
+            "column": 17,
+            "symbol": null,
+            "message": "Use of `assert` detected",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "d4deea918a47c5a3f0bc3b29": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "d4deea918a47c5a3f0bc3b29",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1299,
+            "column": 84,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `×` (MULTIPLICATION SIGN). Did you mean `x` (LATIN SMALL LETTER X)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "d657bc128e129b3f72d7fe06": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "d657bc128e129b3f72d7fe06",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "S110",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1186,
+            "column": 13,
+            "symbol": null,
+            "message": "`try`-`except`-`pass` detected, consider logging the exception",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "d80271b6739ab57731075169": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "d80271b6739ab57731075169",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "C901",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1333,
+            "column": 9,
+            "symbol": null,
+            "message": "`_render_maze_at` is too complex (12 > 10)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "d83f1db62f97976caa4e878f": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "d83f1db62f97976caa4e878f",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0904",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_localization.py",
+            "line": 7,
+            "column": 1,
+            "symbol": null,
+            "message": "Too many public methods (20 > 12)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "d8c3ab6fc7f1cbcaea529922": {
+          "count": 3,
+          "finding": {
+            "fingerprint": "d8c3ab6fc7f1cbcaea529922",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/mongodb_client.py",
+            "line": 93,
+            "column": 33,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "dbc857bbe4cdab7e46da72ad": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "dbc857bbe4cdab7e46da72ad",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "S108",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_book_service.py",
+            "line": 267,
+            "column": 27,
+            "symbol": null,
+            "message": "Probable insecure usage of temporary file or directory: \"/tmp/test_marketplace_en\"",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "dbfd8324015470eae8e1a4f6": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "dbfd8324015470eae8e1a4f6",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "F841",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_preview_generator.py",
+            "line": 184,
+            "column": 87,
+            "symbol": null,
+            "message": "Local variable `mock_collage` is assigned to but never used",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "dcbcbb602916c0dc0c0b22ba": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "dcbcbb602916c0dc0c0b22ba",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "C901",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1399,
+            "column": 9,
+            "symbol": null,
+            "message": "`_render_polar_maze_at` is too complex (14 > 10)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "ded8ffdbec3ed461b27555d1": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "ded8ffdbec3ed461b27555d1",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR1702",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_pdf_renderer.py",
+            "line": 204,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many nested blocks (6 > 4)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "e100c46743d21787f222699b": {
+          "count": 17,
+          "finding": {
+            "fingerprint": "e100c46743d21787f222699b",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/maze_generator.py",
+            "line": 1288,
+            "column": 57,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "e1132b47cd7308cf8f4bdcfa": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "e1132b47cd7308cf8f4bdcfa",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0912",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1399,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many branches (15 > 12)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "e160738f008a46cb9ba00071": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "e160738f008a46cb9ba00071",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "I001",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/utils.py",
+            "line": 3,
+            "column": 1,
+            "symbol": null,
+            "message": "Import block is un-sorted or un-formatted",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "e219fb507d3c773d71efe979": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "e219fb507d3c773d71efe979",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "ARG002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/application/book_service.py",
+            "line": 312,
+            "column": 9,
+            "symbol": null,
+            "message": "Unused method argument: `base_difficulty`",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "e22ae3b667bd7dd7703039ec": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "e22ae3b667bd7dd7703039ec",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "UP042",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/models.py",
+            "line": 8,
+            "column": 7,
+            "symbol": null,
+            "message": "Class Difficulty inherits from both `str` and `enum.Enum`",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "e24794b59e0060693ecfcc94": {
+          "count": 7,
+          "finding": {
+            "fingerprint": "e24794b59e0060693ecfcc94",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "TRY003",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/polar_topology_service.py",
+            "line": 159,
+            "column": 19,
+            "symbol": null,
+            "message": "Avoid specifying long messages outside the exception class",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "e2a794387684f256be5d8f0c": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "e2a794387684f256be5d8f0c",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "S108",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_preview_generator.py",
+            "line": 58,
+            "column": 27,
+            "symbol": null,
+            "message": "Probable insecure usage of temporary file or directory: \"/tmp/test_no_pdf\"",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "e2eb106ed9c733db0b8dc12a": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "e2eb106ed9c733db0b8dc12a",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0904",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_ai_client.py",
+            "line": 14,
+            "column": 1,
+            "symbol": null,
+            "message": "Too many public methods (20 > 12)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "e4e9cf325e5503e02c4f0e1f": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "e4e9cf325e5503e02c4f0e1f",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF069",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_polar_topology_service.py",
+            "line": 62,
+            "column": 16,
+            "symbol": null,
+            "message": "Unreliable floating point equality comparison `end == 2 * 3.141592653589793`",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "e5f3c1c637b0472c61be9b6d": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "e5f3c1c637b0472c61be9b6d",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0917",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1285,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many positional arguments (8 > 5)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "e674cfabdef9a9fbea9e0103": {
+          "count": 7,
+          "finding": {
+            "fingerprint": "e674cfabdef9a9fbea9e0103",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 490,
+            "column": 37,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "e7a73593a331bf67caafb721": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "e7a73593a331bf67caafb721",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0914",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/maze_generator.py",
+            "line": 710,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many local variables (19 > 15)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "e8c1eb9302b957e3adcfd1cc": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "e8c1eb9302b957e3adcfd1cc",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "UP042",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/models.py",
+            "line": 29,
+            "column": 7,
+            "symbol": null,
+            "message": "Class DifficultyMode inherits from both `str` and `enum.Enum`",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "ea995ad8230143044f11288f": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "ea995ad8230143044f11288f",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0914",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1189,
+            "column": 9,
+            "symbol": null,
+            "message": "Too many local variables (22 > 15)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "eb31fbd58bdc49f82065f7dd": {
+          "count": 35,
+          "finding": {
+            "fingerprint": "eb31fbd58bdc49f82065f7dd",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 2311,
+            "column": 65,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "eb876414fb62da6085428c13": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "eb876414fb62da6085428c13",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_polar_topology_service.py",
+            "line": 13,
+            "column": 26,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "eba102e05417a9b16daff0fa": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "eba102e05417a9b16daff0fa",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "F841",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_preview_generator.py",
+            "line": 186,
+            "column": 100,
+            "symbol": null,
+            "message": "Local variable `mock_promo` is assigned to but never used",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "efd5f63da67d01bc000e719b": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "efd5f63da67d01bc000e719b",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RET505",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/maze_generator.py",
+            "line": 92,
+            "column": 9,
+            "symbol": null,
+            "message": "Unnecessary `elif` after `return` statement",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "effb5c3a230c084c345268d5": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "effb5c3a230c084c345268d5",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "F401",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_localization.py",
+            "line": 4,
+            "column": 41,
+            "symbol": null,
+            "message": "`src.localization.Language` imported but unused",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "f0aa14f5ec5519a88886116d": {
+          "count": 7,
+          "finding": {
+            "fingerprint": "f0aa14f5ec5519a88886116d",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_localization.py",
+            "line": 98,
+            "column": 38,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "f296f1b9dcedd2f7214c9615": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "f296f1b9dcedd2f7214c9615",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "S108",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_preview_generator.py",
+            "line": 135,
+            "column": 59,
+            "symbol": null,
+            "message": "Probable insecure usage of temporary file or directory: \"/tmp/test_preview\"",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "f3f76b95ae8b004677edc2c5": {
+          "count": 3,
+          "finding": {
+            "fingerprint": "f3f76b95ae8b004677edc2c5",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/ai_client.py",
+            "line": 52,
+            "column": 26,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "fb6e321b1fa0e4b24989247a": {
+          "count": 13,
+          "finding": {
+            "fingerprint": "fb6e321b1fa0e4b24989247a",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF003",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 2009,
+            "column": 59,
+            "symbol": null,
+            "message": "Comment contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "fec2d39c60caf73007ae3e02": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "fec2d39c60caf73007ae3e02",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/infrastructure/preview_generator.py",
+            "line": 231,
+            "column": 51,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `×` (MULTIPLICATION SIGN). Did you mean `x` (LATIN SMALL LETTER X)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "fecd94f384447a254234ffb3": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "fecd94f384447a254234ffb3",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PT018",
+            "severity": "error",
+            "confidence": "high",
+            "path": "tests/test_preview_smoke.py",
+            "line": 67,
+            "column": 13,
+            "symbol": null,
+            "message": "Assertion should be broken down into multiple parts",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "ffb93032be861f5ee2a84945": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "ffb93032be861f5ee2a84945",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF002",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/domain/models.py",
+            "line": 112,
+            "column": 23,
+            "symbol": null,
+            "message": "Docstring contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)?",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        }
+      }
+    },
+    "pylint/maze-book-generator": {
+      "tool": "pylint",
+      "service": "maze-book-generator",
+      "findings": {
+        "03ec5a0f4ff6753b2ed8c414": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "03ec5a0f4ff6753b2ed8c414",
+            "tool": "pylint",
+            "service": "maze-book-generator",
+            "rule_id": "R0904",
+            "severity": "refactor",
+            "confidence": null,
+            "path": "tests/test_polar_topology_service.py",
+            "line": 9,
+            "column": 1,
+            "symbol": "TestPolarTopologyService",
+            "message": "Too many public methods (33/12)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "0bfb1fe37dbf29da272a5ad5": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "0bfb1fe37dbf29da272a5ad5",
+            "tool": "pylint",
+            "service": "maze-book-generator",
+            "rule_id": "C0302",
+            "severity": "convention",
+            "confidence": null,
+            "path": "src/infrastructure/pdf_renderer.py",
+            "line": 1,
+            "column": 1,
+            "symbol": "too-many-lines",
+            "message": "Too many lines in module (2316/600)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "3a76101414d30362e616e0c4": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "3a76101414d30362e616e0c4",
+            "tool": "pylint",
+            "service": "maze-book-generator",
+            "rule_id": "C0302",
+            "severity": "convention",
+            "confidence": null,
+            "path": "src/domain/maze_generator.py",
+            "line": 1,
+            "column": 1,
+            "symbol": "too-many-lines",
+            "message": "Too many lines in module (1312/600)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "3b94ee16b3922e15f6a88e62": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "3b94ee16b3922e15f6a88e62",
+            "tool": "pylint",
+            "service": "maze-book-generator",
+            "rule_id": "R0801",
+            "severity": "refactor",
+            "confidence": null,
+            "path": "tests/test_utils.py",
+            "line": 1,
+            "column": 1,
+            "symbol": "duplicate-code",
+            "message": "Similar lines in 2 files\n==src.infrastructure.pollinations_client:[88:115]\n==src.infrastructure.replicate_client:[122:149]\n        return None\n\n    def generate_book_illustrations(\n        self,\n        image_keywords: list[list[str]],\n        book_dir: Path,\n    ) -> list[Path | None]:\n        \"\"\"\n        Генерирует иллюстрации для всех страниц книги.\n\n        Args:\n            image_keywords: Список ключевых слов по страницам\n            book_dir: Директория книги (illustrations/page_N.png)\n\n        Returns:\n            Список путей к файлам (None если генерация страницы не удалась)\n        \"\"\"\n        illustrations_dir = book_dir / IMAGE_STORAGE_SUBDIR\n        results: list[Path | None] = []\n\n        for idx, keywords in enumerate(image_keywords):\n            output_path = illustrations_dir / f\"page_{idx + 1}.png\"\n            self._logger.info(\"Generating illustration %d/%d...\", idx + 1, len(image_keywords))\n            path = self.generate_illustration(keywords, output_path)\n            results.append(path)\n            # Соблюдаем rate limit Replicate (~6 запросов/мин)\n            if idx < len(image_keywords) - 1:",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "595ad27c8fe93f9a312c2a10": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "595ad27c8fe93f9a312c2a10",
+            "tool": "pylint",
+            "service": "maze-book-generator",
+            "rule_id": "R0904",
+            "severity": "refactor",
+            "confidence": null,
+            "path": "tests/test_localization.py",
+            "line": 7,
+            "column": 1,
+            "symbol": "TestBookTexts",
+            "message": "Too many public methods (20/12)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "6be62933cb8f28c5c9e8695d": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "6be62933cb8f28c5c9e8695d",
+            "tool": "pylint",
+            "service": "maze-book-generator",
+            "rule_id": "R0904",
+            "severity": "refactor",
+            "confidence": null,
+            "path": "tests/test_ai_client.py",
+            "line": 14,
+            "column": 1,
+            "symbol": "TestAIClient",
+            "message": "Too many public methods (20/12)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "90e9e6ff11df52701e1d9358": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "90e9e6ff11df52701e1d9358",
+            "tool": "pylint",
+            "service": "maze-book-generator",
+            "rule_id": "R0904",
+            "severity": "refactor",
+            "confidence": null,
+            "path": "tests/test_pdf_renderer.py",
+            "line": 9,
+            "column": 1,
+            "symbol": "TestPDFRenderer",
+            "message": "Too many public methods (23/12)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "abe90bbbf2bbd320b70a636f": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "abe90bbbf2bbd320b70a636f",
+            "tool": "pylint",
+            "service": "maze-book-generator",
+            "rule_id": "R0904",
+            "severity": "refactor",
+            "confidence": null,
+            "path": "tests/test_maze_generator.py",
+            "line": 10,
+            "column": 1,
+            "symbol": "TestMazeGenerator",
+            "message": "Too many public methods (19/12)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "c13629e029d1e76e0e067d62": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "c13629e029d1e76e0e067d62",
+            "tool": "pylint",
+            "service": "maze-book-generator",
+            "rule_id": "R0904",
+            "severity": "refactor",
+            "confidence": null,
+            "path": "tests/test_book_service.py",
+            "line": 11,
+            "column": 1,
+            "symbol": "TestBookService",
+            "message": "Too many public methods (26/12)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "c89d0756e508c291b62e1c4d": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "c89d0756e508c291b62e1c4d",
+            "tool": "pylint",
+            "service": "maze-book-generator",
+            "rule_id": "R0904",
+            "severity": "refactor",
+            "confidence": null,
+            "path": "tests/test_preview_generator.py",
+            "line": 9,
+            "column": 1,
+            "symbol": "TestPreviewGenerator",
+            "message": "Too many public methods (14/12)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "dd6889920709b3ed4bac1317": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "dd6889920709b3ed4bac1317",
+            "tool": "pylint",
+            "service": "maze-book-generator",
+            "rule_id": "R0904",
+            "severity": "refactor",
+            "confidence": null,
+            "path": "src/domain/polar_topology_service.py",
+            "line": 13,
+            "column": 1,
+            "symbol": "PolarTopologyService",
+            "message": "Too many public methods (13/12)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        }
+      }
+    },
+    "import_linter/maze-book-generator": {
+      "tool": "import_linter",
+      "service": "maze-book-generator",
+      "findings": {}
+    },
+    "pyright/maze-book-generator": {
+      "tool": "pyright",
+      "service": "maze-book-generator",
+      "findings": {}
+    },
+    "semgrep/repository": {
+      "tool": "semgrep",
+      "service": "repository",
+      "findings": {}
+    }
+  }
+}
