@@ -29,3 +29,8 @@ tests_service_*.log
 /.gemini/
 /.junie/
 output
+# quality-gate runtime state (baselines коммитим, отчёты/кэш — нет)
+/.quality-gate/reports/
+/.quality-gate/cache/
+/.quality-gate/tmp/
+/.quality-gate/observations/

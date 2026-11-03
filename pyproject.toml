@@ -1,7 +1,13 @@
 [project]
-name = "pythonproject"
+name = "maze-book-generator"
 version = "0.1.0"
-requires-python = ">=3.14"
+description = "Printable maze book generator for kids: PDF books with AI themes and illustrations (EN/RU)"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "GPL-3.0-only"
+authors = [
+    { name = "plamer", email = "plamer777@mail.ru" },
+]
 dependencies = [
     "pydantic>=2.13.4",
     "pydantic-settings>=2.14.1",

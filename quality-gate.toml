@@ -1,0 +1,185 @@
+version = 1
+
+[tools]
+ruff = true
+pylint = true
+import_linter = true
+package_structure = true
+pyright = true
+semgrep = true
+migration_graph = false
+alembic_check = false
+openapi = false
+constants = true
+
+[execution]
+light_workers = 4
+heavy_workers = 2
+
+[paths]
+exclude_directory_names = []
+exclude_file_globs = []
+
+[constants]
+exclude_test_roots = true
+exclude = ["scripts/**", "**/scripts/**", "local_tools/**", "tmp/**"]
+
+[settings_discovery]
+file_patterns = ["settings.py", "config.py", "configuration.py", "*_settings.py"]
+package_names = ["settings", "config"]
+
+[database]
+service = "maze-book-generator"
+versions_root = "migrations/versions"
+alembic_ini = "alembic.ini"
+changed_paths = ["migrations/"]
+
+[package_structure]
+max_python_modules = 15
+extensions = [".py", ".pyi"]
+ignored_files = ["__init__.py"]
+role_hints_enabled = true
+domain_hints_enabled = true
+domain_hint_min_modules = 2
+exclude = [".git/**", ".venv/**", "**/.venv/**", "venv/**", "**/venv/**", "**/__pycache__/**", "**/.pytest_cache/**", "**/.ruff_cache/**", "**/.mypy_cache/**", "**/.tox/**", "**/node_modules/**", "**/build/**", "**/dist/**", ".quality-gate/**", ".codex-quality-local/**", "**/migrations/versions/**", "**/alembic/versions/**"]
+
+[ruff]
+target-version = "py312"
+line-length = 120
+preview = true
+exclude = [".git", ".venv", "venv", "__pycache__", "build", "dist", ".mypy_cache", ".pytest_cache", ".ruff_cache", "*.toml", "**/migrations/**"]
+
+[ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "UP", "B", "SIM", "C4", "RET", "ARG", "PERF", "PT", "RUF", "S", "ASYNC", "DTZ", "BLE", "TRY", "LOG", "C901", "PLR0904", "PLR0911", "PLR0912", "PLR0913", "PLR0914", "PLR0915", "PLR0916", "PLR0917", "PLR1702"]
+ignore = ["E501", "B008", "RUF001"]
+
+[ruff.lint.per-file-ignores]
+"**/tests/**" = ["S101", "PLR0913", "PLR0917"]
+"**/tests_unit/**" = ["S101", "PLR0913", "PLR0917"]
+"**/tests_live/**" = ["S101", "PLR0913", "PLR0917"]
+
+[ruff.lint.mccabe]
+max-complexity = 10
+
+[ruff.lint.pylint]
+max-public-methods = 12
+max-returns = 6
+max-branches = 12
+max-args = 6
+max-positional-args = 5
+max-locals = 15
+max-statements = 50
+max-bool-expr = 5
+max-nested-blocks = 4
+
+[ruff.lint.isort]
+combine-as-imports = true
+
+[pylint]
+[pylint.main]
+py-version = "3.12"
+persistent = false
+recursive = true
+jobs = 1
+ignore = [".git", ".venv", "venv", "build", "dist", "__pycache__"]
+ignore-paths = [".*/migrations/versions/.*", ".*/alembic/versions/.*", ".*/.quality-gate/.*"]
+
+[pylint.messages_control]
+disable = ["all"]
+enable = ["duplicate-code", "too-many-lines", "too-many-public-methods", "cyclic-import"]
+
+[pylint.design]
+max-public-methods = 12
+
+[pylint.format]
+max-module-lines = 600
+
+[pylint.similarities]
+min-similarity-lines = 8
+ignore-comments = true
+ignore-docstrings = true
+ignore-imports = true
+ignore-signatures = true
+
+[pyright]
+typeCheckingMode = "standard"
+pythonVersion = "3.14"
+exclude = [".venv/**", "**/.venv/**", "venv/**", "**/venv/**", "**/__pycache__/**", "**/.pytest_cache/**", "**/.mypy_cache/**", "**/.ruff_cache/**"]
+reportMissingTypeStubs = "none"
+reportMissingParameterType = "error"
+reportMissingTypeArgument = "error"
+reportUnknownVariableType = "none"
+reportUnknownMemberType = "none"
+reportUnknownParameterType = "none"
+reportUnknownArgumentType = "none"
+reportUnknownLambdaType = "none"
+reportUntypedFunctionDecorator = "none"
+reportUntypedBaseClass = "none"
+reportUnusedFunction = "none"
+reportUnusedCallResult = "none"
+verboseOutput = false
+
+[semgrep]
+[[semgrep.rules]]
+id = "quality.python.unsafe-pickle-loads"
+message = "Untrusted data must not be deserialized with pickle.loads."
+severity = "ERROR"
+languages = ["python"]
+confidence = "HIGH"
+category = "security"
+pattern = "pickle.loads(...)"
+
+[[semgrep.rules]]
+id = "quality.python.subprocess-shell-true"
+message = "shell=True expands command injection risk; use an argument vector."
+severity = "ERROR"
+languages = ["python"]
+confidence = "HIGH"
+category = "security"
+pattern_either = ["subprocess.run(..., shell=True, ...)", "subprocess.Popen(..., shell=True, ...)", "subprocess.call(..., shell=True, ...)"]
+
+[[semgrep.rules]]
+id = "quality.python.tls-verification-disabled"
+message = "TLS certificate verification must not be disabled."
+severity = "ERROR"
+languages = ["python"]
+confidence = "HIGH"
+category = "security"
+pattern_either = ["requests.$METHOD(..., verify=False, ...)", "httpx.$METHOD(..., verify=False, ...)", "httpx.Client(..., verify=False, ...)", "httpx.AsyncClient(..., verify=False, ...)"]
+
+[[semgrep.rules]]
+id = "quality.python.blocking-sleep-in-async"
+message = "time.sleep blocks the event loop inside async code."
+severity = "ERROR"
+languages = ["python"]
+confidence = "HIGH"
+category = "async"
+pattern = "time.sleep(...)"
+pattern_inside = "async def $FUNCTION(...):\n  ..."
+
+[[semgrep.rules]]
+id = "quality.python.requests-without-timeout"
+message = "Direct requests calls require an explicit timeout."
+severity = "ERROR"
+languages = ["python"]
+confidence = "HIGH"
+category = "reliability"
+pattern_either = ["requests.get(...)", "requests.post(...)", "requests.put(...)", "requests.patch(...)", "requests.delete(...)", "requests.request(...)"]
+pattern_not = ["requests.$METHOD(..., timeout=..., ...)"]
+
+[[services]]
+name = "maze-book-generator"
+path = "."
+package_manager = "uv"
+python_version = "3.14"
+source_roots = ["src"]
+test_roots = ["tests"]
+pythonpath = ["."]
+virtual_env = ".venv"
+
+[services.import_linter]
+root_packages = ["src"]
+include_external_packages = true
+
+[services.constant_policy]
+allowed_files = ["src/settings.py"]
