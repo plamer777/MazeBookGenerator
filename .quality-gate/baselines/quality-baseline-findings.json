@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "generated_at": "2026-11-03T08:08:30.821778+00:00",
-  "commit": "ea73d97c4a76d9c80df85dc32340cc15a26d06c3",
+  "generated_at": "2026-11-03T09:11:40.315314+00:00",
+  "commit": "797e465b76182acde7da8a892c5903c13cdd17b7",
   "config_hash": "cdaccd8bdbabee11dc2c471369cb89918382fd515535be6224f6ca5f56e8c909",
   "scopes": {
     "constants/maze-book-generator": {
       "tool": "constants",
       "service": "maze-book-generator",
-      "policy_hash": "b7b624c4e0815852d3975d4194235fc1857689f29bae102cbe1f472847e0d588",
+      "policy_hash": "30c60572a6007fb698d91d568eb4b2ab137960bf788983ee431e3b7f33421254",
       "findings": {}
     },
     "ruff/maze-book-generator": {
@@ -47,6 +47,25 @@
             "column": 15,
             "symbol": null,
             "message": "Too many positional arguments (7 > 5)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "0f6dc47b4e003b90f4fc7c6f": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "0f6dc47b4e003b90f4fc7c6f",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0914",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/maze_book_generator/domain/maze/polar.py",
+            "line": 364,
+            "column": 5,
+            "symbol": null,
+            "message": "Too many local variables (18 > 15)",
             "blocking": true,
             "category": null,
             "allowed_locations": []
@@ -128,6 +147,25 @@
             "allowed_locations": []
           }
         },
+        "2dde1a5fd2643c45f341719f": {
+          "count": 2,
+          "finding": {
+            "fingerprint": "2dde1a5fd2643c45f341719f",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR1702",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/maze_book_generator/domain/maze/masks.py",
+            "line": 165,
+            "column": 5,
+            "symbol": null,
+            "message": "Too many nested blocks (5 > 4)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
         "2e86c91bff701d4dd56458fb": {
           "count": 1,
           "finding": {
@@ -180,25 +218,6 @@
             "column": 9,
             "symbol": null,
             "message": "`_render_page_corner_deco` is too complex (12 > 10)",
-            "blocking": true,
-            "category": null,
-            "allowed_locations": []
-          }
-        },
-        "3c76a2dad641342046615d49": {
-          "count": 1,
-          "finding": {
-            "fingerprint": "3c76a2dad641342046615d49",
-            "tool": "ruff",
-            "service": "maze-book-generator",
-            "rule_id": "PLR0914",
-            "severity": "error",
-            "confidence": "high",
-            "path": "src/maze_book_generator/domain/maze_generator.py",
-            "line": 416,
-            "column": 9,
-            "symbol": null,
-            "message": "Too many local variables (18 > 15)",
             "blocking": true,
             "category": null,
             "allowed_locations": []
@@ -413,44 +432,6 @@
             "allowed_locations": []
           }
         },
-        "61fcbda2b89b5298acdf7e1b": {
-          "count": 7,
-          "finding": {
-            "fingerprint": "61fcbda2b89b5298acdf7e1b",
-            "tool": "ruff",
-            "service": "maze-book-generator",
-            "rule_id": "TRY003",
-            "severity": "error",
-            "confidence": "high",
-            "path": "src/maze_book_generator/domain/polar_topology_service.py",
-            "line": 161,
-            "column": 19,
-            "symbol": null,
-            "message": "Avoid specifying long messages outside the exception class",
-            "blocking": true,
-            "category": null,
-            "allowed_locations": []
-          }
-        },
-        "6a33c308b559b3cf58f91503": {
-          "count": 1,
-          "finding": {
-            "fingerprint": "6a33c308b559b3cf58f91503",
-            "tool": "ruff",
-            "service": "maze-book-generator",
-            "rule_id": "PLR0914",
-            "severity": "error",
-            "confidence": "high",
-            "path": "src/maze_book_generator/domain/maze_generator.py",
-            "line": 705,
-            "column": 9,
-            "symbol": null,
-            "message": "Too many local variables (19 > 15)",
-            "blocking": true,
-            "category": null,
-            "allowed_locations": []
-          }
-        },
         "6ae46eb42dd157041281428e": {
           "count": 5,
           "finding": {
@@ -484,6 +465,25 @@
             "column": 9,
             "symbol": null,
             "message": "`_render_polar_maze` is too complex (13 > 10)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "6f1d8e8162fb91a95e0356cf": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "6f1d8e8162fb91a95e0356cf",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0917",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/maze_book_generator/domain/maze/grid.py",
+            "line": 103,
+            "column": 5,
+            "symbol": null,
+            "message": "Too many positional arguments (6 > 5)",
             "blocking": true,
             "category": null,
             "allowed_locations": []
@@ -546,25 +546,6 @@
             "allowed_locations": []
           }
         },
-        "7595479a22c519af2d1ea7df": {
-          "count": 1,
-          "finding": {
-            "fingerprint": "7595479a22c519af2d1ea7df",
-            "tool": "ruff",
-            "service": "maze-book-generator",
-            "rule_id": "PLR0911",
-            "severity": "error",
-            "confidence": "high",
-            "path": "src/maze_book_generator/domain/maze_generator.py",
-            "line": 56,
-            "column": 9,
-            "symbol": null,
-            "message": "Too many return statements (8 > 6)",
-            "blocking": true,
-            "category": null,
-            "allowed_locations": []
-          }
-        },
         "75da27f5150e68eb9f9ca983": {
           "count": 2,
           "finding": {
@@ -617,6 +598,44 @@
             "column": 9,
             "symbol": null,
             "message": "Too many arguments in function definition (8 > 6)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "7e8abc09639aeb9d2fbd9589": {
+          "count": 3,
+          "finding": {
+            "fingerprint": "7e8abc09639aeb9d2fbd9589",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "RUF031",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/maze_book_generator/domain/maze/solver.py",
+            "line": 90,
+            "column": 23,
+            "symbol": null,
+            "message": "Avoid parentheses for tuples in subscripts",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "7fb59fc6001a802214147002": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "7fb59fc6001a802214147002",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0914",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/maze_book_generator/domain/maze/masks.py",
+            "line": 97,
+            "column": 5,
+            "symbol": null,
+            "message": "Too many local variables (19 > 15)",
             "blocking": true,
             "category": null,
             "allowed_locations": []
@@ -831,20 +850,20 @@
             "allowed_locations": []
           }
         },
-        "a95f7c6ad9b9b86348758990": {
+        "b4d1af0cc9da54e4e5c68173": {
           "count": 1,
           "finding": {
-            "fingerprint": "a95f7c6ad9b9b86348758990",
+            "fingerprint": "b4d1af0cc9da54e4e5c68173",
             "tool": "ruff",
             "service": "maze-book-generator",
-            "rule_id": "PLR0917",
+            "rule_id": "I001",
             "severity": "error",
             "confidence": "high",
-            "path": "src/maze_book_generator/domain/maze_generator.py",
-            "line": 993,
-            "column": 9,
+            "path": "src/maze_book_generator/infrastructure/pdf_renderer.py",
+            "line": 3,
+            "column": 1,
             "symbol": null,
-            "message": "Too many positional arguments (7 > 5)",
+            "message": "Import block is un-sorted or un-formatted",
             "blocking": true,
             "category": null,
             "allowed_locations": []
@@ -883,25 +902,6 @@
             "column": 9,
             "symbol": null,
             "message": "Too many local variables (16 > 15)",
-            "blocking": true,
-            "category": null,
-            "allowed_locations": []
-          }
-        },
-        "bc5754c1cff8480841413ea6": {
-          "count": 2,
-          "finding": {
-            "fingerprint": "bc5754c1cff8480841413ea6",
-            "tool": "ruff",
-            "service": "maze-book-generator",
-            "rule_id": "PLR1702",
-            "severity": "error",
-            "confidence": "high",
-            "path": "src/maze_book_generator/domain/maze_generator.py",
-            "line": 925,
-            "column": 9,
-            "symbol": null,
-            "message": "Too many nested blocks (5 > 4)",
             "blocking": true,
             "category": null,
             "allowed_locations": []
@@ -983,25 +983,6 @@
             "allowed_locations": []
           }
         },
-        "db01536a2d91fb7c6911f1ec": {
-          "count": 1,
-          "finding": {
-            "fingerprint": "db01536a2d91fb7c6911f1ec",
-            "tool": "ruff",
-            "service": "maze-book-generator",
-            "rule_id": "PLR0913",
-            "severity": "error",
-            "confidence": "high",
-            "path": "src/maze_book_generator/domain/maze_generator.py",
-            "line": 993,
-            "column": 9,
-            "symbol": null,
-            "message": "Too many arguments in function definition (7 > 6)",
-            "blocking": true,
-            "category": null,
-            "allowed_locations": []
-          }
-        },
         "dd6daf0121a2767a77ce3399": {
           "count": 1,
           "finding": {
@@ -1016,6 +997,44 @@
             "column": 9,
             "symbol": null,
             "message": "Too many arguments in function definition (8 > 6)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "dda5c6ae7eef01cd4744741c": {
+          "count": 3,
+          "finding": {
+            "fingerprint": "dda5c6ae7eef01cd4744741c",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0917",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/maze_book_generator/domain/maze/carving.py",
+            "line": 175,
+            "column": 5,
+            "symbol": null,
+            "message": "Too many positional arguments (6 > 5)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "df912afaa066e7be01b2887b": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "df912afaa066e7be01b2887b",
+            "tool": "ruff",
+            "service": "maze-book-generator",
+            "rule_id": "PLR0914",
+            "severity": "error",
+            "confidence": "high",
+            "path": "src/maze_book_generator/domain/maze/carving.py",
+            "line": 117,
+            "column": 5,
+            "symbol": null,
+            "message": "Too many local variables (16 > 15)",
             "blocking": true,
             "category": null,
             "allowed_locations": []
@@ -1040,20 +1059,20 @@
             "allowed_locations": []
           }
         },
-        "e453e32d90db5144e3bcb37f": {
+        "e2044256fb022af0c669af73": {
           "count": 1,
           "finding": {
-            "fingerprint": "e453e32d90db5144e3bcb37f",
+            "fingerprint": "e2044256fb022af0c669af73",
             "tool": "ruff",
             "service": "maze-book-generator",
-            "rule_id": "PLR0914",
+            "rule_id": "PLR0904",
             "severity": "error",
             "confidence": "high",
-            "path": "src/maze_book_generator/domain/maze_generator.py",
-            "line": 1091,
-            "column": 9,
+            "path": "src/maze_book_generator/domain/maze/polar.py",
+            "line": 20,
+            "column": 1,
             "symbol": null,
-            "message": "Too many local variables (17 > 15)",
+            "message": "Too many public methods (14 > 12)",
             "blocking": true,
             "category": null,
             "allowed_locations": []
@@ -1173,25 +1192,6 @@
             "allowed_locations": []
           }
         },
-        "f8202f797312ee940e1373c9": {
-          "count": 1,
-          "finding": {
-            "fingerprint": "f8202f797312ee940e1373c9",
-            "tool": "ruff",
-            "service": "maze-book-generator",
-            "rule_id": "PLR0904",
-            "severity": "error",
-            "confidence": "high",
-            "path": "src/maze_book_generator/domain/polar_topology_service.py",
-            "line": 13,
-            "column": 1,
-            "symbol": null,
-            "message": "Too many public methods (14 > 12)",
-            "blocking": true,
-            "category": null,
-            "allowed_locations": []
-          }
-        },
         "f8644e94bc9f50106517f5e5": {
           "count": 5,
           "finding": {
@@ -1236,58 +1236,39 @@
       "tool": "pylint",
       "service": "maze-book-generator",
       "findings": {
-        "03ec5a0f4ff6753b2ed8c414": {
+        "2964c917c51fba9aee565e3d": {
           "count": 1,
           "finding": {
-            "fingerprint": "03ec5a0f4ff6753b2ed8c414",
+            "fingerprint": "2964c917c51fba9aee565e3d",
             "tool": "pylint",
             "service": "maze-book-generator",
             "rule_id": "R0904",
             "severity": "refactor",
             "confidence": null,
-            "path": "tests/test_polar_topology_service.py",
+            "path": "src/maze_book_generator/domain/maze/polar.py",
+            "line": 20,
+            "column": 1,
+            "symbol": "PolarTopologyService",
+            "message": "Too many public methods (13/12)",
+            "blocking": true,
+            "category": null,
+            "allowed_locations": []
+          }
+        },
+        "4a32213b25adcd025e23869d": {
+          "count": 1,
+          "finding": {
+            "fingerprint": "4a32213b25adcd025e23869d",
+            "tool": "pylint",
+            "service": "maze-book-generator",
+            "rule_id": "R0904",
+            "severity": "refactor",
+            "confidence": null,
+            "path": "tests/test_polar.py",
             "line": 10,
             "column": 1,
             "symbol": "TestPolarTopologyService",
             "message": "Too many public methods (33/12)",
-            "blocking": true,
-            "category": null,
-            "allowed_locations": []
-          }
-        },
-        "19598207809990c7b76ef7e7": {
-          "count": 1,
-          "finding": {
-            "fingerprint": "19598207809990c7b76ef7e7",
-            "tool": "pylint",
-            "service": "maze-book-generator",
-            "rule_id": "C0302",
-            "severity": "convention",
-            "confidence": null,
-            "path": "src/maze_book_generator/domain/maze_generator.py",
-            "line": 1,
-            "column": 1,
-            "symbol": "too-many-lines",
-            "message": "Too many lines in module (1306/600)",
-            "blocking": true,
-            "category": null,
-            "allowed_locations": []
-          }
-        },
-        "21741e18ecfb3329b044a57a": {
-          "count": 1,
-          "finding": {
-            "fingerprint": "21741e18ecfb3329b044a57a",
-            "tool": "pylint",
-            "service": "maze-book-generator",
-            "rule_id": "R0904",
-            "severity": "refactor",
-            "confidence": null,
-            "path": "src/maze_book_generator/domain/polar_topology_service.py",
-            "line": 13,
-            "column": 1,
-            "symbol": "PolarTopologyService",
-            "message": "Too many public methods (13/12)",
             "blocking": true,
             "category": null,
             "allowed_locations": []
@@ -1398,7 +1379,7 @@
             "severity": "refactor",
             "confidence": null,
             "path": "tests/test_maze_generator.py",
-            "line": 10,
+            "line": 17,
             "column": 1,
             "symbol": "TestMazeGenerator",
             "message": "Too many public methods (19/12)",
