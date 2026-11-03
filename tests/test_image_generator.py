@@ -4,7 +4,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from src.infrastructure.image_generator import ImageGenerator
+from maze_book_generator.infrastructure.image_generator import ImageGenerator
 
 
 class TestImageGenerator:

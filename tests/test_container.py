@@ -1,6 +1,6 @@
 """Тесты DI-контейнера: ленивая инициализация и кэширование зависимостей."""
 
-from src.container import Container
+from maze_book_generator.container import Container
 
 
 class TestContainer:

@@ -1,11 +1,11 @@
 """Модели данных для MazeBookGenerator."""
 
 from dataclasses import dataclass, field
-from enum import Enum
-from typing import Dict, Set, Tuple, Literal
+from enum import StrEnum
+from typing import Literal
 
 
-class Difficulty(str, Enum):
+class Difficulty(StrEnum):
     """Уровень сложности лабиринта (7 градаций)."""
     L1 = "L1"
     L2 = "L2"
@@ -26,7 +26,7 @@ class Difficulty(str, Enum):
         return int(self.value[1])
 
 
-class DifficultyMode(str, Enum):
+class DifficultyMode(StrEnum):
     """Режим распределения сложности по страницам."""
     FIXED = "FIXED"
     INCREMENTAL = "INCREMENTAL"
@@ -36,7 +36,7 @@ class DifficultyMode(str, Enum):
     STORY_WAVE = "STORY_WAVE"
 
 
-class MazeShape(str, Enum):
+class MazeShape(StrEnum):
     """Формы лабиринтов."""
     RECTANGULAR = "RECTANGULAR"
     SQUARE = "SQUARE"
@@ -54,15 +54,15 @@ class Maze:
     grid: list[list[int]]  # 0 - стена, 1 - проход (для обратной совместимости)
     width: int
     height: int
-    start: Tuple[int, int]
-    end: Tuple[int, int]
+    start: tuple[int, int]
+    end: tuple[int, int]
     difficulty: Difficulty
     shape: MazeShape = MazeShape.RECTANGULAR
-    solution_path: list[Tuple[int, int]] | None = None
+    solution_path: list[tuple[int, int]] | None = None
     # Стены между ячейками: walls[y][x] = [верх, право, низ, лево] (True=есть стена)
     walls: list[list[list[bool]]] | None = None
     # Полярный граф соединений: connections[(ring, sector)] = set[(ring, sector)]
-    polar_connections: Dict[tuple[int, int], Set[tuple[int, int]]] | None = None
+    polar_connections: dict[tuple[int, int], set[tuple[int, int]]] | None = None
     # Количество колец в полярном лабиринте
     num_rings: int | None = None
     # Количество ячеек в каждом кольце (переменное)
@@ -83,7 +83,7 @@ class Theme:
     book_description: str
     page_prompts: list[PagePrompt]
     image_notes: str | None = None
-    image_keywords: list[list[str]] = None  # type: ignore[assignment]
+    image_keywords: list[list[str]] | None = None
     marketplace_title: str | None = None
     marketplace_description: str | None = None
 

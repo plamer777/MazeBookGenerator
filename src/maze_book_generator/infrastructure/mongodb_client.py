@@ -1,12 +1,13 @@
 """Клиент для MongoDB хранения использованных тем."""
 
-from datetime import datetime
+from contextlib import suppress
+from datetime import UTC, datetime
 from typing import Any
 
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure, PyMongoError
 
-from src.settings import settings
+from maze_book_generator.settings import settings
 
 
 class MongoDBClient:
@@ -42,10 +43,10 @@ class MongoDBClient:
         """
         try:
             result = self.collection.find_one({"title": title})
-            return result is not None
         except (ConnectionFailure, PyMongoError):
             # Если MongoDB недоступен, возвращаем False (позволяем продолжить)
             return False
+        return result is not None
 
     def save_theme(self, title: str) -> None:
         """
@@ -54,16 +55,14 @@ class MongoDBClient:
         Args:
             title: Название темы
         """
-        try:
+        # Если MongoDB недоступен, игнорируем ошибку сохранения
+        with suppress(ConnectionFailure, PyMongoError):
             self.collection.insert_one(
                 {
                     "title": title,
-                    "timestamp": datetime.utcnow(),
+                    "timestamp": datetime.now(UTC),
                 }
             )
-        except (ConnectionFailure, PyMongoError):
-            # Если MongoDB недоступен, игнорируем ошибку
-            pass
 
     def get_used_titles(self) -> list[str]:
         """

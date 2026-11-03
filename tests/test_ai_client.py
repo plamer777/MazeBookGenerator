@@ -1,14 +1,11 @@
 """Unit-тесты для AIClient с моками OpenAI."""
 
-import pytest
-
-import asyncio
 import json
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from src.domain.models import PagePrompt, Theme
-from src.infrastructure.ai_client import AIClient
-from src.localization import Language
+import pytest
+
+from maze_book_generator.infrastructure.ai_client import AIClient
 
 
 class TestAIClient:
@@ -20,14 +17,14 @@ class TestAIClient:
 
     def test_initialization_with_key(self) -> None:
         """Инициализация с ключом должна создавать AsyncOpenAI клиент."""
-        with patch("src.infrastructure.ai_client.settings") as mock_settings:
+        with patch("maze_book_generator.infrastructure.ai_client.settings") as mock_settings:
             mock_settings.OPEN_AI_KEY = "test-key"
             client = AIClient()
             assert client._client is not None
 
     def test_initialization_without_key(self) -> None:
         """Инициализация без ключа должна создавать None клиент."""
-        with patch("src.infrastructure.ai_client.settings") as mock_settings:
+        with patch("maze_book_generator.infrastructure.ai_client.settings") as mock_settings:
             mock_settings.OPEN_AI_KEY = None
             client = AIClient()
             assert client._client is None
@@ -183,7 +180,7 @@ class TestAIClient:
 
     async def test_generate_theme_with_mock_openai(self) -> None:
         """Генерация темы с моком OpenAI."""
-        with patch("src.infrastructure.ai_client.settings") as mock_settings:
+        with patch("maze_book_generator.infrastructure.ai_client.settings") as mock_settings:
             mock_settings.OPEN_AI_KEY = "test-key"
             client = AIClient()
 
@@ -215,16 +212,16 @@ class TestAIClient:
 
     async def test_generate_theme_without_client_raises(self) -> None:
         """Генерация без клиента должна вызывать ValueError."""
-        with patch("src.infrastructure.ai_client.settings") as mock_settings:
+        with patch("maze_book_generator.infrastructure.ai_client.settings") as mock_settings:
             mock_settings.OPEN_AI_KEY = None
             client = AIClient()
 
-            with pytest.raises(ValueError):
+            with pytest.raises(ValueError, match="not initialized"):
                 await client.generate_theme(pages_count=2, language="en")
 
     async def test_generate_theme_retry_on_failure(self) -> None:
         """Повторные попытки при ошибке OpenAI."""
-        with patch("src.infrastructure.ai_client.settings") as mock_settings:
+        with patch("maze_book_generator.infrastructure.ai_client.settings") as mock_settings:
             mock_settings.OPEN_AI_KEY = "test-key"
             client = AIClient()
 
@@ -250,7 +247,7 @@ class TestAIClient:
 
     async def test_generate_theme_fails_after_max_retries(self) -> None:
         """Ошибка после максимального количества попыток."""
-        with patch("src.infrastructure.ai_client.settings") as mock_settings:
+        with patch("maze_book_generator.infrastructure.ai_client.settings") as mock_settings:
             mock_settings.OPEN_AI_KEY = "test-key"
             client = AIClient()
 
@@ -260,7 +257,7 @@ class TestAIClient:
             )
             client._client = mock_openai
 
-            with pytest.raises(ValueError):
+            with pytest.raises(ValueError, match="Failed to generate"):
                 await client.generate_theme(pages_count=1, language="en")
 
     def test_parse_theme_response_russian_language(self) -> None:

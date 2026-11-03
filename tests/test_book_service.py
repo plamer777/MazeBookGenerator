@@ -3,9 +3,9 @@
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from src.application.book_service import BookService
-from src.domain.models import BookConfig, Difficulty, DifficultyMode, MazeShape, Theme
-from src.localization import BookTexts
+from maze_book_generator.application.book_service import BookService
+from maze_book_generator.domain.models import BookConfig, Difficulty, DifficultyMode, MazeShape, Theme
+from maze_book_generator.localization import BookTexts
 
 
 class TestBookService:
@@ -13,7 +13,7 @@ class TestBookService:
 
     def setup_method(self) -> None:
         """Инициализация сервиса с моками контейнера."""
-        with patch("src.application.book_service.container") as mock_container:
+        with patch("maze_book_generator.application.book_service.container") as mock_container:
             mock_container.maze_generator = MagicMock()
             mock_container.pdf_renderer = MagicMock()
             mock_container.ai_client = MagicMock()
@@ -230,30 +230,25 @@ class TestBookService:
         assert "maze" in prompt.lower()
         assert "6" in prompt  # index + 1
 
-    def test_next_free_book_id_empty_dir(self) -> None:
+    def test_next_free_book_id_empty_dir(self, tmp_path: Path) -> None:
         """Следующий ID в пустой директории."""
-        with patch("src.application.book_service.settings") as mock_settings:
-            mock_settings.OUTPUT_DIR = Path("/tmp/test_empty")
-            Path("/tmp/test_empty").mkdir(parents=True, exist_ok=True)
+        with patch("maze_book_generator.application.book_service.settings") as mock_settings:
+            mock_settings.OUTPUT_DIR = tmp_path
 
             book_id = BookService._next_free_book_id(mock_settings.OUTPUT_DIR)
             assert book_id == 1
 
-    def test_next_free_book_id_with_existing(self) -> None:
+    def test_next_free_book_id_with_existing(self, tmp_path: Path) -> None:
         """Следующий ID с существующими папками."""
-        import shutil
-        with patch("src.application.book_service.settings") as mock_settings:
-            mock_settings.OUTPUT_DIR = Path("/tmp/test_existing_unique")
-            if Path("/tmp/test_existing_unique").exists():
-                shutil.rmtree("/tmp/test_existing_unique")
-            Path("/tmp/test_existing_unique").mkdir(parents=True, exist_ok=True)
-            (Path("/tmp/test_existing_unique") / "book_1").mkdir()
-            (Path("/tmp/test_existing_unique") / "book_3").mkdir()
+        with patch("maze_book_generator.application.book_service.settings") as mock_settings:
+            mock_settings.OUTPUT_DIR = tmp_path
+            (tmp_path / "book_1").mkdir()
+            (tmp_path / "book_3").mkdir()
 
             book_id = BookService._next_free_book_id(mock_settings.OUTPUT_DIR)
             assert book_id == 4
 
-    def test_save_marketplace_info_english(self) -> None:
+    def test_save_marketplace_info_english(self, tmp_path: Path) -> None:
         """Сохранение маркетинговой информации на английском."""
         theme = Theme(
             book_title="Test Title",
@@ -264,8 +259,7 @@ class TestBookService:
             image_keywords=[],
         )
 
-        output_dir = Path("/tmp/test_marketplace_en")
-        output_dir.mkdir(parents=True, exist_ok=True)
+        output_dir = tmp_path
 
         self.service._save_marketplace_info(output_dir, theme, "en")
 
@@ -275,7 +269,7 @@ class TestBookService:
         assert "Marketplace title" in content
         assert "Marketplace Title" in content
 
-    def test_save_marketplace_info_russian(self) -> None:
+    def test_save_marketplace_info_russian(self, tmp_path: Path) -> None:
         """Сохранение маркетинговой информации на русском."""
         theme = Theme(
             book_title="Тест",
@@ -286,8 +280,7 @@ class TestBookService:
             image_keywords=[],
         )
 
-        output_dir = Path("/tmp/test_marketplace_ru")
-        output_dir.mkdir(parents=True, exist_ok=True)
+        output_dir = tmp_path
 
         self.service._save_marketplace_info(output_dir, theme, "ru")
 
@@ -297,7 +290,7 @@ class TestBookService:
         assert "Заголовок для маркетплейса" in content
         assert "Маркетплейс заголовок" in content
 
-    def test_save_marketplace_info_fallback(self) -> None:
+    def test_save_marketplace_info_fallback(self, tmp_path: Path) -> None:
         """Fallback на базовые поля при отсутствии marketplace полей."""
         theme = Theme(
             book_title="Base Title",
@@ -306,8 +299,7 @@ class TestBookService:
             image_keywords=[],
         )
 
-        output_dir = Path("/tmp/test_marketplace_fallback")
-        output_dir.mkdir(parents=True, exist_ok=True)
+        output_dir = tmp_path
 
         self.service._save_marketplace_info(output_dir, theme, "en")
 

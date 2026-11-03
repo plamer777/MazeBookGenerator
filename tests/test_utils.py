@@ -1,7 +1,7 @@
 """Unit-тесты для утилит работы с текстом."""
 
 
-from src.utils import plural_form_ru, format_count_with_plural_ru
+from maze_book_generator.utils import format_count_with_plural_ru, plural_form_ru
 
 
 class TestRussianPluralization:

@@ -3,10 +3,9 @@
 import math
 import random
 from collections import deque
-from typing import Dict, Set
 
-from src.domain.models import Difficulty, Maze, MazeShape
-from src.domain.polar_topology_service import PolarTopologyService, Cell, Connections
+from maze_book_generator.domain.models import Difficulty, Maze, MazeShape
+from maze_book_generator.domain.polar_topology_service import Cell, Connections, PolarTopologyService
 
 
 class MazeGenerator:
@@ -89,18 +88,17 @@ class MazeGenerator:
 
         if shape == MazeShape.SQUARE:
             return self._generate_square_maze(scaled_w, scaled_h, difficulty)
-        elif shape == MazeShape.TRIANGULAR:
+        if shape == MazeShape.TRIANGULAR:
             return self._generate_triangular_maze(scaled_w, scaled_h, difficulty)
-        elif shape == MazeShape.DIAMOND:
+        if shape == MazeShape.DIAMOND:
             return self._generate_diamond_maze(scaled_w, scaled_h, difficulty)
-        elif shape == MazeShape.HEART:
+        if shape == MazeShape.HEART:
             return self._generate_heart_maze(scaled_w, scaled_h, difficulty)
-        elif shape == MazeShape.RANDOM:
+        if shape == MazeShape.RANDOM:
             return self._generate_random_maze(scaled_w, scaled_h, difficulty)
-        elif shape == MazeShape.CHAOTIC:
+        if shape == MazeShape.CHAOTIC:
             return self._generate_chaotic_maze(scaled_w, scaled_h, difficulty)
-        else:
-            return self._generate_rectangular_maze(scaled_w, scaled_h, difficulty)
+        return self._generate_rectangular_maze(scaled_w, scaled_h, difficulty)
 
     def _generate_rectangular_maze(
         self,
@@ -444,7 +442,7 @@ class MazeGenerator:
         outer_cells = topology.cells_per_ring[-1]
         end = (topology.num_rings - 1, outer_cells // 2)
 
-        solution = self._solve_polar_maze(connections, start, end, topology)
+        solution = self._solve_polar_maze(connections, start, end)
 
         # Создаём минимальный grid ТОЛЬКО для обратной совместимости и визуализации
         grid = [[0 for _ in range(grid_size)] for _ in range(grid_size)]
@@ -535,7 +533,7 @@ class MazeGenerator:
 
         start = (0, 0)
         stack = [start]
-        visited: Set[Cell] = {start}
+        visited: set[Cell] = {start}
 
         while stack:
             current = stack[-1]
@@ -591,7 +589,6 @@ class MazeGenerator:
 
         connections[cell_a].add(cell_b)
         connections[cell_b].add(cell_a)
-        assert cell_a in connections[cell_b], "Нарушена симметрия графа"
 
     def _apply_difficulty_bias(
         self,
@@ -899,7 +896,7 @@ class MazeGenerator:
 
         while queue:
             x, y = queue.popleft()
-            current_distance = distances[(x, y)]
+            current_distance = distances[x, y]
 
             if self._is_mask_boundary_cell(mask, x, y, width, height) and current_distance > farthest_distance:
                 farthest = (x, y)
@@ -910,7 +907,7 @@ class MazeGenerator:
                     continue
                 if (nx, ny) in distances:
                     continue
-                distances[(nx, ny)] = current_distance + 1
+                distances[nx, ny] = current_distance + 1
                 queue.append((nx, ny))
 
         if farthest == start:
@@ -993,10 +990,7 @@ class MazeGenerator:
             True если лабиринт валидный
         """
         # Проверяем, что есть хотя бы один проход
-        for row in grid:
-            if 1 in row:
-                return True
-        return False
+        return any(1 in row for row in grid)
 
     def _carve_passages_with_walls_and_mask(
         self,
@@ -1121,7 +1115,7 @@ class MazeGenerator:
         # L1=6% петель, L7=0% (чистое дерево без доп. проходов)
         loop_rate = max(0.0, self._lerp(self._effective_level(difficulty), 0.06, 0.0))
 
-        if loop_rate == 0.0:
+        if loop_rate <= 0.0:
             return
 
         directions = [(0, -1, 0, 2), (1, 0, 1, 3), (0, 1, 2, 0), (-1, 0, 3, 1)]
@@ -1177,7 +1171,7 @@ class MazeGenerator:
             neighbors = self._iter_wall_neighbors(walls, x, y, width, height)
             for nx, ny in neighbors:
                 if (nx, ny) not in parents:
-                    parents[(nx, ny)] = (x, y)
+                    parents[nx, ny] = (x, y)
                     queue.append((nx, ny))
 
         if end not in parents:
@@ -1210,9 +1204,13 @@ class MazeGenerator:
         neighbors: list[tuple[int, int]] = []
         for dx, dy, wall_idx, neighbor_wall_idx in directions:
             nx, ny = x + dx, y + dy
-            if 0 <= nx < width and 0 <= ny < height:
-                if not walls[y][x][wall_idx] and not walls[ny][nx][neighbor_wall_idx]:
-                    neighbors.append((nx, ny))
+            if (
+                0 <= nx < width
+                and 0 <= ny < height
+                and not walls[y][x][wall_idx]
+                and not walls[ny][nx][neighbor_wall_idx]
+            ):
+                neighbors.append((nx, ny))
         return neighbors
 
     def _create_triangular_mask(self, width: int, height: int) -> list[list[bool]]:
@@ -1283,12 +1281,11 @@ class MazeGenerator:
         connections: Connections,
         start: Cell,
         end: Cell,
-        topology: PolarTopologyService,
     ) -> list[Cell]:
         """Находит кратчайший путь в полярном лабиринте с помощью BFS."""
 
         queue = deque([start])
-        parents: Dict[Cell, Cell | None] = {start: None}
+        parents: dict[Cell, Cell | None] = {start: None}
 
         while queue:
             current = queue.popleft()
@@ -1296,7 +1293,6 @@ class MazeGenerator:
                 break
 
             for neighbor in connections[current]:
-                assert current in connections[neighbor], "Нарушена симметрия графа"
                 if neighbor not in parents:
                     parents[neighbor] = current
                     queue.append(neighbor)

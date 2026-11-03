@@ -8,9 +8,9 @@ from typing import Any
 
 from openai import AsyncOpenAI
 
-from src.domain.models import PagePrompt, Theme
-from src.localization import BookTexts, Language
-from src.settings import (
+from maze_book_generator.domain.models import PagePrompt, Theme
+from maze_book_generator.localization import BookTexts, Language
+from maze_book_generator.settings import (
     OPEN_AI_THEME_MODEL,
     OPEN_AI_THEME_PROMPT,
     OPEN_AI_THEME_PROMPT_RU,
@@ -138,17 +138,18 @@ class AIClient:
         t = BookTexts(language)
 
         raw_prompts: list[Any] = payload.get("page_prompts", [])
-        prompts: list[PagePrompt] = []
-        for item in raw_prompts:
-            if isinstance(item, dict):
-                prompts.append(PagePrompt(
-                    task=item.get("task", t.get("fallback_maze_task")),
-                    heroes=item.get("heroes", []),
-                ))
+        prompts: list[PagePrompt] = [
+            PagePrompt(
+                task=item.get("task", t.get("fallback_maze_task")),
+                heroes=item.get("heroes", []),
+            )
+            for item in raw_prompts
+            if isinstance(item, dict)
+        ]
         while len(prompts) < pages_count:
             n = len(prompts) + 1
             prompts.append(PagePrompt(
-                task=t.get("fallback_maze_task_n").replace("{n}", str(n)),
+                task=t.get("fallback_maze_task_n").format(n=n),
                 heroes=[],
             ))
 

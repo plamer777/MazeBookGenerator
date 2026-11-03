@@ -4,8 +4,6 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
-from src.settings import settings
-
 
 class ImageGenerator:
     """Генератор изображений для обложек и иллюстраций книг."""
@@ -45,7 +43,7 @@ class ImageGenerator:
             # Пытаемся использовать системный шрифт
             font_large = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 60)
             font_small = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 30)
-        except (OSError, IOError):
+        except OSError:
             # Fallback на стандартный шрифт
             font_large = ImageFont.load_default()
             font_small = ImageFont.load_default()
@@ -72,12 +70,13 @@ class ImageGenerator:
         img.save(output_path, "PNG")
         return output_path
 
-    def generate_illustration(self, prompt: str, output_path: Path) -> Path:
+    def generate_illustration(self, _prompt: str, output_path: Path) -> Path:
         """
-        Генерирует иллюстрацию для страницы.
+        Генерирует иллюстрацию для страницы (заглушка с мини-лабиринтом).
 
         Args:
-            prompt: Промпт для генерации
+            _prompt: Промпт для генерации — заглушке не нужен, параметр сохранён
+                для совместимости интерфейса с провайдерами иллюстраций
             output_path: Путь для сохранения изображения
 
         Returns:

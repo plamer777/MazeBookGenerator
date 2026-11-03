@@ -1,8 +1,8 @@
 """Smoke-тесты новых параметров конфигурации и локализации книги."""
 
 
-from src.domain.models import BookConfig
-from src.localization import BookTexts
+from maze_book_generator.domain.models import BookConfig
+from maze_book_generator.localization import BookTexts
 
 
 class TestBookConfigAndLocalization:

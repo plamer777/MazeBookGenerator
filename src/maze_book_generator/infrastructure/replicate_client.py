@@ -9,7 +9,7 @@ from pathlib import Path
 import httpx
 import replicate
 
-from src.settings import (
+from maze_book_generator.settings import (
     IMAGE_GENERATOR_PROMPT_TEMPLATE,
     IMAGE_STORAGE_SUBDIR,
     REPLICATE_IMAGE_MODELS,
@@ -81,6 +81,7 @@ class ReplicateClient:
             except Exception as exc:
                 self._logger.warning("Replicate generation failed for %s: %s", model_version, exc)
                 return None
+        return None
 
     def _build_prompt(self, keywords: list[str]) -> str:
         """

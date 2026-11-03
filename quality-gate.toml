@@ -51,10 +51,10 @@ exclude = [".git", ".venv", "venv", "__pycache__", "build", "dist", ".mypy_cache
 
 [ruff.lint]
 select = ["E4", "E7", "E9", "F", "I", "UP", "B", "SIM", "C4", "RET", "ARG", "PERF", "PT", "RUF", "S", "ASYNC", "DTZ", "BLE", "TRY", "LOG", "C901", "PLR0904", "PLR0911", "PLR0912", "PLR0913", "PLR0914", "PLR0915", "PLR0916", "PLR0917", "PLR1702"]
-ignore = ["E501", "B008", "RUF001"]
+ignore = ["E501", "B008", "RUF001", "RUF002", "RUF003"]
 
 [ruff.lint.per-file-ignores]
-"**/tests/**" = ["S101", "PLR0913", "PLR0917"]
+"**/tests/**" = ["S101", "PLR0913", "PLR0917", "PLR0904", "PLR1702"]
 "**/tests_unit/**" = ["S101", "PLR0913", "PLR0917"]
 "**/tests_live/**" = ["S101", "PLR0913", "PLR0917"]
 
@@ -182,4 +182,4 @@ root_packages = ["src"]
 include_external_packages = true
 
 [services.constant_policy]
-allowed_files = ["src/settings.py"]
+allowed_files = ["src/maze_book_generator/settings.py", "src/maze_book_generator/localization.py"]

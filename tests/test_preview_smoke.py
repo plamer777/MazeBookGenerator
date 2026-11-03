@@ -5,8 +5,8 @@ from pathlib import Path
 import pytest
 from PIL import Image
 
-from src.domain.maze_generator import MazeGenerator
-from src.domain.models import (
+from maze_book_generator.domain.maze_generator import MazeGenerator
+from maze_book_generator.domain.models import (
     Book,
     BookConfig,
     BookPage,
@@ -15,8 +15,8 @@ from src.domain.models import (
     PagePrompt,
     Theme,
 )
-from src.infrastructure.pdf_renderer import PDFRenderer
-from src.infrastructure.preview_generator import PreviewGenerator
+from maze_book_generator.infrastructure.pdf_renderer import PDFRenderer
+from maze_book_generator.infrastructure.preview_generator import PreviewGenerator
 
 
 def _render_book(tmp_path: Path, language: str = "en") -> Path:
@@ -64,7 +64,8 @@ def test_generate_previews_full_pack(tmp_path: Path, language: str) -> None:
         assert path.exists()
         with Image.open(path) as img:
             assert img.format == "PNG"
-            assert img.width > 0 and img.height > 0
+            assert img.width > 0
+            assert img.height > 0
 
 
 def test_generate_previews_without_pdf(tmp_path: Path) -> None:

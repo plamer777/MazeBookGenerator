@@ -3,26 +3,24 @@
 import math
 import random
 from pathlib import Path
-from typing import Tuple
 
-from src.container import container
-from src.domain.maze_generator import MazeGenerator
-from src.domain.models import (
+from maze_book_generator.container import container
+from maze_book_generator.domain.maze_generator import MazeGenerator
+from maze_book_generator.domain.models import (
     Book,
     BookConfig,
     BookPage,
     Difficulty,
     DifficultyMode,
     MazeShape,
-
     Theme,
 )
-from src.infrastructure.hf_client import HFClient
-from src.infrastructure.pollinations_client import PollinationsClient
-from src.infrastructure.replicate_client import ReplicateClient
-from src.infrastructure.pdf_renderer import PDFRenderer
-from src.localization import BookTexts, Language
-from src.settings import settings
+from maze_book_generator.infrastructure.hf_client import HFClient
+from maze_book_generator.infrastructure.pdf_renderer import PDFRenderer
+from maze_book_generator.infrastructure.pollinations_client import PollinationsClient
+from maze_book_generator.infrastructure.replicate_client import ReplicateClient
+from maze_book_generator.localization import BookTexts, Language
+from maze_book_generator.settings import settings
 
 
 class BookService:
@@ -44,7 +42,7 @@ class BookService:
         self,
         book_id: int,
         pages_per_book: int,
-        maze_size: Tuple[int, int],
+        maze_size: tuple[int, int],
         difficulty_mode: DifficultyMode,
         base_difficulty: Difficulty = Difficulty.MEDIUM,
         language: Language = "en",
@@ -87,7 +85,7 @@ class BookService:
         book_id: int,
         theme: Theme,
         pages_per_book: int,
-        maze_size: Tuple[int, int],
+        maze_size: tuple[int, int],
         difficulty_mode: DifficultyMode,
         base_difficulty: Difficulty = Difficulty.MEDIUM,
         language: Language = "en",
@@ -255,7 +253,7 @@ class BookService:
             for list_idx, original_idx in enumerate(failed_indices):
                 paths[original_idx] = hf_paths[list_idx]
 
-        for page, path in zip(unique_pages, paths):
+        for page, path in zip(unique_pages, paths, strict=True):
             if path is not None:
                 str_path = str(path)
                 page.image_path = str_path
@@ -270,7 +268,7 @@ class BookService:
         self,
         book_id: int,
         pages_per_book: int,
-        maze_size: Tuple[int, int],
+        maze_size: tuple[int, int],
         difficulty_mode: DifficultyMode,
         base_difficulty: Difficulty = Difficulty.MEDIUM,
         language: Language = "en",
@@ -307,9 +305,8 @@ class BookService:
         self,
         number_of_books: int,
         pages_per_book: int,
-        maze_size: Tuple[int, int],
+        maze_size: tuple[int, int],
         difficulty_mode: DifficultyMode,
-        base_difficulty: Difficulty = Difficulty.MEDIUM,
         base_seed: int | None = None,
         language: Language = "en",
         book_config: BookConfig | None = None,
@@ -317,21 +314,23 @@ class BookService:
         """
         Генерирует пачку книг в batch режиме с гарантированной уникальностью структур.
 
+        Сложность и размер ротируются по книгам (EASY/MEDIUM/HARD), чтобы пачка
+        была разнообразной — поэтому единой base_difficulty здесь нет.
+
         Args:
             number_of_books: Количество книг
             pages_per_book: Количество страниц
             maze_size: Базовый размер лабиринта
             difficulty_mode: Стратегия изменения сложности
-            base_difficulty: Начальная сложность
             base_seed: Опциональный seed. Если None — каждый перезапуск скрипта абсолютно рандомен.
             language: Язык текста книги (ru или en)
             book_config: Опциональный конфиг с дополнительными параметрами для генерации книги
         """
         books: list[Book] = []
-        if any([number_of_books <= 0, pages_per_book <= 0]):
+        if number_of_books <= 0 or pages_per_book <= 0:
             print("Кол-во книг и страниц в каждой книге должно быть больше 0")
             return books
-        
+
         for local_idx in range(1, number_of_books + 1):
             book_id = self._next_free_book_id(settings.OUTPUT_DIR)
             print(f"Генерация книги {local_idx}/{number_of_books} (папка book_{book_id})...")
@@ -349,10 +348,11 @@ class BookService:
             # РЕШЕНИЕ ПРОБЛЕМЫ ПОВТОРОВ:
             # Если base_seed передан — генерируем воспроизводимую цепочку.
             # Если нет — берем случайное число, исключая повторение лабиринтов при перезапусках.
-            if base_seed is not None:
-                current_seed = base_seed + book_id * 1337
-            else:
-                current_seed = random.randint(1, 999999999)
+            current_seed = (
+                base_seed + book_id * 1337
+                if base_seed is not None
+                else random.randint(1, 999999999)
+            )
 
             self._maze_generator = MazeGenerator(seed=current_seed)
 
@@ -500,7 +500,7 @@ class BookService:
             # Оставляем только простые и хорошо читаемые формы.
             return random.choice([MazeShape.RECTANGULAR, MazeShape.SQUARE, MazeShape.DIAMOND])
 
-        elif mode_str in ("CHALLENGE_HARD", "MEGA_HARD"):
+        if mode_str in ("CHALLENGE_HARD", "MEGA_HARD"):
             # Для экспертов сразу выкатываем сложные альтернативные топологии
             complex_shapes = [
                 MazeShape.TRIANGULAR,
@@ -512,24 +512,23 @@ class BookService:
             ]
             return complex_shapes[(page_num - 1) % len(complex_shapes)]
 
-        elif mode_str == "INCREMENTAL":
+        if mode_str == "INCREMENTAL":
             # Эволюция форм: от простых к сложным по мере пролистывания книги
             progress = (page_num - 1) / max(total_pages - 1, 1)
             if progress < 0.35:
                 return random.choice([MazeShape.RECTANGULAR, MazeShape.SQUARE, MazeShape.DIAMOND])
-            elif progress < 0.70:
+            if progress < 0.70:
                 return random.choice([MazeShape.SQUARE, MazeShape.CIRCULAR, MazeShape.TRIANGULAR, MazeShape.DIAMOND])
-            else:
-                return random.choice(
-                    [
-                        MazeShape.CIRCULAR,
-                        MazeShape.TRIANGULAR,
-                        MazeShape.CHAOTIC,
-                        MazeShape.RANDOM,
-                        MazeShape.DIAMOND,
-                        MazeShape.HEART,
-                    ]
-                )
+            return random.choice(
+                [
+                    MazeShape.CIRCULAR,
+                    MazeShape.TRIANGULAR,
+                    MazeShape.CHAOTIC,
+                    MazeShape.RANDOM,
+                    MazeShape.DIAMOND,
+                    MazeShape.HEART,
+                ]
+            )
 
         # Дефолтное классическое чередование для FIXED и RANDOM_RANGE
         shapes = [

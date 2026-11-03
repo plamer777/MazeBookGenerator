@@ -2,11 +2,11 @@
 
 import math
 from pathlib import Path
-from typing import Optional
 
 from pdf2image import convert_from_path
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
-from src.utils import format_count_with_plural_ru
+
+from maze_book_generator.utils import format_count_with_plural_ru
 
 
 class PreviewGenerator:
@@ -100,7 +100,7 @@ class PreviewGenerator:
         # 4. Превью страницы ответов
         if solution_img is not None:
             answer_path = output_dir / "preview_answer.png"
-            self._generate_answer_preview(solution_img, answer_path, maze_count, language)
+            self._generate_answer_preview(solution_img, answer_path, language)
             paths.append(answer_path)
 
         # 5. Продающий промо-баннер со стикером
@@ -115,7 +115,7 @@ class PreviewGenerator:
     # Загрузка исходников
     # ------------------------------------------------------------------
 
-    def _load_cover(self, output_dir: Path) -> Optional[Image.Image]:
+    def _load_cover(self, output_dir: Path) -> Image.Image | None:
         """Загружает обложку. Если cover.png нет, берет стр 0 из PDF."""
 
         pdf_path = output_dir / "book.pdf"
@@ -148,7 +148,7 @@ class PreviewGenerator:
         except Exception:
             return [self._make_placeholder(i + 1) for i in range(count)]
 
-    def _load_solution_page(self, output_dir: Path) -> Optional[Image.Image]:
+    def _load_solution_page(self, output_dir: Path) -> Image.Image | None:
         """
         Загружает первую страницу с ответами из PDF.
 
@@ -175,7 +175,7 @@ class PreviewGenerator:
 
     def _generate_book_spread(
         self,
-        cover: Optional[Image.Image],
+        cover: Image.Image | None,
         pages: list[Image.Image],
         output_path: Path,
     ) -> None:
@@ -224,7 +224,7 @@ class PreviewGenerator:
 
     def _generate_collage(
         self,
-        cover: Optional[Image.Image],
+        cover: Image.Image | None,
         pages: list[Image.Image],
         output_path: Path,
     ) -> None:
@@ -232,10 +232,11 @@ class PreviewGenerator:
         gap = 12
         collage = Image.new("RGB", (self.CANVAS_W, self.CANVAS_H), (235, 235, 240))
 
-        sources: list[Image.Image] = []
-        sources.append(cover if cover is not None else self._make_placeholder(0))
-        for i in range(3):
-            sources.append(pages[i] if i < len(pages) else self._make_placeholder(i + 1))
+        sources: list[Image.Image] = [cover if cover is not None else self._make_placeholder(0)]
+        sources.extend(
+            pages[i] if i < len(pages) else self._make_placeholder(i + 1)
+            for i in range(3)
+        )
 
         positions = [
             (gap, gap),
@@ -244,7 +245,7 @@ class PreviewGenerator:
             (self.CANVAS_W // 2 + gap // 2, self.CANVAS_H // 2 + gap // 2),
         ]
 
-        for src, (px, py) in zip(sources, positions):
+        for src, (px, py) in zip(sources, positions, strict=True):
             cell = self._fit_to_cell(src, self.CANVAS_W // 2 - int(gap * 1.5), self.CANVAS_H // 2 - int(gap * 1.5))
             collage.paste(cell, (px, py))
 
@@ -255,7 +256,6 @@ class PreviewGenerator:
         self,
         solution_page: Image.Image,
         output_path: Path,
-        maze_count: int = 0,
         language: str = "en",
     ) -> None:
         """Создаёт превью страницы ответов на детском столике."""
@@ -444,7 +444,7 @@ class PreviewGenerator:
             outline=(255, 255, 255), width=3,
         )
 
-        _FONT_PATH = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+        font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
         # Доступная ширина внутри канта (диаметр внутренней окружности минус отступы)
         inner_w = (radius - 16) * 2
         gap = max(4, radius // 16)
@@ -453,11 +453,11 @@ class PreviewGenerator:
             """Подбирает максимальный размер шрифта чтобы text влезал в max_w."""
             try:
                 for size in range(start_size, min_size - 1, -1):
-                    f = ImageFont.truetype(_FONT_PATH, size)
+                    f = ImageFont.truetype(font_path, size)
                     bb = draw.textbbox((0, 0), text, font=f)
                     if bb[2] - bb[0] <= max_w:
                         return f
-                return ImageFont.truetype(_FONT_PATH, min_size)
+                return ImageFont.truetype(font_path, min_size)
             except OSError:
                 return ImageFont.load_default()
 
@@ -498,7 +498,7 @@ class PreviewGenerator:
         path.parent.mkdir(parents=True, exist_ok=True)
         thumb.save(path, "PNG")
 
-    def _make_placeholder(self, page_num: int, width: Optional[int] = None, height: Optional[int] = None) -> Image.Image:
+    def _make_placeholder(self, page_num: int, width: int | None = None, height: int | None = None) -> Image.Image:
         """Генерирует чистый плейсхолдер страницы."""
         w = width or self.preview_width
         h = height or self.preview_height

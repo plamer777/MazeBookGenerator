@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import math
 from collections import deque
-from typing import Dict, Iterator, Sequence, Set
+from collections.abc import Iterator, Sequence
 
 Cell = tuple[int, int]
-Connections = Dict[Cell, Set[Cell]]
+Connections = dict[Cell, set[Cell]]
 
 
 class PolarTopologyService:
@@ -76,12 +76,14 @@ class PolarTopologyService:
         return [(ring + 1, sector * 2), (ring + 1, sector * 2 + 1)]
 
     def get_clockwise_neighbor(self, ring: int, sector: int) -> Cell:
-        if ring == 0: return (0, 0)
+        if ring == 0:
+            return (0, 0)
         count = self.cells_per_ring[ring]
         return (ring, (sector + 1) % count)
 
     def get_counter_clockwise_neighbor(self, ring: int, sector: int) -> Cell:
-        if ring == 0: return (0, 0)
+        if ring == 0:
+            return (0, 0)
         count = self.cells_per_ring[ring]
         return (ring, (sector - 1) % count)
 

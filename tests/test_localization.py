@@ -1,7 +1,7 @@
 """Unit-тесты для локализации."""
 
 
-from src.localization import BookTexts, Language
+from maze_book_generator.localization import BookTexts
 
 
 class TestBookTexts:

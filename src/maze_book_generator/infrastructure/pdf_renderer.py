@@ -3,6 +3,7 @@
 import io
 import math
 import random
+from itertools import pairwise
 from pathlib import Path
 
 from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageOps
@@ -12,10 +13,10 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
-from src.domain.models import Book, BookConfig, BookPage, Maze, MazeShape
-from src.domain.polar_topology_service import PolarTopologyService
-from src.localization import BookTexts, Language
-from src.settings import (
+from maze_book_generator.domain.models import Book, BookConfig, BookPage, Maze, MazeShape
+from maze_book_generator.domain.polar_topology_service import PolarTopologyService
+from maze_book_generator.localization import BookTexts, Language
+from maze_book_generator.settings import (
     WATERMARK_ALPHA,
     WATERMARK_BG_DIFF_GAIN,
     WATERMARK_BG_DIFF_THRESHOLD,
@@ -23,7 +24,7 @@ from src.settings import (
     WATERMARK_EDGE_FADE_INSET_RATIO,
     settings,
 )
-from src.utils import format_count_with_plural_ru
+from maze_book_generator.utils import format_count_with_plural_ru
 
 _DEJAVU_REGULAR = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 _DEJAVU_BOLD = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
@@ -1088,7 +1089,6 @@ class PDFRenderer:
         c: canvas.Canvas,
         illustrations_dir: Path,
         alpha: float = WATERMARK_ALPHA,
-        count: int = 20,
         seed: int | None = None,
     ) -> None:
         """
@@ -1102,7 +1102,6 @@ class PDFRenderer:
             c: Canvas для рисования
             illustrations_dir: Папка с PNG-файлами
             alpha: Прозрачность изображений (не изменяется)
-            count: Не используется (сохранён для совместимости сигнатуры)
             seed: Seed для детерминированной вариативности коллажа
         """
         if not illustrations_dir.exists():
@@ -1165,8 +1164,8 @@ class PDFRenderer:
                 if i > 0:
                     half_w = rot_w / 2
                     half_h = rot_h / 2
-                    cx = margin + half_w if cx_frac == 0.0 else pw - margin - half_w
-                    cy = margin + half_h if cy_frac == 0.0 else ph - margin - half_h
+                    cx = margin + half_w if cx_frac < 0.5 else pw - margin - half_w
+                    cy = margin + half_h if cy_frac < 0.5 else ph - margin - half_h
                     cx += jitter_x
                     cy += jitter_y
 
@@ -1209,7 +1208,6 @@ class PDFRenderer:
                 c,
                 illustrations_dir,
                 alpha=WATERMARK_ALPHA,
-                count=25,
                 seed=collage_seed,
             )
 
@@ -1561,7 +1559,7 @@ class PDFRenderer:
             (frame_m + 9 * mm,  frame_m + 9 * mm),
             (self.page_width - frame_m - 9 * mm, frame_m + 9 * mm),
         ]
-        for i, (cx, cy) in enumerate(corners):
+        for cx, cy in corners:
             sym = rng.choice(symbols_big)
             col = rng.choice(colors)
             draw_sym(sym, cx, cy, 22, col)
@@ -1977,8 +1975,8 @@ class PDFRenderer:
         cur_radius = cell_ring_radius(ring0) if ring0 > 0 else 0.0
         cur_x, cur_y = polar_to_xy(cur_radius, cur_angle)
 
-        for current, nxt in zip(solution_path, solution_path[1:]):
-            ring1, sector1 = current
+        for current, nxt in pairwise(solution_path):
+            ring1, _sector1 = current
             ring2, sector2 = nxt
 
             if ring1 == ring2:

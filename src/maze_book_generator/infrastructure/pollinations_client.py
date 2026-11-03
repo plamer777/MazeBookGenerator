@@ -9,11 +9,11 @@ from pathlib import Path
 
 import httpx
 
-from src.settings import (
+from maze_book_generator.settings import (
     IMAGE_GENERATOR_PROMPT_TEMPLATE,
     IMAGE_STORAGE_SUBDIR,
     POLLINATIONS_PARAMS,
-    POLLINATIONS_RATE_LIMIT_DELAY
+    POLLINATIONS_RATE_LIMIT_DELAY,
 )
 
 

@@ -2,10 +2,10 @@
 
 import asyncio
 
-from src.application.book_service import BookService
-from src.application.config_presets import PRESETS, personalized
-from src.container import container
-from src.domain.models import Difficulty, DifficultyMode
+from maze_book_generator.application.book_service import BookService
+from maze_book_generator.application.config_presets import PRESETS
+from maze_book_generator.container import container
+from maze_book_generator.domain.models import DifficultyMode
 
 
 async def main() -> None:
@@ -18,7 +18,6 @@ async def main() -> None:
     mazes_per_book = 30
     maze_size = (15, 11)
     difficulty_mode = DifficultyMode.KIDS_EASY
-    base_difficulty = Difficulty.EASY
 
     # Выбираем пресет конфигурации книги.
     # Доступные пресеты: en_kids_basic, en_kids_printable, en_school, en_school_printable,
@@ -39,7 +38,6 @@ async def main() -> None:
         pages_per_book=mazes_per_book,
         maze_size=maze_size,
         difficulty_mode=difficulty_mode,
-        base_difficulty=base_difficulty,
         book_config=book_config,
     )
 

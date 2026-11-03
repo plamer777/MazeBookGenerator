@@ -2,8 +2,8 @@
 
 from unittest.mock import MagicMock, patch
 
-from src.domain.models import Book, BookConfig, BookPage, Difficulty, Maze, MazeShape, Theme
-from src.infrastructure.pdf_renderer import PDFRenderer
+from maze_book_generator.domain.models import Book, BookConfig, BookPage, Difficulty, Maze, MazeShape, Theme
+from maze_book_generator.infrastructure.pdf_renderer import PDFRenderer
 
 
 class TestPDFRenderer:
@@ -130,12 +130,12 @@ class TestPDFRenderer:
         """Длинный текст должен переноситься по словам."""
         mock_canvas = MagicMock()
         # Первое слово влезает, второе - нет
-        def stringWidth_side_effect(text, font, size):
+        def stringWidth_side_effect(text, _font, _size):
             if text == "Hello":
                 return 40
-            elif text == "Hello world":
+            if text == "Hello world":
                 return 120
-            elif text == "world":
+            if text == "world":
                 return 50
             return 0
 
@@ -151,7 +151,7 @@ class TestPDFRenderer:
         mock_canvas = MagicMock()
 
         # Каждая буква занимает 10 единиц
-        def stringWidth_side_effect(text, font, size):
+        def stringWidth_side_effect(text, _font, _size):
             return len(text) * 10
 
         mock_canvas.stringWidth.side_effect = stringWidth_side_effect
@@ -176,24 +176,24 @@ class TestPDFRenderer:
         """Длинный заголовок должен переноситься на несколько строк."""
         mock_canvas = MagicMock()
         # Каждое слово занимает много места
-        def stringWidth_side_effect(text, font, size):
+        def stringWidth_side_effect(text, _font, _size):
             return len(text) * 30
 
         mock_canvas.stringWidth.side_effect = stringWidth_side_effect
 
-        font_size, lines = self.renderer._fit_cover_title_layout(mock_canvas, "Very Long Title Here", 100)
+        _font_size, lines = self.renderer._fit_cover_title_layout(mock_canvas, "Very Long Title Here", 100)
         assert len(lines) > 1
 
     def test_fit_cover_title_layout_reduces_font_size(self) -> None:
         """Если текст не влезает, размер шрифта должен уменьшаться."""
         mock_canvas = MagicMock()
         # Большой размер шрифта даёт большую ширину
-        def stringWidth_side_effect(text, font, size):
+        def stringWidth_side_effect(text, _font, size):
             return len(text) * size * 2
 
         mock_canvas.stringWidth.side_effect = stringWidth_side_effect
 
-        font_size, lines = self.renderer._fit_cover_title_layout(mock_canvas, "Very Long Title", 100)
+        font_size, _lines = self.renderer._fit_cover_title_layout(mock_canvas, "Very Long Title", 100)
         assert font_size < 34  # начальный размер
 
     def test_render_book_calls_render_cover(self) -> None:
@@ -201,18 +201,20 @@ class TestPDFRenderer:
         book = self._create_test_book()
         output_path = MagicMock()
 
-        with patch.object(self.renderer, "_render_cover"):
-            with patch.object(self.renderer, "_render_intro_page"):
-                with patch.object(self.renderer, "_render_maze_page"):
-                    with patch.object(self.renderer, "_render_solution_page"):
-                        with patch.object(self.renderer, "_render_outro_page"):
-                            with patch("src.infrastructure.pdf_renderer.canvas.Canvas") as mock_canvas_class:
-                                mock_canvas = MagicMock()
-                                mock_canvas_class.return_value = mock_canvas
+        with (
+            patch.object(self.renderer, "_render_cover") as mock_cover,
+            patch.object(self.renderer, "_render_intro_page"),
+            patch.object(self.renderer, "_render_maze_page"),
+            patch.object(self.renderer, "_render_solution_page"),
+            patch.object(self.renderer, "_render_outro_page"),
+            patch("maze_book_generator.infrastructure.pdf_renderer.canvas.Canvas") as mock_canvas_class,
+        ):
+            mock_canvas = MagicMock()
+            mock_canvas_class.return_value = mock_canvas
 
-                                self.renderer.render_book(book, output_path)
+            self.renderer.render_book(book, output_path)
 
-                                self.renderer._render_cover.assert_called_once()
+            mock_cover.assert_called_once()
 
     def test_render_book_with_contents_page(self) -> None:
         """При include_contents_page=True должна рендериться страница contents."""
@@ -220,19 +222,21 @@ class TestPDFRenderer:
         self.config.include_contents_page = True
         output_path = MagicMock()
 
-        with patch.object(self.renderer, "_render_cover"):
-            with patch.object(self.renderer, "_render_contents_page") as mock_contents:
-                with patch.object(self.renderer, "_render_intro_page"):
-                    with patch.object(self.renderer, "_render_maze_page"):
-                        with patch.object(self.renderer, "_render_solution_page"):
-                            with patch.object(self.renderer, "_render_outro_page"):
-                                with patch("src.infrastructure.pdf_renderer.canvas.Canvas") as mock_canvas_class:
-                                    mock_canvas = MagicMock()
-                                    mock_canvas_class.return_value = mock_canvas
+        with (
+            patch.object(self.renderer, "_render_cover"),
+            patch.object(self.renderer, "_render_contents_page") as mock_contents,
+            patch.object(self.renderer, "_render_intro_page"),
+            patch.object(self.renderer, "_render_maze_page"),
+            patch.object(self.renderer, "_render_solution_page"),
+            patch.object(self.renderer, "_render_outro_page"),
+            patch("maze_book_generator.infrastructure.pdf_renderer.canvas.Canvas") as mock_canvas_class,
+        ):
+            mock_canvas = MagicMock()
+            mock_canvas_class.return_value = mock_canvas
 
-                                    self.renderer.render_book(book, output_path)
+            self.renderer.render_book(book, output_path)
 
-                                    mock_contents.assert_called_once()
+            mock_contents.assert_called_once()
 
     def test_render_book_without_contents_page(self) -> None:
         """При include_contents_page=False страница contents не должна рендериться."""
@@ -240,23 +244,25 @@ class TestPDFRenderer:
         self.config.include_contents_page = False
         output_path = MagicMock()
 
-        with patch.object(self.renderer, "_render_cover"):
-            with patch.object(self.renderer, "_render_contents_page") as mock_contents:
-                with patch.object(self.renderer, "_render_intro_page"):
-                    with patch.object(self.renderer, "_render_maze_page"):
-                        with patch.object(self.renderer, "_render_solution_page"):
-                            with patch.object(self.renderer, "_render_outro_page"):
-                                with patch("src.infrastructure.pdf_renderer.canvas.Canvas") as mock_canvas_class:
-                                    mock_canvas = MagicMock()
-                                    mock_canvas_class.return_value = mock_canvas
+        with (
+            patch.object(self.renderer, "_render_cover"),
+            patch.object(self.renderer, "_render_contents_page") as mock_contents,
+            patch.object(self.renderer, "_render_intro_page"),
+            patch.object(self.renderer, "_render_maze_page"),
+            patch.object(self.renderer, "_render_solution_page"),
+            patch.object(self.renderer, "_render_outro_page"),
+            patch("maze_book_generator.infrastructure.pdf_renderer.canvas.Canvas") as mock_canvas_class,
+        ):
+            mock_canvas = MagicMock()
+            mock_canvas_class.return_value = mock_canvas
 
-                                    self.renderer.render_book(book, output_path)
+            self.renderer.render_book(book, output_path)
 
-                                    mock_contents.assert_not_called()
+            mock_contents.assert_not_called()
 
     def _create_test_book(self) -> Book:
         """Создаёт тестовый объект Book."""
-        from src.domain.models import PagePrompt
+        from maze_book_generator.domain.models import PagePrompt
 
         theme = Theme(
             book_title="Test Theme",
@@ -314,6 +320,6 @@ class TestPDFRenderer:
             id=1,
             theme=theme,
             pages=[page1, page2],
-            output_dir="/tmp/test",
+            output_dir="test_output",
             config=self.config,
         )

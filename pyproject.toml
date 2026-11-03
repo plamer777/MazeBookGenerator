@@ -32,3 +32,45 @@ dev = [
 testpaths = ["tests"]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
+
+[build-system]
+requires = ["hatchling>=1.29"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/maze_book_generator"]
+
+[project.scripts]
+mazebook = "maze_book_generator.cli:main"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+src = ["src"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "UP", "B", "SIM", "C4", "RET", "ARG", "PERF", "PT", "RUF", "S", "ASYNC", "DTZ", "BLE", "TRY", "LOG", "C901", "PLR0904", "PLR0911", "PLR0912", "PLR0913", "PLR0914", "PLR0915", "PLR0916", "PLR0917", "PLR1702"]
+# RUF002/RUF003 отключены: документация проекта на русском (AGENTS.md),
+# кириллические буквы в docstrings/комментариях — норма, а не опечатки
+ignore = ["E501", "B008", "RUF001", "RUF002", "RUF003"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "PLR0913", "PLR0917", "PLR0904", "PLR1702", "PT009"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.pylint]
+max-public-methods = 12
+max-returns = 6
+max-branches = 12
+max-args = 6
+max-positional-args = 5
+max-locals = 15
+max-statements = 50
+max-bool-expr = 5
+max-nested-blocks = 4
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+known-first-party = ["maze_book_generator"]

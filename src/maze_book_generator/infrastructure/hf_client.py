@@ -2,14 +2,13 @@
 
 from __future__ import annotations
 
-import asyncio
 import logging
 from pathlib import Path
 from time import sleep
 
 import requests
 
-from src.settings import (
+from maze_book_generator.settings import (
     HF_IMAGE_MODEL_FALLBACKS,
     IMAGE_GENERATOR_PROMPT_TEMPLATE,
     IMAGE_STORAGE_SUBDIR,
@@ -87,6 +86,7 @@ class HFClient:
                     )
                     if attempt == 0:
                         sleep(2)
+        return None
 
     def generate_book_illustrations(
         self,

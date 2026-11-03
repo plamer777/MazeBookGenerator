@@ -3,8 +3,8 @@
 
 import pytest
 
-from src.domain.maze_generator import MazeGenerator
-from src.domain.models import Difficulty, MazeShape
+from maze_book_generator.domain.maze_generator import MazeGenerator
+from maze_book_generator.domain.models import Difficulty, MazeShape
 
 
 class TestMazeGenerator:

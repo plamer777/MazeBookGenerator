@@ -2,7 +2,6 @@
 
 from typing import Literal
 
-
 TextCase = Literal["raw", "lower", "upper", "capitalize"]
 
 

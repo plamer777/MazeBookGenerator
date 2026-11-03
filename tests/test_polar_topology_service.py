@@ -1,9 +1,10 @@
 """Unit-тесты для PolarTopologyService."""
 
+import math
 
 import pytest
 
-from src.domain.polar_topology_service import PolarTopologyService
+from maze_book_generator.domain.polar_topology_service import PolarTopologyService
 
 
 class TestPolarTopologyService:
@@ -19,17 +20,17 @@ class TestPolarTopologyService:
 
     def test_initialization_empty_raises(self) -> None:
         """Пустой список колец должен вызывать ValueError."""
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="пустым"):
             PolarTopologyService([])
 
     def test_initialization_center_not_one_raises(self) -> None:
         """Центральное кольцо должно содержать одну ячейку."""
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="одну ячейку"):
             PolarTopologyService([2, 6, 12])
 
     def test_initialization_invalid_subdivision_raises(self) -> None:
         """Некорректное разбиение (не 1:1 или 1:2) должно вызывать ValueError."""
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="разбиения"):
             PolarTopologyService([1, 6, 9])  # 6 -> 9 не 1:1 или 1:2
 
     def test_iter_cells(self) -> None:
@@ -58,8 +59,8 @@ class TestPolarTopologyService:
         service = PolarTopologyService(cells_per_ring)
 
         start, end = service.get_sector_bounds(0, 0)
-        assert start == 0.0
-        assert end == 2 * 3.141592653589793  # 2π
+        assert start == pytest.approx(0.0)
+        assert end == pytest.approx(2 * math.pi)
 
     def test_get_sector_bounds_ring(self) -> None:
         """Границы ячеек в кольце должны быть равномерными."""
@@ -198,7 +199,7 @@ class TestPolarTopologyService:
         assert result is not None
         neighbor, start, end = result
         assert neighbor == (0, 0)
-        assert start == 0.0
+        assert start == pytest.approx(0.0)
         assert end == pytest.approx(1.0472, abs=10**-4)  # 2π/6
 
     def test_inner_neighbor_interval_center(self) -> None:
@@ -241,7 +242,7 @@ class TestPolarTopologyService:
         service = PolarTopologyService(cells_per_ring)
 
         connections = {}
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="изолированные области"):
             service.validate_connections(connections)
 
     def test_validate_connections_symmetry(self) -> None:
@@ -274,7 +275,7 @@ class TestPolarTopologyService:
             (1, 3): set(),
         }
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="симметрия"):
             service.validate_connections(connections)
 
     def test_validate_connectivity(self) -> None:
@@ -307,7 +308,7 @@ class TestPolarTopologyService:
             (1, 3): set(),
         }
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="изолированные области"):
             service.validate_connections(connections)
 
     def test_validate_cell_invalid_ring_raises(self) -> None:
@@ -315,7 +316,7 @@ class TestPolarTopologyService:
         cells_per_ring = [1, 4]
         service = PolarTopologyService(cells_per_ring)
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="кольцо"):
             service.get_sector_bounds(5, 0)
 
     def test_validate_cell_invalid_sector_raises(self) -> None:
@@ -323,5 +324,5 @@ class TestPolarTopologyService:
         cells_per_ring = [1, 4]
         service = PolarTopologyService(cells_per_ring)
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="сектор"):
             service.get_sector_bounds(1, 10)

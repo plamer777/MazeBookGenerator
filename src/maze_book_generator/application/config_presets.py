@@ -1,12 +1,11 @@
 """Готовые пресеты BookConfig для типовых сценариев генерации книги с лабиринтами.
 
 Использование в main.py:
-    from src.application.config_presets import PRESETS
+    from maze_book_generator.application.config_presets import PRESETS
     book_config = PRESETS["en_kids_basic"]
 """
 
-from src.domain.models import BookConfig
-
+from maze_book_generator.domain.models import BookConfig
 
 PRESETS: dict[str, BookConfig] = {
 

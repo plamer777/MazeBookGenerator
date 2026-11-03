@@ -6,9 +6,9 @@ from pathlib import Path
 import pytest
 from PIL import Image
 
-from src.application.config_presets import PRESETS
-from src.domain.maze_generator import MazeGenerator
-from src.domain.models import (
+from maze_book_generator.application.config_presets import PRESETS
+from maze_book_generator.domain.maze_generator import MazeGenerator
+from maze_book_generator.domain.models import (
     Book,
     BookConfig,
     BookPage,
@@ -17,7 +17,7 @@ from src.domain.models import (
     PagePrompt,
     Theme,
 )
-from src.infrastructure.pdf_renderer import PDFRenderer
+from maze_book_generator.infrastructure.pdf_renderer import PDFRenderer
 
 ALL_SHAPES = list(MazeShape)
 
