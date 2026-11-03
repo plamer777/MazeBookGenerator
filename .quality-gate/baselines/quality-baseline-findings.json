@@ -1,213 +1,14 @@
 {
   "version": 1,
-  "generated_at": "2026-11-03T07:53:51.495090+00:00",
-  "commit": "2f67146e143a4c9b78990d2402859f833de466ac",
+  "generated_at": "2026-11-03T08:08:30.821778+00:00",
+  "commit": "ea73d97c4a76d9c80df85dc32340cc15a26d06c3",
   "config_hash": "cdaccd8bdbabee11dc2c471369cb89918382fd515535be6224f6ca5f56e8c909",
   "scopes": {
     "constants/maze-book-generator": {
       "tool": "constants",
       "service": "maze-book-generator",
       "policy_hash": "b7b624c4e0815852d3975d4194235fc1857689f29bae102cbe1f472847e0d588",
-      "findings": {
-        "1baefb9bf42af2ad9eaf47fd": {
-          "count": 1,
-          "finding": {
-            "fingerprint": "1baefb9bf42af2ad9eaf47fd",
-            "tool": "constants",
-            "service": "maze-book-generator",
-            "rule_id": "CFG001",
-            "severity": "error",
-            "confidence": "HIGH",
-            "path": "src/maze_book_generator/infrastructure/hf_client.py",
-            "line": 18,
-            "column": 1,
-            "symbol": "_HF_API_BASE",
-            "message": "_HF_API_BASE: module constant outside approved settings; choose an allowed location and wire the runtime consumer.",
-            "blocking": true,
-            "category": "module constant",
-            "allowed_locations": [
-              "src/maze_book_generator/localization.py",
-              "src/maze_book_generator/settings.py"
-            ]
-          }
-        },
-        "426a9291132961cf6bfc5f84": {
-          "count": 1,
-          "finding": {
-            "fingerprint": "426a9291132961cf6bfc5f84",
-            "tool": "constants",
-            "service": "maze-book-generator",
-            "rule_id": "CFG001",
-            "severity": "error",
-            "confidence": "HIGH",
-            "path": "src/maze_book_generator/infrastructure/pdf_renderer.py",
-            "line": 29,
-            "column": 1,
-            "symbol": "_DEJAVU_REGULAR",
-            "message": "_DEJAVU_REGULAR: module constant outside approved settings; choose an allowed location and wire the runtime consumer.",
-            "blocking": true,
-            "category": "module constant",
-            "allowed_locations": [
-              "src/maze_book_generator/localization.py",
-              "src/maze_book_generator/settings.py"
-            ]
-          }
-        },
-        "95e1ebbd1f66a71208c438bb": {
-          "count": 1,
-          "finding": {
-            "fingerprint": "95e1ebbd1f66a71208c438bb",
-            "tool": "constants",
-            "service": "maze-book-generator",
-            "rule_id": "CFG001",
-            "severity": "error",
-            "confidence": "HIGH",
-            "path": "src/maze_book_generator/infrastructure/preview_generator.py",
-            "line": 35,
-            "column": 5,
-            "symbol": "PAGE_THUMB_H",
-            "message": "PAGE_THUMB_H: class constant outside approved settings; choose an allowed location and wire the runtime consumer.",
-            "blocking": true,
-            "category": "class constant",
-            "allowed_locations": [
-              "src/maze_book_generator/localization.py",
-              "src/maze_book_generator/settings.py"
-            ]
-          }
-        },
-        "96ca481d5a52cc3efb5e2863": {
-          "count": 1,
-          "finding": {
-            "fingerprint": "96ca481d5a52cc3efb5e2863",
-            "tool": "constants",
-            "service": "maze-book-generator",
-            "rule_id": "CFG001",
-            "severity": "error",
-            "confidence": "HIGH",
-            "path": "src/maze_book_generator/infrastructure/preview_generator.py",
-            "line": 25,
-            "column": 5,
-            "symbol": "CANVAS_W",
-            "message": "CANVAS_W: class constant outside approved settings; choose an allowed location and wire the runtime consumer.",
-            "blocking": true,
-            "category": "class constant",
-            "allowed_locations": [
-              "src/maze_book_generator/localization.py",
-              "src/maze_book_generator/settings.py"
-            ]
-          }
-        },
-        "b5f7febee9031e749225a12f": {
-          "count": 1,
-          "finding": {
-            "fingerprint": "b5f7febee9031e749225a12f",
-            "tool": "constants",
-            "service": "maze-book-generator",
-            "rule_id": "CFG001",
-            "severity": "error",
-            "confidence": "HIGH",
-            "path": "src/maze_book_generator/infrastructure/preview_generator.py",
-            "line": 26,
-            "column": 5,
-            "symbol": "CANVAS_H",
-            "message": "CANVAS_H: class constant outside approved settings; choose an allowed location and wire the runtime consumer.",
-            "blocking": true,
-            "category": "class constant",
-            "allowed_locations": [
-              "src/maze_book_generator/localization.py",
-              "src/maze_book_generator/settings.py"
-            ]
-          }
-        },
-        "de2bcd0d73f40c7755cac857": {
-          "count": 1,
-          "finding": {
-            "fingerprint": "de2bcd0d73f40c7755cac857",
-            "tool": "constants",
-            "service": "maze-book-generator",
-            "rule_id": "CFG001",
-            "severity": "error",
-            "confidence": "HIGH",
-            "path": "src/maze_book_generator/infrastructure/pdf_renderer.py",
-            "line": 30,
-            "column": 1,
-            "symbol": "_DEJAVU_BOLD",
-            "message": "_DEJAVU_BOLD: module constant outside approved settings; choose an allowed location and wire the runtime consumer.",
-            "blocking": true,
-            "category": "module constant",
-            "allowed_locations": [
-              "src/maze_book_generator/localization.py",
-              "src/maze_book_generator/settings.py"
-            ]
-          }
-        },
-        "df8407b9b9abb9fa6c9632a2": {
-          "count": 1,
-          "finding": {
-            "fingerprint": "df8407b9b9abb9fa6c9632a2",
-            "tool": "constants",
-            "service": "maze-book-generator",
-            "rule_id": "CFG001",
-            "severity": "error",
-            "confidence": "HIGH",
-            "path": "src/maze_book_generator/infrastructure/preview_generator.py",
-            "line": 34,
-            "column": 5,
-            "symbol": "PAGE_THUMB_W",
-            "message": "PAGE_THUMB_W: class constant outside approved settings; choose an allowed location and wire the runtime consumer.",
-            "blocking": true,
-            "category": "class constant",
-            "allowed_locations": [
-              "src/maze_book_generator/localization.py",
-              "src/maze_book_generator/settings.py"
-            ]
-          }
-        },
-        "ee33cff13bef9639b39c9f88": {
-          "count": 1,
-          "finding": {
-            "fingerprint": "ee33cff13bef9639b39c9f88",
-            "tool": "constants",
-            "service": "maze-book-generator",
-            "rule_id": "CFG001",
-            "severity": "error",
-            "confidence": "HIGH",
-            "path": "src/maze_book_generator/infrastructure/preview_generator.py",
-            "line": 31,
-            "column": 5,
-            "symbol": "PLANK_LINE_COLOR",
-            "message": "PLANK_LINE_COLOR: class constant outside approved settings; choose an allowed location and wire the runtime consumer.",
-            "blocking": true,
-            "category": "class constant",
-            "allowed_locations": [
-              "src/maze_book_generator/localization.py",
-              "src/maze_book_generator/settings.py"
-            ]
-          }
-        },
-        "f9404c316ab8dbb115fe2065": {
-          "count": 1,
-          "finding": {
-            "fingerprint": "f9404c316ab8dbb115fe2065",
-            "tool": "constants",
-            "service": "maze-book-generator",
-            "rule_id": "CFG001",
-            "severity": "error",
-            "confidence": "HIGH",
-            "path": "src/maze_book_generator/infrastructure/preview_generator.py",
-            "line": 29,
-            "column": 5,
-            "symbol": "TABLE_COLOR",
-            "message": "TABLE_COLOR: class constant outside approved settings; choose an allowed location and wire the runtime consumer.",
-            "blocking": true,
-            "category": "class constant",
-            "allowed_locations": [
-              "src/maze_book_generator/localization.py",
-              "src/maze_book_generator/settings.py"
-            ]
-          }
-        }
-      }
+      "findings": {}
     },
     "ruff/maze-book-generator": {
       "tool": "ruff",
@@ -223,7 +24,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/infrastructure/pdf_renderer.py",
-            "line": 210,
+            "line": 209,
             "column": 9,
             "symbol": null,
             "message": "Too many local variables (44 > 15)",
@@ -242,7 +43,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/application/book_service.py",
-            "line": 304,
+            "line": 316,
             "column": 15,
             "symbol": null,
             "message": "Too many positional arguments (7 > 5)",
@@ -261,7 +62,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/infrastructure/preview_generator.py",
-            "line": 168,
+            "line": 165,
             "column": 9,
             "symbol": null,
             "message": "`try`-`except`-`pass` detected, consider logging the exception",
@@ -280,7 +81,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/infrastructure/pdf_renderer.py",
-            "line": 210,
+            "line": 209,
             "column": 9,
             "symbol": null,
             "message": "Too many statements (102 > 50)",
@@ -299,7 +100,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/infrastructure/replicate_client.py",
-            "line": 70,
+            "line": 71,
             "column": 17,
             "symbol": null,
             "message": "Consider moving this statement to an `else` block",
@@ -318,7 +119,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/infrastructure/replicate_client.py",
-            "line": 50,
+            "line": 51,
             "column": 19,
             "symbol": null,
             "message": "Avoid specifying long messages outside the exception class",
@@ -394,7 +195,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/domain/maze_generator.py",
-            "line": 418,
+            "line": 416,
             "column": 9,
             "symbol": null,
             "message": "Too many local variables (18 > 15)",
@@ -451,7 +252,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/infrastructure/preview_generator.py",
-            "line": 147,
+            "line": 144,
             "column": 13,
             "symbol": null,
             "message": "Consider moving this statement to an `else` block",
@@ -479,25 +280,6 @@
             "allowed_locations": []
           }
         },
-        "494a21eb031a8ec0ad9c4d7a": {
-          "count": 6,
-          "finding": {
-            "fingerprint": "494a21eb031a8ec0ad9c4d7a",
-            "tool": "ruff",
-            "service": "maze-book-generator",
-            "rule_id": "S311",
-            "severity": "error",
-            "confidence": "high",
-            "path": "src/maze_book_generator/infrastructure/pdf_renderer.py",
-            "line": 1512,
-            "column": 15,
-            "symbol": null,
-            "message": "Standard pseudo-random generators are not suitable for cryptographic purposes",
-            "blocking": true,
-            "category": null,
-            "allowed_locations": []
-          }
-        },
         "4d5bc7749c5da56654ee481e": {
           "count": 1,
           "finding": {
@@ -508,7 +290,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/infrastructure/pdf_renderer.py",
-            "line": 210,
+            "line": 209,
             "column": 9,
             "symbol": null,
             "message": "Too many branches (17 > 12)",
@@ -546,7 +328,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/infrastructure/pdf_renderer.py",
-            "line": 210,
+            "line": 209,
             "column": 9,
             "symbol": null,
             "message": "`_render_cover` is too complex (15 > 10)",
@@ -565,7 +347,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/infrastructure/preview_generator.py",
-            "line": 168,
+            "line": 165,
             "column": 16,
             "symbol": null,
             "message": "Do not catch blind exception: `Exception`",
@@ -660,7 +442,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/domain/maze_generator.py",
-            "line": 707,
+            "line": 705,
             "column": 9,
             "symbol": null,
             "message": "Too many local variables (19 > 15)",
@@ -717,7 +499,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/infrastructure/pollinations_client.py",
-            "line": 82,
+            "line": 84,
             "column": 17,
             "symbol": null,
             "message": "Consider moving this statement to an `else` block",
@@ -774,7 +556,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/domain/maze_generator.py",
-            "line": 58,
+            "line": 56,
             "column": 9,
             "symbol": null,
             "message": "Too many return statements (8 > 6)",
@@ -850,7 +632,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/infrastructure/replicate_client.py",
-            "line": 81,
+            "line": 82,
             "column": 20,
             "symbol": null,
             "message": "Do not catch blind exception: `Exception`",
@@ -869,7 +651,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/infrastructure/preview_generator.py",
-            "line": 176,
+            "line": 173,
             "column": 9,
             "symbol": null,
             "message": "Too many local variables (20 > 15)",
@@ -888,7 +670,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/infrastructure/pollinations_client.py",
-            "line": 84,
+            "line": 86,
             "column": 20,
             "symbol": null,
             "message": "Do not catch blind exception: `Exception`",
@@ -926,7 +708,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/infrastructure/pdf_renderer.py",
-            "line": 768,
+            "line": 767,
             "column": 9,
             "symbol": null,
             "message": "Too many positional arguments (9 > 5)",
@@ -964,7 +746,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/infrastructure/preview_generator.py",
-            "line": 414,
+            "line": 411,
             "column": 9,
             "symbol": null,
             "message": "Too many positional arguments (8 > 5)",
@@ -1040,7 +822,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/application/book_service.py",
-            "line": 83,
+            "line": 95,
             "column": 9,
             "symbol": null,
             "message": "Too many arguments in function definition (8 > 6)",
@@ -1059,29 +841,10 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/domain/maze_generator.py",
-            "line": 995,
+            "line": 993,
             "column": 9,
             "symbol": null,
             "message": "Too many positional arguments (7 > 5)",
-            "blocking": true,
-            "category": null,
-            "allowed_locations": []
-          }
-        },
-        "b3072fbaeab4a9499064b067": {
-          "count": 8,
-          "finding": {
-            "fingerprint": "b3072fbaeab4a9499064b067",
-            "tool": "ruff",
-            "service": "maze-book-generator",
-            "rule_id": "S311",
-            "severity": "error",
-            "confidence": "high",
-            "path": "src/maze_book_generator/application/book_service.py",
-            "line": 522,
-            "column": 20,
-            "symbol": null,
-            "message": "Standard pseudo-random generators are not suitable for cryptographic purposes",
             "blocking": true,
             "category": null,
             "allowed_locations": []
@@ -1097,7 +860,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/infrastructure/pdf_renderer.py",
-            "line": 768,
+            "line": 767,
             "column": 9,
             "symbol": null,
             "message": "Too many arguments in function definition (9 > 6)",
@@ -1106,20 +869,20 @@
             "allowed_locations": []
           }
         },
-        "b9fe253d366212105ad1eae3": {
-          "count": 2,
+        "b98b3def73e044f51ca4a777": {
+          "count": 1,
           "finding": {
-            "fingerprint": "b9fe253d366212105ad1eae3",
+            "fingerprint": "b98b3def73e044f51ca4a777",
             "tool": "ruff",
             "service": "maze-book-generator",
-            "rule_id": "S311",
+            "rule_id": "PLR0914",
             "severity": "error",
             "confidence": "high",
-            "path": "src/maze_book_generator/infrastructure/image_generator.py",
-            "line": 173,
-            "column": 18,
+            "path": "src/maze_book_generator/infrastructure/preview_generator.py",
+            "line": 411,
+            "column": 9,
             "symbol": null,
-            "message": "Standard pseudo-random generators are not suitable for cryptographic purposes",
+            "message": "Too many local variables (16 > 15)",
             "blocking": true,
             "category": null,
             "allowed_locations": []
@@ -1135,7 +898,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/domain/maze_generator.py",
-            "line": 927,
+            "line": 925,
             "column": 9,
             "symbol": null,
             "message": "Too many nested blocks (5 > 4)",
@@ -1173,7 +936,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/application/book_service.py",
-            "line": 304,
+            "line": 316,
             "column": 15,
             "symbol": null,
             "message": "Too many arguments in function definition (7 > 6)",
@@ -1192,7 +955,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/infrastructure/hf_client.py",
-            "line": 82,
+            "line": 83,
             "column": 24,
             "symbol": null,
             "message": "Do not catch blind exception: `Exception`",
@@ -1230,7 +993,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/domain/maze_generator.py",
-            "line": 995,
+            "line": 993,
             "column": 9,
             "symbol": null,
             "message": "Too many arguments in function definition (7 > 6)",
@@ -1249,7 +1012,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/infrastructure/preview_generator.py",
-            "line": 414,
+            "line": 411,
             "column": 9,
             "symbol": null,
             "message": "Too many arguments in function definition (8 > 6)",
@@ -1277,25 +1040,6 @@
             "allowed_locations": []
           }
         },
-        "e3dc3ff1aef315d0164c0852": {
-          "count": 1,
-          "finding": {
-            "fingerprint": "e3dc3ff1aef315d0164c0852",
-            "tool": "ruff",
-            "service": "maze-book-generator",
-            "rule_id": "PLR0914",
-            "severity": "error",
-            "confidence": "high",
-            "path": "src/maze_book_generator/infrastructure/preview_generator.py",
-            "line": 414,
-            "column": 9,
-            "symbol": null,
-            "message": "Too many local variables (17 > 15)",
-            "blocking": true,
-            "category": null,
-            "allowed_locations": []
-          }
-        },
         "e453e32d90db5144e3bcb37f": {
           "count": 1,
           "finding": {
@@ -1306,7 +1050,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/domain/maze_generator.py",
-            "line": 1093,
+            "line": 1091,
             "column": 9,
             "symbol": null,
             "message": "Too many local variables (17 > 15)",
@@ -1325,7 +1069,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/infrastructure/preview_generator.py",
-            "line": 358,
+            "line": 355,
             "column": 9,
             "symbol": null,
             "message": "Too many positional arguments (6 > 5)",
@@ -1363,7 +1107,7 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/infrastructure/hf_client.py",
-            "line": 80,
+            "line": 81,
             "column": 21,
             "symbol": null,
             "message": "Consider moving this statement to an `else` block",
@@ -1401,29 +1145,10 @@
             "severity": "error",
             "confidence": "high",
             "path": "src/maze_book_generator/application/book_service.py",
-            "line": 83,
+            "line": 95,
             "column": 9,
             "symbol": null,
             "message": "Too many positional arguments (8 > 5)",
-            "blocking": true,
-            "category": null,
-            "allowed_locations": []
-          }
-        },
-        "f4ba65dcc4504c9344da6c01": {
-          "count": 19,
-          "finding": {
-            "fingerprint": "f4ba65dcc4504c9344da6c01",
-            "tool": "ruff",
-            "service": "maze-book-generator",
-            "rule_id": "S311",
-            "severity": "error",
-            "confidence": "high",
-            "path": "src/maze_book_generator/domain/maze_generator.py",
-            "line": 1257,
-            "column": 29,
-            "symbol": null,
-            "message": "Standard pseudo-random generators are not suitable for cryptographic purposes",
             "blocking": true,
             "category": null,
             "allowed_locations": []
@@ -1543,7 +1268,7 @@
             "line": 1,
             "column": 1,
             "symbol": "too-many-lines",
-            "message": "Too many lines in module (1308/600)",
+            "message": "Too many lines in module (1306/600)",
             "blocking": true,
             "category": null,
             "allowed_locations": []
@@ -1638,7 +1363,7 @@
             "line": 1,
             "column": 1,
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==maze_book_generator.infrastructure.pollinations_client:[88:115]\n==maze_book_generator.infrastructure.replicate_client:[123:150]\n        return None\n\n    def generate_book_illustrations(\n        self,\n        image_keywords: list[list[str]],\n        book_dir: Path,\n    ) -> list[Path | None]:\n        \"\"\"\n        Генерирует иллюстрации для всех страниц книги.\n\n        Args:\n            image_keywords: Список ключевых слов по страницам\n            book_dir: Директория книги (illustrations/page_N.png)\n\n        Returns:\n            Список путей к файлам (None если генерация страницы не удалась)\n        \"\"\"\n        illustrations_dir = book_dir / IMAGE_STORAGE_SUBDIR\n        results: list[Path | None] = []\n\n        for idx, keywords in enumerate(image_keywords):\n            output_path = illustrations_dir / f\"page_{idx + 1}.png\"\n            self._logger.info(\"Generating illustration %d/%d...\", idx + 1, len(image_keywords))\n            path = self.generate_illustration(keywords, output_path)\n            results.append(path)\n            # Pollinations rate limit ~6 requests/minute\n            if idx < len(image_keywords) - 1:",
+            "message": "Similar lines in 2 files\n==maze_book_generator.infrastructure.pollinations_client:[90:117]\n==maze_book_generator.infrastructure.replicate_client:[124:151]\n        return None\n\n    def generate_book_illustrations(\n        self,\n        image_keywords: list[list[str]],\n        book_dir: Path,\n    ) -> list[Path | None]:\n        \"\"\"\n        Генерирует иллюстрации для всех страниц книги.\n\n        Args:\n            image_keywords: Список ключевых слов по страницам\n            book_dir: Директория книги (illustrations/page_N.png)\n\n        Returns:\n            Список путей к файлам (None если генерация страницы не удалась)\n        \"\"\"\n        illustrations_dir = book_dir / IMAGE_STORAGE_SUBDIR\n        results: list[Path | None] = []\n\n        for idx, keywords in enumerate(image_keywords):\n            output_path = illustrations_dir / f\"page_{idx + 1}.png\"\n            self._logger.info(\"Generating illustration %d/%d...\", idx + 1, len(image_keywords))\n            path = self.generate_illustration(keywords, output_path)\n            results.append(path)\n            # Pollinations rate limit ~6 requests/minute\n            if idx < len(image_keywords) - 1:",
             "blocking": true,
             "category": null,
             "allowed_locations": []
