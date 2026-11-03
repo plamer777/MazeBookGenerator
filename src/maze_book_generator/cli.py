@@ -141,6 +141,11 @@ def main() -> None:
             raise SystemExit(asyncio.run(_generate(args)))
         except ValueError as exc:
             msg = f"Ошибка генерации: {exc}"
+            if "quota" in str(exc) or "credits" in str(exc):
+                msg += (
+                    '\nПодсказка: пополните баланс OpenAI или используйте офлайн-режим '
+                    '--theme "Название книги".'
+                )
             raise SystemExit(msg) from exc
         except KeyboardInterrupt:
             msg = "Прервано пользователем"

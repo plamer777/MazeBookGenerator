@@ -97,6 +97,7 @@ class AIClient:
             ),
         )
 
+        last_error = ""
         for _ in range(AI_THEME_ATTEMPTS):
             try:
                 # Увеличенный бюджет токенов для структурированного маркетплейс-описания.
@@ -116,12 +117,16 @@ class AIClient:
                 if parsed is not None:
                     return parsed
 
+                last_error = "response could not be parsed"
                 await asyncio.sleep(AI_THEME_RETRY_DELAY)
 
             except APIError as exc:
+                last_error = str(exc)
                 logger.warning("Failed to generate theme: %s", exc)
 
-        msg = "Failed to generate theme after 3 attempts"
+        msg = f"Failed to generate theme after {AI_THEME_ATTEMPTS} attempts"
+        if last_error:
+            msg += f": {last_error}"
         raise ValueError(msg)
 
     @staticmethod

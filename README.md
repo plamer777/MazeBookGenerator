@@ -102,6 +102,18 @@ python main.py generate
 `ru_school`, `ru_school_printable`, `ru_challenge` — см.
 `src/maze_book_generator/application/config_presets.py`.
 
+## Примеры генерации
+
+Сгенерированная книга (пресет `en_kids_basic`, 20 страниц):
+
+| Обложка | Разворот | Страница лабиринта |
+|---------|----------|--------------------|
+| ![Обложка](static/book_cover.png) | ![Разворот](static/book_spread.png) | ![Лабиринт](static/maze_page.png) |
+
+| Коллаж превью | Промо-баннер | Иллюстрация |
+|---------------|--------------|-------------|
+| ![Коллаж](static/book_collage.png) | ![Промо](static/book_promo.png) | ![Иллюстрация](static/illustration.png) |
+
 ## Структура проекта
 
 ```
