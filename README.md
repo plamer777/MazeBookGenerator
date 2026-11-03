@@ -239,7 +239,7 @@ A generated book (preset `en_kids_basic`, 20 pages):
 
 | Cover | Maze page | Answer page |
 |-------|-----------|-------------|
-| ![Cover](static/book_cover.png) | ![Maze page](static/maze_page.png) | ![Answer page](static/answer_page.png) |
+| ![Cover](static/book_cover.png) | ![Maze page](static/maze_task_page.png) | ![Answer page](static/maze_answer_page.png) |
 
 | Spread | Preview collage | Promo banner | AI illustration |
 |--------|-----------------|--------------|-----------------|
