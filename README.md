@@ -237,13 +237,13 @@ Output lands in `output/book_N/`: `book.pdf` + `book_print_friendly.pdf`,
 
 A generated book (preset `en_kids_basic`, 20 pages):
 
-| Cover | Spread | Maze page |
-|-------|--------|-----------|
-| ![Cover](static/book_cover.png) | ![Spread](static/book_spread.png) | ![Maze page](static/maze_page.png) |
+| Cover | Maze page | Answer page |
+|-------|-----------|-------------|
+| ![Cover](static/book_cover.png) | ![Maze page](static/maze_page.png) | ![Answer page](static/answer_page.png) |
 
-| Preview collage | Promo banner | AI illustration |
-|-----------------|--------------|-----------------|
-| ![Collage](static/book_collage.png) | ![Promo](static/book_promo.png) | ![Illustration](static/illustration.png) |
+| Spread | Preview collage | Promo banner | AI illustration |
+|--------|-----------------|--------------|-----------------|
+| ![Spread](static/book_spread.png) | ![Collage](static/book_collage.png) | ![Promo](static/book_promo.png) | ![Illustration](static/illustration.png) |
 
 ## 🗺 Roadmap / known limitations
 
