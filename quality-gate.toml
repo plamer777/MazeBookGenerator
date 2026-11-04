@@ -11,6 +11,7 @@ migration_graph = false
 alembic_check = false
 openapi = false
 constants = true
+complexipy = true
 
 [execution]
 light_workers = 4
@@ -23,6 +24,9 @@ exclude_file_globs = []
 [constants]
 exclude_test_roots = true
 exclude = ["scripts/**", "**/scripts/**", "local_tools/**", "tmp/**"]
+
+[complexipy]
+max_complexity_allowed = 15
 
 [settings_discovery]
 file_patterns = ["settings.py", "config.py", "configuration.py", "*_settings.py"]

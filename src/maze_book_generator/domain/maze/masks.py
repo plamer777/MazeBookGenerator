@@ -118,26 +118,38 @@ def chaotic_connected_mask(
     carved = 1
 
     while carved < target_cells:
-        if not frontier:
-            connected_cells = [
-                (x, y)
-                for y in range(height)
-                for x in range(width)
-                if mask[y][x]
-            ]
-            if not connected_cells:
-                break
-            frontier.append(rng.choice(connected_cells))
-
-        point = rng.choice(frontier)
+        point = _next_frontier_point(rng, frontier, mask, width, height)
+        if point is None:
+            break
         grown = _grow_cell(rng, mask, point, center=(cx, cy), size=(width, height))
         if grown is not None:
             frontier.append(grown)
             carved += 1
-        elif point in frontier:
+        else:
             frontier.remove(point)
 
     return mask
+
+
+def _next_frontier_point(
+    rng: random.Random,
+    frontier: list[Point],
+    mask: Mask,
+    width: int,
+    height: int,
+) -> Point | None:
+    """Выбирает точку роста, перезапуская фронтир из связных ячеек маски."""
+    if not frontier:
+        connected_cells = [
+            (x, y)
+            for y in range(height)
+            for x in range(width)
+            if mask[y][x]
+        ]
+        if not connected_cells:
+            return None
+        frontier.append(rng.choice(connected_cells))
+    return rng.choice(frontier)
 
 
 def _grow_cell(

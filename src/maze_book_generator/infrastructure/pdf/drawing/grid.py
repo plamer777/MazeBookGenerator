@@ -1,6 +1,7 @@
 """Отрисовка grid-лабиринтов: прямоугольные и фигурные формы, путь решения."""
 
 import math
+from collections.abc import Iterator
 
 from reportlab.pdfgen import canvas
 
@@ -28,6 +29,45 @@ def draw_grid_body(c: canvas.Canvas,
         _draw_cell_outlines(c, maze, cell_size, start_x, start_y, mask=mask)
 
 
+# Отрезки стен ячейки в долях cell_size: (x1, y1, x2, y2) для [верх, право, низ, лево]
+_wall_edges: tuple[tuple[float, float, float, float], ...] = (
+    (0, 1, 1, 1),
+    (1, 0, 1, 1),
+    (0, 0, 1, 0),
+    (0, 0, 0, 1),
+)
+
+
+def draw_cell_walls(
+    c: canvas.Canvas,
+    walls: list[bool] | tuple[bool, ...],
+    cell_x: float,
+    cell_y: float,
+    cell_size: float,
+) -> None:
+    """Рисует стены одной ячейки по флагам [верх, право, низ, лево]."""
+    for wall_on, (ax, ay, bx, by) in zip(walls, _wall_edges, strict=True):
+        if wall_on:
+            c.line(
+                cell_x + ax * cell_size,
+                cell_y + ay * cell_size,
+                cell_x + bx * cell_size,
+                cell_y + by * cell_size,
+            )
+
+
+def _masked_cells(
+    width: int,
+    height: int,
+    mask: list[list[bool]] | None,
+) -> Iterator[tuple[int, int]]:
+    """Итерирует координаты ячеек, входящих в маску (вся сетка при mask=None)."""
+    for y in range(height):
+        for x in range(width):
+            if mask is None or mask[y][x]:
+                yield y, x
+
+
 def _draw_wall_segments(c: canvas.Canvas,
     maze: Maze,
     cell_size: float,
@@ -37,21 +77,10 @@ def _draw_wall_segments(c: canvas.Canvas,
     mask: list[list[bool]] | None,
 ) -> None:
     """Рисует стены ячеек линиями по данным maze.walls [верх, право, низ, лево]."""
-    for y in range(maze.height):
-        for x in range(maze.width):
-            if mask and not mask[y][x]:
-                continue
-            cell_x = start_x + x * cell_size
-            cell_y = start_y + (maze.height - 1 - y) * cell_size
-            walls = maze.walls[y][x]
-            if walls[0]:
-                c.line(cell_x, cell_y + cell_size, cell_x + cell_size, cell_y + cell_size)
-            if walls[1]:
-                c.line(cell_x + cell_size, cell_y, cell_x + cell_size, cell_y + cell_size)
-            if walls[2]:
-                c.line(cell_x, cell_y, cell_x + cell_size, cell_y)
-            if walls[3]:
-                c.line(cell_x, cell_y, cell_x, cell_y + cell_size)
+    for y, x in _masked_cells(maze.width, maze.height, mask):
+        cell_x = start_x + x * cell_size
+        cell_y = start_y + (maze.height - 1 - y) * cell_size
+        draw_cell_walls(c, maze.walls[y][x], cell_x, cell_y, cell_size)
 
 
 def _draw_cell_outlines(c: canvas.Canvas,
@@ -63,19 +92,16 @@ def _draw_cell_outlines(c: canvas.Canvas,
     mask: list[list[bool]] | None,
 ) -> None:
     """Fallback-отрисовка: контуры ячеек по значению grid, если walls не заданы."""
-    for y in range(maze.height):
-        for x in range(maze.width):
-            if mask and not mask[y][x]:
-                continue
-            if maze.grid[y][x] == 0:
-                c.rect(
-                    start_x + x * cell_size,
-                    start_y + (maze.height - 1 - y) * cell_size,
-                    cell_size,
-                    cell_size,
-                    fill=0,
-                    stroke=1,
-                )
+    for y, x in _masked_cells(maze.width, maze.height, mask):
+        if maze.grid[y][x] == 0:
+            c.rect(
+                start_x + x * cell_size,
+                start_y + (maze.height - 1 - y) * cell_size,
+                cell_size,
+                cell_size,
+                fill=0,
+                stroke=1,
+            )
 
 
 def render_solution_path(ctx: RenderContext, c: canvas.Canvas, maze: Maze,

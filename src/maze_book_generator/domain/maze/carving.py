@@ -194,25 +194,48 @@ def add_chaotic_shortcuts(
     if not inside_cells:
         return
 
-    num_walks = max(2, round(lerp(effective_level(difficulty), 6, 18)))
+    level = effective_level(difficulty)
+    num_walks = max(2, round(lerp(level, 6, 18)))
     walk_len_min = 4
-    walk_len_max = max(walk_len_min + 1, round(lerp(effective_level(difficulty), 10, 20)))
+    walk_len_max = max(walk_len_min + 1, round(lerp(level, 10, 20)))
 
     for _ in range(num_walks):
-        x, y = rng.choice(inside_cells)
-        walk_length = rng.randint(walk_len_min, walk_len_max)
+        _chaotic_walk(
+            rng,
+            walls,
+            mask,
+            start=rng.choice(inside_cells),
+            length=rng.randint(walk_len_min, walk_len_max),
+            size=(width, height),
+        )
 
-        for _ in range(walk_length):
-            candidates = []
-            for dx, dy, wall_current, wall_neighbor in _directions:
-                nx, ny = x + dx, y + dy
-                if 0 <= nx < width and 0 <= ny < height and mask[ny][nx]:
-                    candidates.append((nx, ny, wall_current, wall_neighbor))
 
-            if not candidates:
-                break
+def _chaotic_walk(
+    rng: random.Random,
+    walls: Walls,
+    mask: Mask,
+    *,
+    start: tuple[int, int],
+    length: int,
+    size: tuple[int, int],
+) -> None:
+    """Выполняет одно блуждание, снимая стены между пройденными ячейками."""
+    width, height = size
+    x, y = start
+    for _ in range(length):
+        candidates = _walk_candidates(x, y, mask, width, height)
+        if not candidates:
+            break
+        nx, ny, wall_current, wall_neighbor = rng.choice(candidates)
+        walls[y][x][wall_current] = False
+        walls[ny][nx][wall_neighbor] = False
+        x, y = nx, ny
 
-            nx, ny, wall_current, wall_neighbor = rng.choice(candidates)
-            walls[y][x][wall_current] = False
-            walls[ny][nx][wall_neighbor] = False
-            x, y = nx, ny
+
+def _walk_candidates(x: int, y: int, mask: Mask, width: int, height: int) -> list[Step]:
+    """Возвращает доступные шаги блуждания внутри границ и маски."""
+    return [
+        (x + dx, y + dy, wc, wn)
+        for dx, dy, wc, wn in _directions
+        if 0 <= x + dx < width and 0 <= y + dy < height and mask[y + dy][x + dx]
+    ]

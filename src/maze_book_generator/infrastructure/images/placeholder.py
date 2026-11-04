@@ -138,72 +138,85 @@ class ImageGenerator:
 
     def _draw_mini_maze(self, draw: ImageDraw.Draw, width: int, height: int) -> None:
         """Рисует мини-лабиринт как иллюстрацию с более реалистичной структурой."""
-
-        # Размер мини-лабиринта
         maze_size = 7
         cell_size = 35
         start_x = (width - maze_size * cell_size) // 2
         start_y = (height - maze_size * cell_size) // 2 + 10
 
-        # Создаём сетку с более структурированным подходом
+        grid = self._mini_maze_grid(maze_size)
+        self._paint_mini_cells(draw, grid, start_x, start_y, cell_size)
+        self._paint_mini_endpoints(draw, start_x, start_y, cell_size, maze_size)
+
+    def _mini_maze_grid(self, maze_size: int) -> list[list[int]]:
+        """Генерирует сетку мини-лабиринта с путём, достижимым концом и лишними проходами."""
         grid = [[0 for _ in range(maze_size)] for _ in range(maze_size)]
+        grid[0][0] = 1
+        self._carve_mini_path(grid, maze_size)
+        grid[maze_size - 1][maze_size - 1] = 1
+        for _ in range(5):
+            grid[self._rng.randint(0, maze_size - 1)][self._rng.randint(0, maze_size - 1)] = 1
+        return grid
 
-        # Генерируем простой путь от старта к концу
+    def _carve_mini_path(self, grid: list[list[int]], maze_size: int) -> None:
+        """Прокладывает случайный путь по сетке, отмечая проходы единицами."""
         x, y = 0, 0
-        grid[y][x] = 1
-
-        # Простой путь
         directions = [(1, 0), (0, 1), (-1, 0), (0, -1)]
         for _ in range(maze_size * 2):
             self._rng.shuffle(directions)
-            moved = False
-            for dx, dy in directions:
-                nx, ny = x + dx, y + dy
-                if 0 <= nx < maze_size and 0 <= ny < maze_size and grid[ny][nx] == 0:
-                    x, y = nx, ny
-                    grid[y][x] = 1
-                    moved = True
-                    break
-            if not moved:
+            step = self._first_open_step(grid, x, y, directions, maze_size)
+            if step is None:
                 break
+            x, y = x + step[0], y + step[1]
+            grid[y][x] = 1
 
-        # Убеждаемся что конец достижим
-        grid[maze_size - 1][maze_size - 1] = 1
+    @staticmethod
+    def _first_open_step(
+        grid: list[list[int]],
+        x: int,
+        y: int,
+        directions: list[tuple[int, int]],
+        maze_size: int,
+    ) -> tuple[int, int] | None:
+        """Возвращает первое направление в свободную ячейку или None."""
+        for dx, dy in directions:
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < maze_size and 0 <= ny < maze_size and grid[ny][nx] == 0:
+                return dx, dy
+        return None
 
-        # Добавляем несколько случайных проходов
-        for _ in range(5):
-            rx = self._rng.randint(0, maze_size - 1)
-            ry = self._rng.randint(0, maze_size - 1)
-            grid[ry][rx] = 1
-
-        # Рисуем сетку
-        for y in range(maze_size):
-            for x in range(maze_size):
+    @staticmethod
+    def _paint_mini_cells(
+        draw: ImageDraw.Draw,
+        grid: list[list[int]],
+        start_x: int,
+        start_y: int,
+        cell_size: int,
+    ) -> None:
+        """Закрашивает ячейки сетки: проходы светлыми, стены тёмными."""
+        for y, row in enumerate(grid):
+            for x, cell in enumerate(row):
                 cell_x = start_x + x * cell_size
                 cell_y = start_y + y * cell_size
+                fill, outline = ("#FFF8DC", "#DEB887") if cell == 1 else ("#8B4513", "#654321")
+                draw.rectangle(
+                    [(cell_x + 2, cell_y + 2), (cell_x + cell_size - 2, cell_y + cell_size - 2)],
+                    fill=fill,
+                    outline=outline,
+                )
 
-                if grid[y][x] == 1:
-                    # Проход
-                    draw.rectangle(
-                        [(cell_x + 2, cell_y + 2), (cell_x + cell_size - 2, cell_y + cell_size - 2)],
-                        fill="#FFF8DC",
-                        outline="#DEB887",
-                    )
-                else:
-                    # Стена
-                    draw.rectangle(
-                        [(cell_x + 2, cell_y + 2), (cell_x + cell_size - 2, cell_y + cell_size - 2)],
-                        fill="#8B4513",
-                        outline="#654321",
-                    )
-
-        # Рисуем старт (зелёный)
+    @staticmethod
+    def _paint_mini_endpoints(
+        draw: ImageDraw.Draw,
+        start_x: int,
+        start_y: int,
+        cell_size: int,
+        maze_size: int,
+    ) -> None:
+        """Помечает старт зелёным и финиш красным квадратом."""
         draw.rectangle(
             [(start_x + 4, start_y + 4), (start_x + cell_size - 4, start_y + cell_size - 4)],
             fill="#32CD32",
         )
-
-        # Рисуем конец (красный)
         end_x = start_x + (maze_size - 1) * cell_size
         end_y = start_y + (maze_size - 1) * cell_size
         draw.rectangle(

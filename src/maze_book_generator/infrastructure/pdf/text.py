@@ -91,25 +91,34 @@ def wrap_text_lines(c: canvas.Canvas,
     """Разбивает текст на строки с переносами по ширине."""
     c.setFont(font_name, font_size)
     wrapped: list[str] = []
-
     for paragraph in text.split("\n"):
-        if not paragraph.strip():
-            wrapped.append("")
-            continue
-
-        words = paragraph.split()
-        current_line = ""
-        for word in words:
-            test_line = word if not current_line else f"{current_line} {word}"
-            if c.stringWidth(test_line, font_name, font_size) <= max_width:
-                current_line = test_line
-            else:
-                if current_line:
-                    wrapped.append(current_line)
-                current_line = word
-
-        if current_line:
-            wrapped.append(current_line)
-
+        wrapped.extend(_wrap_paragraph(c, paragraph, font_name, font_size, max_width))
     return wrapped
+
+
+def _wrap_paragraph(
+    c: canvas.Canvas,
+    paragraph: str,
+    font_name: str,
+    font_size: float,
+    max_width: float,
+) -> list[str]:
+    """Переносит один абзац по словам; пустой абзац даёт пустую строку."""
+    if not paragraph.strip():
+        return [""]
+
+    lines: list[str] = []
+    current_line = ""
+    for word in paragraph.split():
+        test_line = word if not current_line else f"{current_line} {word}"
+        if c.stringWidth(test_line, font_name, font_size) <= max_width:
+            current_line = test_line
+        else:
+            if current_line:
+                lines.append(current_line)
+            current_line = word
+
+    if current_line:
+        lines.append(current_line)
+    return lines
 

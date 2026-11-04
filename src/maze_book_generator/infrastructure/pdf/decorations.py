@@ -9,6 +9,7 @@ from reportlab.lib.units import mm
 from reportlab.pdfgen import canvas
 
 from maze_book_generator.infrastructure.pdf.context import RenderContext
+from maze_book_generator.infrastructure.pdf.drawing.grid import draw_cell_walls
 from maze_book_generator.infrastructure.pdf.params import DecoRingSpec, Rect
 from maze_book_generator.utils import create_rng
 
@@ -46,17 +47,8 @@ def render_maze_band(ctx: RenderContext,
     rng = create_rng(int(y_bottom + band_h * 7))
     for row in range(rows):
         for col in range(cols):
-            x0 = col * cell
-            y0 = y_bottom + row * cell
             walls = [rng.random() < 0.55 for _ in range(4)]  # верх, право, низ, лево
-            if walls[0]:
-                c.line(x0, y0 + cell, x0 + cell, y0 + cell)
-            if walls[1]:
-                c.line(x0 + cell, y0, x0 + cell, y0 + cell)
-            if walls[2]:
-                c.line(x0, y0, x0 + cell, y0)
-            if walls[3]:
-                c.line(x0, y0, x0, y0 + cell)
+            draw_cell_walls(c, walls, col * cell, y_bottom + row * cell, cell)
 
 
 
