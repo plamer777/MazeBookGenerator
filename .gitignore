@@ -3,6 +3,7 @@
 __pycache__/
 *.egg-info/
 .pytest_cache/
+.ruff_cache/
 .coverage
 
 # IDE / агентные инструменты
@@ -22,8 +23,8 @@ GEMINI.md
 output/
 temp/
 
-# quality-gate runtime state (baselines коммитим, отчёты/кэш — нет)
-/.quality-gate/reports/
-/.quality-gate/cache/
-/.quality-gate/tmp/
-/.quality-gate/observations/
+# quality-gate — служебное состояние (baselines, отчёты, кэш)
+/.quality-gate/
+
+# Рабочие документы рефакторинга
+/REFACTORING_PLAN.md
