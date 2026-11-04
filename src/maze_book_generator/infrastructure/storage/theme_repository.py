@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import logging
+from contextlib import suppress
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Protocol
@@ -97,43 +98,61 @@ class JsonThemeRepository:
         """No-op: JSON-хранилище не держит открытых ресурсов."""
 
 
-class MongoThemeRepository:
-    """Репозиторий тем поверх MongoDB (обёртка над MongoDBClient).
+def _pymongo_errors() -> tuple[type[Exception], ...]:
+    """Возвращает ошибки pymongo (импорт ленивый — pymongo опциональная зависимость)."""
+    from pymongo.errors import PyMongoError
 
-    Ленивая инициализация: pymongo и соединение требуются только
-    при первом реальном вызове метода.
+    return (PyMongoError,)
+
+
+class MongoThemeRepository:
+    """Репозиторий тем поверх MongoDB: запросная логика к used_themes.
+
+    Соединение управляется MongoDBClient и создаётся лениво — pymongo
+    требуется только при первом реальном вызове. При недоступности
+    MongoDB методы деградируют к безопасным значениям, не прерывая работу.
     """
 
     def __init__(self) -> None:
-        """Создаёт клиент MongoDB лениво (импорт pymongo при первом обращении)."""
+        """Создаёт репозиторий без соединения (MongoDBClient — ленивый)."""
         self._client: Any | None = None
 
     @property
-    def _mongo(self) -> Any:
-        """Возвращает MongoDBClient, создавая его при первом обращении."""
+    def _collection(self) -> Any:
+        """Возвращает коллекцию тем, создавая клиент при первом обращении."""
         if self._client is None:
             from maze_book_generator.infrastructure.storage.mongodb import (
                 MongoDBClient,
             )
 
             self._client = MongoDBClient()
-        return self._client
+        return self._client.collection
 
     def is_theme_used(self, title: str) -> bool:
         """Возвращает True, если тема с таким заголовком уже использовалась."""
-        return self._mongo.is_theme_used(title)
+        try:
+            return self._collection.find_one({"title": title}) is not None
+        except _pymongo_errors():
+            return False
 
     def save_theme(self, title: str) -> None:
         """Сохраняет заголовок темы как использованный."""
-        self._mongo.save_theme(title)
+        with suppress(*_pymongo_errors()):
+            self._collection.insert_one({"title": title, "timestamp": datetime.now(UTC)})
 
     def get_used_titles(self) -> list[str]:
         """Возвращает список всех использованных заголовков."""
-        return self._mongo.get_used_titles()
+        try:
+            return [doc["title"] for doc in self._collection.find({}, {"title": 1})]
+        except _pymongo_errors():
+            return []
 
     def get_used_themes_count(self) -> int:
         """Возвращает количество сохранённых тем."""
-        return self._mongo.get_used_themes_count()
+        try:
+            return self._collection.count_documents({})
+        except _pymongo_errors():
+            return 0
 
     def close(self) -> None:
         """Закрывает соединение с MongoDB, если оно было открыто."""
