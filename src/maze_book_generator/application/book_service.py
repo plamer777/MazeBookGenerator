@@ -5,7 +5,6 @@
 иллюстрации — в illustration_pipeline.
 """
 
-import logging
 from dataclasses import replace
 from pathlib import Path
 
@@ -44,8 +43,6 @@ from maze_book_generator.settings import (
     settings,
 )
 from maze_book_generator.utils import create_rng
-
-logger = logging.getLogger(__name__)
 
 
 class BookService:

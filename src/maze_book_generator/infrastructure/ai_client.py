@@ -70,32 +70,8 @@ class AIClient:
             msg = "OpenAI client is not initialized"
             raise ValueError(msg)
 
-        hints = hints or ThemeHints()
-
-        titles_block = (
-            "\n".join(f"- {t}" for t in used_titles)
-            if used_titles
-            else ("none yet" if language == "en" else "пока нет")
-        )
-
-        system = OPEN_AI_THEME_SYSTEM if language == "en" else OPEN_AI_THEME_SYSTEM_RU
-        prompt_tpl = OPEN_AI_THEME_PROMPT if language == "en" else OPEN_AI_THEME_PROMPT_RU
-        language_name = "Russian" if language == "ru" else "English"
-        prompt = prompt_tpl.format(
-            pages_count=pages_count,
-            used_titles=titles_block,
-            language_name=language_name,
-            book_title_hint=self._safe_prompt_value(hints.book_title_hint or "auto"),
-            theme_hint=self._safe_prompt_value(hints.theme_hint or "auto"),
-            age_range=self._safe_prompt_value(hints.age_range or ("4-7 years" if language == "en" else "4-7 лет")),
-            answers_included=("yes" if language == "en" else "да"),
-            print_friendly=(
-                "yes" if language == "en" and hints.print_friendly else
-                "no" if language == "en" else
-                "да" if hints.print_friendly else
-                "нет"
-            ),
-        )
+        system_prompt = OPEN_AI_THEME_SYSTEM if language == "en" else OPEN_AI_THEME_SYSTEM_RU
+        gen_prompt = self._prepare_theme_generate_prompt(used_titles, language, pages_count, hints)
 
         last_error = ""
         for _ in range(AI_THEME_ATTEMPTS):
@@ -107,8 +83,8 @@ class AIClient:
                     temperature=OPEN_AI_THEME_TEMPERATURE,
                     max_tokens=max_tokens,
                     messages=[
-                        {"role": "system", "content": system},
-                        {"role": "user", "content": prompt},
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": gen_prompt},
                     ],
                 )
                 text = response.choices[0].message.content or ""
@@ -128,6 +104,39 @@ class AIClient:
         if last_error:
             msg += f": {last_error}"
         raise ValueError(msg)
+
+    def _prepare_theme_generate_prompt(
+        self,
+        used_titles: list[str] | None,
+        language: Language,
+        pages_count: int,
+        hints: ThemeHints | None,
+    ) -> str:
+        """Подготавливает промпт генерации темы текущей книги."""
+        hints = hints or ThemeHints()
+        titles_block = (
+            "\n".join(f"- {t}" for t in used_titles)
+            if used_titles
+            else ("none yet" if language == "en" else "пока нет")
+        )
+
+        prompt_tpl = OPEN_AI_THEME_PROMPT if language == "en" else OPEN_AI_THEME_PROMPT_RU
+        language_name = "Russian" if language == "ru" else "English"
+        return prompt_tpl.format(
+            pages_count=pages_count,
+            used_titles=titles_block,
+            language_name=language_name,
+            book_title_hint=self._safe_prompt_value(hints.book_title_hint or "auto"),
+            theme_hint=self._safe_prompt_value(hints.theme_hint or "auto"),
+            age_range=self._safe_prompt_value(hints.age_range or ("4-7 years" if language == "en" else "4-7 лет")),
+            answers_included=("yes" if language == "en" else "да"),
+            print_friendly=(
+                "yes" if language == "en" and hints.print_friendly else
+                "no" if language == "en" else
+                "да" if hints.print_friendly else
+                "нет"
+            ),
+        )
 
     @staticmethod
     def _safe_prompt_value(value: str) -> str:
