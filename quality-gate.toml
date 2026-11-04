@@ -50,7 +50,7 @@ preview = true
 exclude = [".git", ".venv", "venv", "__pycache__", "build", "dist", ".mypy_cache", ".pytest_cache", ".ruff_cache", "*.toml", "**/migrations/**"]
 
 [ruff.lint]
-select = ["E4", "E7", "E9", "F", "I", "UP", "B", "SIM", "C4", "RET", "ARG", "PERF", "PT", "RUF", "S", "ASYNC", "DTZ", "BLE", "TRY", "LOG", "C901", "PLR0904", "PLR0911", "PLR0912", "PLR0913", "PLR0914", "PLR0915", "PLR0916", "PLR0917", "PLR1702"]
+select = ["E4", "E7", "E9", "F", "I", "UP", "B", "SIM", "C4", "RET", "ARG", "PERF", "PT", "RUF", "S", "ASYNC", "DTZ", "BLE", "TRY", "LOG", "N", "D100", "D101", "D102", "D103", "D417", "C901", "PLR0904", "PLR0911", "PLR0912", "PLR0913", "PLR0914", "PLR0915", "PLR0916", "PLR0917", "PLR1702"]
 ignore = ["E501", "B008", "RUF001", "RUF002", "RUF003"]
 
 [ruff.lint.per-file-ignores]
@@ -68,7 +68,7 @@ max-branches = 12
 max-args = 6
 max-positional-args = 5
 max-locals = 15
-max-statements = 50
+max-statements = 35
 max-bool-expr = 5
 max-nested-blocks = 4
 

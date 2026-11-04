@@ -68,6 +68,7 @@ def render_intro_page(ctx: RenderContext, c: canvas.Canvas, book: Book) -> None:
     Простой минималистичный дизайн с дружелюбным локализованным текстом.
 
     Args:
+        ctx: Контекст рендеринга (палитра, размеры страницы, print_friendly)
         c: Canvas для рисования
         book: Объект книги
     """

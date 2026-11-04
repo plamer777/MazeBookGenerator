@@ -117,9 +117,11 @@ def render_start_end(ctx: RenderContext,
 
     Args:
         c: Canvas для рисования
+        ctx: Контекст рендеринга (палитра, размеры страницы, print_friendly)
         maze: Объект лабиринта
         start_x: Начальная координата X лабиринта на странице
         start_y: Начальная координата Y лабиринта на странице
+        show_labels: Показывать ли текстовые подписи СТАРТ/ФИНИШ
     """
     marker_r = ctx.cell_size * 0.45
 

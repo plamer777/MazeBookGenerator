@@ -32,6 +32,7 @@ def render_maze_band(ctx: RenderContext,
     лабиринтный узор поверх фона.
 
     Args:
+        ctx: Контекст рендеринга (палитра, размеры страницы, print_friendly)
         c: Canvas
         y_bottom: Нижняя граница полосы
         band_h: Высота полосы
@@ -70,6 +71,7 @@ def render_meander_border(ctx: RenderContext,
     Внутренняя — меандровый орнамент с прямоугольными зубцами.
 
     Args:
+        ctx: Контекст рендеринга (палитра, размеры страницы, print_friendly)
         c: Canvas
         accent: RGB-цвет рамки
     """
@@ -139,6 +141,7 @@ def render_corner_ornaments(ctx: RenderContext,
     Рисует декоративные уголки — квадратные спирали в каждом углу.
 
     Args:
+        ctx: Контекст рендеринга (палитра, размеры страницы, print_friendly)
         c: Canvas
         accent: RGB-цвет орнамента
     """
@@ -176,6 +179,7 @@ def render_page_corner_deco(ctx: RenderContext,
     Чередование символов и цветов рандомное по номеру страницы.
 
     Args:
+        ctx: Контекст рендеринга (палитра, размеры страницы, print_friendly)
         c: Canvas
         accent: Базовый акцентный цвет
         page_seed: Номер страницы для уникального seed

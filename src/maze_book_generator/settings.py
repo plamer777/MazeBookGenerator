@@ -1,3 +1,5 @@
+"""Централизованная конфигурация и константы MazeBookGenerator."""
+
 from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict

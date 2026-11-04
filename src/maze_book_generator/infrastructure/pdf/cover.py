@@ -116,6 +116,7 @@ def render_cover(ctx: RenderContext, c: canvas.Canvas, book: Book) -> None:
     - Подзаголовок «Maze Book»
 
     Args:
+        ctx: Контекст рендеринга (палитра, размеры страницы, print_friendly)
         c: Canvas для рисования
         book: Объект книги
     """

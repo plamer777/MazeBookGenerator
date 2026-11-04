@@ -140,7 +140,7 @@ class TestCoverAndText:
         """Длинный текст должен переноситься по словам."""
         mock_canvas = MagicMock()
         # Первое слово влезает, второе - нет
-        def stringWidth_side_effect(text, _font, _size):
+        def string_width_side_effect(text, _font, _size):
             if text == "Hello":
                 return 40
             if text == "Hello world":
@@ -149,7 +149,7 @@ class TestCoverAndText:
                 return 50
             return 0
 
-        mock_canvas.stringWidth.side_effect = stringWidth_side_effect
+        mock_canvas.stringWidth.side_effect = string_width_side_effect
 
         lines = text.wrap_text_to_width(mock_canvas, "Hello world", "font", 12, 100)
         assert len(lines) == 2
@@ -161,10 +161,10 @@ class TestCoverAndText:
         mock_canvas = MagicMock()
 
         # Каждая буква занимает 10 единиц
-        def stringWidth_side_effect(text, _font, _size):
+        def string_width_side_effect(text, _font, _size):
             return len(text) * 10
 
-        mock_canvas.stringWidth.side_effect = stringWidth_side_effect
+        mock_canvas.stringWidth.side_effect = string_width_side_effect
 
         chunks = text.split_long_word(mock_canvas, "VeryLongWord", "font", 12, 20)
         assert len(chunks) > 1
@@ -186,10 +186,10 @@ class TestCoverAndText:
         """Длинный заголовок должен переноситься на несколько строк."""
         mock_canvas = MagicMock()
         # Каждое слово занимает много места
-        def stringWidth_side_effect(text, _font, _size):
+        def string_width_side_effect(text, _font, _size):
             return len(text) * 30
 
-        mock_canvas.stringWidth.side_effect = stringWidth_side_effect
+        mock_canvas.stringWidth.side_effect = string_width_side_effect
 
         _font_size, lines = cover.fit_cover_title_layout(
             self.renderer.ctx, mock_canvas, "Very Long Title Here", 100,
@@ -200,10 +200,10 @@ class TestCoverAndText:
         """Если текст не влезает, размер шрифта должен уменьшаться."""
         mock_canvas = MagicMock()
         # Большой размер шрифта даёт большую ширину
-        def stringWidth_side_effect(text, _font, size):
+        def string_width_side_effect(text, _font, size):
             return len(text) * size * 2
 
-        mock_canvas.stringWidth.side_effect = stringWidth_side_effect
+        mock_canvas.stringWidth.side_effect = string_width_side_effect
 
         font_size, _lines = cover.fit_cover_title_layout(
             self.renderer.ctx, mock_canvas, "Very Long Title", 100,

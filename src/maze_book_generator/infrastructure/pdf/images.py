@@ -150,6 +150,7 @@ def render_image_collage(ctx: RenderContext,
     - Углы (TL, TR, BL, BR): по одному изображению 20–28% ширины, поворот ±15°.
 
     Args:
+        ctx: Контекст рендеринга (палитра, размеры страницы, print_friendly)
         c: Canvas для рисования
         illustrations_dir: Папка с PNG-файлами
         alpha: Прозрачность изображений (не изменяется)
